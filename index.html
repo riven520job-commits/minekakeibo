@@ -55,6 +55,9 @@
         .primary-btn:active { transform: translateY(1px) scale(.99); }
         .nav-btn { color: #8993a4; border-radius: 14px; min-width: 62px; transition: color 160ms ease, background 160ms ease; }
         .nav-btn.active { color: var(--accent); background: #eff6ff; }
+        .nav-fab { width: 68px; height: 68px; margin-top: -30px; border: 5px solid #e0f2fe; border-radius: 9999px; background: var(--panel); color: var(--accent); box-shadow: 0 16px 28px rgba(37, 99, 235, .18); font-size: 38px; line-height: 1; }
+        .date-chip { border-radius: 9999px; transition: border-color 160ms ease, color 160ms ease, background 160ms ease; }
+        .date-chip.active { border-color: #38bdf8; color: var(--ink); background: #f0f9ff; }
         nav { padding-bottom: max(1.25rem, env(safe-area-inset-bottom)); }
         .lang-toggle { position: fixed; top: 14px; right: max(14px, calc((100vw - 448px) / 2 + 14px)); z-index: 55; }
         .empty-state { border: 1px dashed #d8dee8; background: #f8fafc; border-radius: 14px; padding: 18px; text-align: center; color: var(--muted); font-size: 13px; }
@@ -82,12 +85,50 @@
                 <p class="section-label mb-1">Budget Manager</p>
                 <h1 class="text-2xl font-bold tracking-tight" data-i18n="dashboardTitle">資產總覽</h1>
             </div>
+
+            <div class="surface p-4 mb-5">
+                <div class="flex items-center justify-between gap-3 mb-3">
+                    <div>
+                        <div class="section-label mb-1" data-i18n="entryDateLabel">記帳日期</div>
+                        <div id="dashboard-selected-date-label" class="text-xl font-bold tracking-tight">2026/06/10</div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="shiftEntryWeek(-1)" class="w-10 h-10 rounded-full bg-gray-50 border border-gray-100 text-gray-500 font-bold">‹</button>
+                        <button onclick="selectDashboardDate(todayString())" class="h-10 px-3 rounded-full bg-gray-50 border border-gray-100 text-xs font-semibold text-gray-500" data-i18n="todayButton">今天</button>
+                        <button onclick="shiftEntryWeek(1)" class="w-10 h-10 rounded-full bg-gray-50 border border-gray-100 text-gray-500 font-bold">›</button>
+                        <label class="w-10 h-10 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center text-lg cursor-pointer">
+                            📅
+                            <input type="date" id="dashboard-date-input" class="sr-only" onchange="selectDashboardDate(this.value)">
+                        </label>
+                    </div>
+                </div>
+                <div id="dashboard-week-strip" class="grid grid-cols-7 gap-1"></div>
+                <p class="text-[11px] text-gray-400 mt-3" data-i18n="entryDateHint">先選日期，再按底部中間的＋新增紀錄。</p>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="section-label mb-3 flex justify-between items-center">
+                    <span data-i18n="dailyRecordsTitle">當日紀錄</span>
+                    <span id="daily-record-total" class="text-[11px] text-gray-400 font-semibold normal-case">¥0</span>
+                </h3>
+                <div id="daily-record-list" class="space-y-3"></div>
+            </div>
             
             <div class="surface p-6 mb-6 relative overflow-hidden bg-gradient-to-br from-white via-white to-blue-50">
                 <div class="absolute -top-7 -right-7 h-28 w-28 rounded-full bg-blue-100"></div>
                 <button id="amount-visibility-toggle" onclick="toggleAmountVisibility()" class="absolute top-4 right-4 z-20 text-[10px] font-semibold text-gray-600 bg-white/90 border border-gray-200 px-3 py-1.5 rounded-full shadow-sm" data-i18n="hideAmounts">隱藏金額</button>
                 <p class="text-xs text-gray-500 relative z-10" data-i18n="netWorthLabel">總資產淨額 (JPY)</p>
                 <div class="text-4xl font-bold mt-2 relative z-10" id="total-net-worth">¥0</div>
+                <div class="grid grid-cols-2 gap-3 mt-4 relative z-10">
+                    <div class="rounded-xl bg-white/70 border border-white/80 p-3">
+                        <div class="text-[10px] text-gray-400 font-semibold" data-i18n="totalAssetsLabel">總資產</div>
+                        <div id="total-assets" class="text-sm font-bold text-green-600 mt-1">¥0</div>
+                    </div>
+                    <div class="rounded-xl bg-white/70 border border-white/80 p-3">
+                        <div class="text-[10px] text-gray-400 font-semibold" data-i18n="totalLiabilitiesLabel">總負債</div>
+                        <div id="total-liabilities" class="text-sm font-bold text-red-500 mt-1">¥0</div>
+                    </div>
+                </div>
                 <p class="text-xs text-gray-400 mt-3 relative z-10" data-i18n="netWorthHint">包含初始金額與所有歷史紀錄</p>
             </div>
 
@@ -106,40 +147,13 @@
             </h3>
             <div id="account-balances-list" class="space-y-3 mb-8"></div>
 
-            <h3 class="section-label mb-3 border-t border-gray-100 pt-6"><span data-i18n="chartsTitle">統計圖表</span> <span class="text-[10px] font-normal normal-case text-gray-400" data-i18n="expenseOnly">(僅計算支出)</span></h3>
-            
-            <div class="space-y-4">
-                <div class="surface p-3 shadow-none">
-                    <div class="flex items-center justify-between gap-3">
-                        <label for="stats-range" class="text-xs text-gray-500 font-medium" data-i18n="statsRangeLabel">統計期間</label>
-                        <select id="stats-range" onchange="setStatsRange(this.value)" class="notion-input max-w-[160px] py-2 text-xs">
-                            <option value="6m" data-i18n="range6m">近 6 個月</option>
-                            <option value="12m" data-i18n="range12m">近 12 個月</option>
-                            <option value="24m" data-i18n="range24m">近 24 個月</option>
-                            <option value="thisYear" data-i18n="rangeThisYear">今年</option>
-                            <option value="lastYear" data-i18n="rangeLastYear">去年</option>
-                            <option value="all" data-i18n="rangeAll">全部歷史</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div id="chart-insights" class="grid grid-cols-2 gap-3"></div>
-
-                <div class="surface p-4">
-                    <p class="text-xs text-gray-500 mb-2 font-medium" data-i18n="trendChartTitle">支出趨勢</p>
-                    <canvas id="trendChart" width="400" height="220"></canvas>
-                </div>
-                
-                <div class="surface p-4">
-                    <p class="text-xs text-gray-500 mb-3 font-medium" data-i18n="topCategoriesTitle">期間主要支出分類</p>
-                    <div id="top-category-list" class="space-y-3"></div>
-                </div>
-
-                <div class="surface p-4">
-                    <p class="text-xs text-gray-500 mb-3 font-medium"><span data-i18n="currencyChartTitle">各幣值支出</span> <span class="text-[10px] text-gray-400 font-normal" data-i18n="bookValueHint">(依帳面數值)</span></p>
-                    <div id="currency-breakdown" class="flex flex-wrap gap-2"></div>
-                </div>
-            </div>
+            <button onclick="openStatsModal()" class="surface w-full text-left p-4 mb-8 hover:bg-gray-50 transition flex items-center justify-between">
+                <span>
+                    <span class="block text-sm font-semibold" data-i18n="openStatsTitle">查看統計圖表</span>
+                    <span class="block text-xs text-gray-400 mt-1" data-i18n="openStatsHint">點選開啟期間分析與分類排行</span>
+                </span>
+                <span class="text-gray-300">›</span>
+            </button>
         </section>
 
         <section id="page-add" class="page">
@@ -329,13 +343,90 @@
         </section>
     </main>
 
+    <div id="stats-modal" class="hidden fixed inset-0 z-[70] bg-black/40 backdrop-blur-sm">
+        <div class="absolute inset-x-0 bottom-0 top-8 max-w-md mx-auto bg-white rounded-t-3xl shadow-2xl overflow-hidden flex flex-col">
+            <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between gap-3">
+                <div>
+                    <p class="section-label mb-1" data-i18n="chartsTitle">統計圖表</p>
+                    <h2 class="text-xl font-bold tracking-tight" data-i18n="statsModalTitle">支出分析</h2>
+                </div>
+                <button onclick="closeStatsModal()" class="w-10 h-10 rounded-full bg-gray-100 text-gray-500 font-bold">×</button>
+            </div>
+            <div class="px-5 py-4 overflow-y-auto space-y-4">
+                <div class="surface p-3 shadow-none">
+                    <div class="flex items-center justify-between gap-3">
+                        <label for="stats-range" class="text-xs text-gray-500 font-medium" data-i18n="statsRangeLabel">統計期間</label>
+                        <select id="stats-range" onchange="setStatsRange(this.value)" class="notion-input max-w-[160px] py-2 text-xs">
+                            <option value="6m" data-i18n="range6m">近 6 個月</option>
+                            <option value="12m" data-i18n="range12m">近 12 個月</option>
+                            <option value="24m" data-i18n="range24m">近 24 個月</option>
+                            <option value="thisYear" data-i18n="rangeThisYear">今年</option>
+                            <option value="lastYear" data-i18n="rangeLastYear">去年</option>
+                            <option value="all" data-i18n="rangeAll">全部歷史</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="chart-insights" class="grid grid-cols-2 gap-3"></div>
+
+                <div class="surface p-4">
+                    <p class="text-xs text-gray-500 mb-2 font-medium" data-i18n="trendChartTitle">支出趨勢</p>
+                    <canvas id="trendChart" width="400" height="220"></canvas>
+                </div>
+
+                <div class="surface p-4">
+                    <p class="text-xs text-gray-500 mb-3 font-medium" data-i18n="topCategoriesTitle">期間主要支出分類</p>
+                    <div id="top-category-list" class="space-y-3"></div>
+                </div>
+
+                <div class="surface p-4">
+                    <p class="text-xs text-gray-500 mb-3 font-medium"><span data-i18n="currencyChartTitle">各幣值支出</span> <span class="text-[10px] text-gray-400 font-normal" data-i18n="bookValueHint">(依帳面數值)</span></p>
+                    <div id="currency-breakdown" class="flex flex-wrap gap-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="add-record-modal" class="hidden fixed inset-0 z-[75] bg-black/40 backdrop-blur-sm">
+        <div class="absolute inset-x-0 bottom-0 top-6 max-w-md mx-auto bg-white rounded-t-3xl shadow-2xl overflow-hidden flex flex-col">
+            <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between gap-3">
+                <div>
+                    <p class="section-label mb-1" data-i18n="entryDateLabel">記帳日期</p>
+                    <h2 id="add-modal-date-label" class="text-xl font-bold tracking-tight">2026/06/10</h2>
+                </div>
+                <button onclick="closeAddModal()" class="w-10 h-10 rounded-full bg-gray-100 text-gray-500 font-bold">×</button>
+            </div>
+            <div id="add-modal-body" class="px-5 py-4 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <div id="record-detail-modal" class="hidden fixed inset-0 z-[80] bg-black/50 backdrop-blur-sm">
+        <div class="absolute inset-x-5 top-[10vh] max-w-md mx-auto surface overflow-hidden shadow-2xl">
+            <div id="record-detail-content"></div>
+        </div>
+    </div>
+
+    <div id="monthly-report-modal" class="hidden fixed inset-0 z-[72] bg-black/40 backdrop-blur-sm">
+        <div class="absolute inset-x-0 bottom-0 top-8 max-w-md mx-auto bg-white rounded-t-3xl shadow-2xl overflow-hidden flex flex-col">
+            <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between gap-3">
+                <div>
+                    <p class="section-label mb-1" data-i18n="monthlyReportTitle">每月報表</p>
+                    <h2 id="monthly-report-month" class="text-xl font-bold tracking-tight">2026/06</h2>
+                </div>
+                <button onclick="closeMonthlyReportModal()" class="w-10 h-10 rounded-full bg-gray-100 text-gray-500 font-bold">×</button>
+            </div>
+            <div id="monthly-report-content" class="px-5 py-4 overflow-y-auto space-y-4"></div>
+        </div>
+    </div>
+
     <div id="toast" class="toast bg-gray-900 text-white text-sm px-4 py-3 rounded-full shadow-xl"></div>
 
-    <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white/95 backdrop-blur border-t border-gray-100 px-3 pt-2 pb-5 flex justify-around shadow-[0_-8px_24px_rgba(31,41,51,0.07)] z-50">
-        <button data-page="dashboard" onclick="switchPage('dashboard')" class="nav-btn active p-2 text-xs font-semibold flex flex-col items-center"><span class="text-lg mb-1">📊</span><span data-i18n="navDashboard">總覽</span></button>
-        <button data-page="add" onclick="switchPage('add')" class="nav-btn p-2 text-xs font-semibold flex flex-col items-center"><span class="text-lg mb-1">➕</span><span data-i18n="navAdd">新增</span></button>
-        <button data-page="report" onclick="switchPage('report')" class="nav-btn p-2 text-xs font-semibold flex flex-col items-center"><span class="text-lg mb-1">📋</span><span data-i18n="navReport">列表</span></button>
-        <button data-page="more" onclick="switchPage('more')" class="nav-btn p-2 text-xs font-semibold flex flex-col items-center"><span class="text-lg mb-1">⚙️</span><span data-i18n="navMore">設定</span></button>
+    <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white/95 backdrop-blur border-t border-gray-100 px-2 pt-2 pb-5 grid grid-cols-5 items-end gap-1 shadow-[0_-8px_24px_rgba(31,41,51,0.07)] z-50">
+        <button data-page="dashboard" onclick="switchPage('dashboard')" class="nav-btn active p-2 text-xs font-semibold flex flex-col items-center justify-center"><span class="text-lg mb-1">📊</span><span data-i18n="navDashboard">總覽</span></button>
+        <button data-page="report" onclick="switchPage('report')" class="nav-btn p-2 text-xs font-semibold flex flex-col items-center justify-center"><span class="text-lg mb-1">📋</span><span data-i18n="navReport">列表</span></button>
+        <button data-page="add" onclick="openAddWithSelectedDate()" class="nav-btn nav-fab flex items-center justify-center" aria-label="新增">+</button>
+        <button onclick="openMonthlyReportModal()" class="nav-btn p-2 text-xs font-semibold flex flex-col items-center justify-center"><span class="text-lg mb-1">📈</span><span data-i18n="navMonthly">月報</span></button>
+        <button data-page="more" onclick="switchPage('more')" class="nav-btn p-2 text-xs font-semibold flex flex-col items-center justify-center"><span class="text-lg mb-1">⚙️</span><span data-i18n="navMore">設定</span></button>
     </nav>
     </div>
 
@@ -476,6 +567,7 @@
         const chartColors = ['#2563eb', '#16a34a', '#f59e0b', '#ef4444', '#8b5cf6', '#0891b2', '#64748b', '#db2777', '#475569'];
         let currentLang = localStorage.getItem('myBudgetLang') || 'zh';
         let statsRange = localStorage.getItem('myStatsRange') || '6m';
+        let selectedEntryDate = localStorage.getItem('mySelectedEntryDate') || todayString();
         const SUPABASE_URL = 'https://ymxjnjrkndzemepflymc.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlteGpuanJrbmR6ZW1lcGZseW1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5Mzg2MDUsImV4cCI6MjA5NjUxNDYwNX0.eDKpQocEdSk0VoNqfGmegMuIRbfhwQLQuBaGajLyD5o';
         const SITE_URL = 'https://riven520job-commits.github.io/minekakeibo/';
@@ -486,8 +578,21 @@
             zh: {
                 langToggle: '日本語',
                 dashboardTitle: '資產總覽',
+                entryDateLabel: '記帳日期',
+                entryDateHint: '可切換週或用日曆選任意日期，再按底部中間的＋新增紀錄。',
+                todayButton: '今天',
+                dailyRecordsTitle: '當日紀錄',
+                dailyRecordsEmpty: '這天還沒有紀錄，按下方＋新增。',
+                recordDetailTitle: '紀錄明細',
+                editRecord: '修改',
+                duplicateRecord: '複製',
+                recordProject: '專案',
+                recordAccount: '帳戶',
+                recordCategory: '分類',
                 netWorthLabel: '總資產淨額 (JPY)',
                 netWorthHint: '包含初始金額與截至今日的歷史紀錄',
+                totalAssetsLabel: '總資產',
+                totalLiabilitiesLabel: '總負債',
                 accountBalances: '各帳戶餘額',
                 budgetProjectsTitle: '預算專案',
                 budgetProjectsHint: '設定與修改專案預算，追蹤期間內支出',
@@ -521,6 +626,9 @@
                 statsTopCategory: '最高分類',
                 noChartData: '此期間還沒有支出紀錄',
                 hiddenChartHint: '金額已隱藏，圖表暫停顯示',
+                openStatsTitle: '查看統計圖表',
+                openStatsHint: '點選開啟期間分析與分類排行',
+                statsModalTitle: '支出分析',
                 addKicker: 'Add Record',
                 addTitle: '新增紀錄',
                 namePlaceholder: '項目名稱 (選填)',
@@ -578,7 +686,14 @@
                 navDashboard: '總覽',
                 navAdd: '新增',
                 navReport: '列表',
+                navMonthly: '月報',
                 navMore: '設定',
+                monthlyReportTitle: '每月報表',
+                monthlyIncome: '本月收入',
+                monthlyExpense: '本月支出',
+                monthlyNet: '本月淨額',
+                monthlyTopCategories: '支出分類排行',
+                monthlyNoData: '這個月份還沒有支出紀錄',
                 initialPrefix: '初始',
                 accountCount: '個帳戶',
                 classify: '分類',
@@ -623,6 +738,8 @@
                 toastInstallmentCount: '請輸入 2 到 60 期之間的分期期數',
                 toastSaved: '紀錄已儲存',
                 toastDeleted: '紀錄已刪除',
+                toastRecordUpdated: '紀錄已修改',
+                toastRecordDuplicated: '紀錄已複製',
                 toastReset: '資料已重置',
                 toastExported: 'CSV 已匯出',
                 csvHeaders: ['類型','日期','大分類','小分類','項目名稱','預算專案','轉出/付款帳戶','轉入帳戶','幣值','金額','分期'],
@@ -647,13 +764,30 @@
                 promptEditProjectEnd: '請修改結束日期 YYYY-MM-DD（可留空）：',
                 promptDeleteProject: name => `確定刪除預算專案「${name}」嗎？`,
                 confirmDelete: '確定刪除此筆紀錄？',
+                confirmDuplicateRecord: '確定複製此筆紀錄到目前選取日期？',
+                promptEditRecordName: '請修改項目名稱：',
+                promptEditRecordAmount: '請修改金額：',
+                promptEditRecordDate: '請修改日期 YYYY-MM-DD：',
                 confirmReset: '警告：確定清除「所有歷史紀錄」與「系統設定」嗎？（此動作無法復原）'
             },
             ja: {
                 langToggle: '繁體中文',
                 dashboardTitle: '資産サマリー',
+                entryDateLabel: '記録日',
+                entryDateHint: '週を切り替えるかカレンダーで日付を選び、下中央の＋で記録を追加します。',
+                todayButton: '今日',
+                dailyRecordsTitle: '当日の記録',
+                dailyRecordsEmpty: 'この日の記録はまだありません。下中央の＋で追加します。',
+                recordDetailTitle: '記録詳細',
+                editRecord: '編集',
+                duplicateRecord: '複製',
+                recordProject: 'プロジェクト',
+                recordAccount: '口座',
+                recordCategory: 'カテゴリ',
                 netWorthLabel: '純資産合計 (JPY)',
                 netWorthHint: '初期金額と今日までの履歴を含みます',
+                totalAssetsLabel: '総資産',
+                totalLiabilitiesLabel: '総負債',
                 accountBalances: '口座残高',
                 budgetProjectsTitle: '予算プロジェクト',
                 budgetProjectsHint: 'プロジェクト予算を設定・編集し、期間内の支出を追跡します',
@@ -687,6 +821,9 @@
                 statsTopCategory: '最大カテゴリ',
                 noChartData: 'この期間の支出記録はまだありません',
                 hiddenChartHint: '金額を隠しているため、グラフを一時停止しています',
+                openStatsTitle: '統計グラフを見る',
+                openStatsHint: '期間分析とカテゴリランキングを開きます',
+                statsModalTitle: '支出分析',
                 addKicker: '記録追加',
                 addTitle: '記録を追加',
                 namePlaceholder: '項目名 (任意)',
@@ -744,7 +881,14 @@
                 navDashboard: '総覧',
                 navAdd: '追加',
                 navReport: '一覧',
+                navMonthly: '月報',
                 navMore: '設定',
+                monthlyReportTitle: '月次レポート',
+                monthlyIncome: '今月の収入',
+                monthlyExpense: '今月の支出',
+                monthlyNet: '今月の純額',
+                monthlyTopCategories: '支出カテゴリランキング',
+                monthlyNoData: 'この月の支出記録はまだありません',
                 initialPrefix: '初期',
                 accountCount: '口座',
                 classify: '分類',
@@ -789,6 +933,8 @@
                 toastInstallmentCount: '分割回数は 2〜60 回で入力してください',
                 toastSaved: '記録を保存しました',
                 toastDeleted: '記録を削除しました',
+                toastRecordUpdated: '記録を更新しました',
+                toastRecordDuplicated: '記録を複製しました',
                 toastReset: 'データをリセットしました',
                 toastExported: 'CSV を書き出しました',
                 csvHeaders: ['種類','日付','大分類','小分類','項目名','予算プロジェクト','支払い/振替元口座','振替先口座','通貨','金額','分割'],
@@ -813,6 +959,10 @@
                 promptEditProjectEnd: '終了日 YYYY-MM-DD を編集してください（空欄可）：',
                 promptDeleteProject: name => `予算プロジェクト「${name}」を削除しますか？`,
                 confirmDelete: 'この記録を削除しますか？',
+                confirmDuplicateRecord: 'この記録を現在選択中の日付へ複製しますか？',
+                promptEditRecordName: '項目名を編集してください：',
+                promptEditRecordAmount: '金額を編集してください：',
+                promptEditRecordDate: '日付 YYYY-MM-DD を編集してください：',
                 confirmReset: '警告：すべての履歴と設定を削除しますか？（この操作は元に戻せません）'
             }
         };
@@ -921,8 +1071,10 @@
             document.getElementById('lang-toggle').textContent = t('langToggle');
             renderAmountVisibilityButton();
             renderEyeCareStatus();
+            renderDashboardDatePicker();
             const statsRangeSelect = document.getElementById('stats-range');
             if (statsRangeSelect) statsRangeSelect.value = statsRange;
+            if (!document.getElementById('monthly-report-modal')?.classList.contains('hidden')) renderMonthlyReport();
             const selectedType = document.getElementById('selected-type').value;
             document.getElementById('label-account-from').textContent = selectedType === '轉帳' ? t('transferFrom') : t('paymentMethod');
         }
@@ -954,6 +1106,328 @@
         function todayString() {
             const now = new Date();
             return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+        }
+
+        function parseLocalDate(dateString) {
+            const [year, month, day] = (dateString || todayString()).split('-').map(Number);
+            return new Date(year, (month || 1) - 1, day || 1);
+        }
+
+        function formatLocalDate(date) {
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        }
+
+        function formatEntryDateLabel(dateString) {
+            const date = parseLocalDate(dateString);
+            return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`;
+        }
+
+        function renderDashboardDatePicker() {
+            const label = document.getElementById('dashboard-selected-date-label');
+            const input = document.getElementById('dashboard-date-input');
+            const strip = document.getElementById('dashboard-week-strip');
+            if (!label || !input || !strip) return;
+
+            label.textContent = formatEntryDateLabel(selectedEntryDate);
+            input.value = selectedEntryDate;
+
+            const selected = parseLocalDate(selectedEntryDate);
+            const weekStart = new Date(selected);
+            weekStart.setDate(selected.getDate() - selected.getDay());
+            const weekdays = currentLang === 'ja'
+                ? ['日', '月', '火', '水', '木', '金', '土']
+                : ['日', '一', '二', '三', '四', '五', '六'];
+
+            strip.innerHTML = Array.from({ length: 7 }, (_, index) => {
+                const date = new Date(weekStart);
+                date.setDate(weekStart.getDate() + index);
+                const dateValue = formatLocalDate(date);
+                const active = dateValue === selectedEntryDate;
+                const isSunday = index === 0;
+                const isSaturday = index === 6;
+                const colorClass = active ? '' : (isSunday ? 'text-red-500' : (isSaturday ? 'text-green-600' : 'text-gray-500'));
+                return `
+                    <button onclick="selectDashboardDate('${dateValue}')" class="date-chip ${active ? 'active border-2' : 'border border-transparent'} py-2 text-center">
+                        <span class="block text-[10px] font-semibold text-gray-400">${weekdays[index]}</span>
+                        <span class="block text-lg font-semibold ${colorClass}">${String(date.getDate()).padStart(2, '0')}</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function selectDashboardDate(dateString) {
+            if (!dateString) return;
+            selectedEntryDate = dateString;
+            localStorage.setItem('mySelectedEntryDate', selectedEntryDate);
+            renderDashboardDatePicker();
+            renderDailyRecords();
+            if (!document.getElementById('monthly-report-modal')?.classList.contains('hidden')) renderMonthlyReport();
+        }
+
+        function shiftEntryWeek(direction) {
+            const next = parseLocalDate(selectedEntryDate);
+            next.setDate(next.getDate() + (direction * 7));
+            selectDashboardDate(formatLocalDate(next));
+        }
+
+        function openAddWithSelectedDate() {
+            openAddModal();
+            document.getElementById('date').value = selectedEntryDate;
+        }
+
+        function recordSign(item) {
+            if (['支出', '應付帳款', '系統'].includes(item.type)) return '-';
+            if (['收入', '應收帳款'].includes(item.type)) return '+';
+            return '';
+        }
+
+        function recordDailyImpactJPY(item) {
+            if (['支出', '應付帳款', '系統'].includes(item.type)) return -toJPY(item.price, item.currency || '¥');
+            if (['收入', '應收帳款'].includes(item.type)) return toJPY(item.price, item.currency || '¥');
+            return 0;
+        }
+
+        function dailyRecordsForSelectedDate() {
+            return data.map((item, index) => ({ item, index }))
+                .filter(({ item }) => item.date === selectedEntryDate);
+        }
+
+        function renderDailyRecords() {
+            const container = document.getElementById('daily-record-list');
+            const totalEl = document.getElementById('daily-record-total');
+            if (!container || !totalEl) return;
+            const records = dailyRecordsForSelectedDate();
+            const total = records.reduce((sum, { item }) => sum + recordDailyImpactJPY(item), 0);
+            totalEl.textContent = amountsHidden ? `¥${t('hiddenAmount')}` : `¥${Math.round(total).toLocaleString()}`;
+            if (!records.length) {
+                container.innerHTML = `<div class="empty-state">${t('dailyRecordsEmpty')}</div>`;
+                return;
+            }
+            container.innerHTML = records.map(({ item, index }) => {
+                const sign = recordSign(item);
+                const project = projectById(item.projectId);
+                const safeIcon = item.subCatIcon || '📝';
+                const iconHtml = safeIcon.startsWith('data:image')
+                    ? `<img src="${safeIcon}" class="w-9 h-9 rounded-full object-cover">`
+                    : `<span class="text-xl">${escapeHTML(safeIcon)}</span>`;
+                return `
+                    <button onclick="openRecordDetail(${index})" class="w-full text-left flex items-center justify-between gap-3 p-3 rounded-2xl hover:bg-gray-50 transition">
+                        <span class="flex items-center gap-3 min-w-0">
+                            <span class="w-12 h-12 rounded-full bg-gray-100 border border-gray-100 flex items-center justify-center shrink-0">${iconHtml}</span>
+                            <span class="min-w-0">
+                                <span class="block text-base font-semibold truncate">${escapeHTML(displayLabel(item.name))}</span>
+                                <span class="block text-xs text-gray-400 truncate">${project ? escapeHTML(project.name) + ' · ' : ''}${escapeHTML(displayLabel(item.account || t('uncategorized')))}</span>
+                            </span>
+                        </span>
+                        <span class="text-right shrink-0">
+                            <span class="block text-base font-bold ${sign === '-' ? 'text-red-500' : (sign === '+' ? 'text-green-600' : 'text-blue-600')}">${sign}${formatPrivateMoney(item.price, item.currency)}</span>
+                            <span class="block text-[10px] text-gray-400">${escapeHTML(displayLabel(item.type))}</span>
+                        </span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function openAddModal() {
+            const modal = document.getElementById('add-record-modal');
+            const body = document.getElementById('add-modal-body');
+            const addPage = document.getElementById('page-add');
+            if (!modal || !body || !addPage) return;
+            document.getElementById('add-modal-date-label').textContent = formatEntryDateLabel(selectedEntryDate);
+            body.appendChild(addPage);
+            addPage.classList.add('active');
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            renderTypes();
+            renderAccounts();
+            renderProjectButtons();
+            toggleInstallmentFields();
+            document.getElementById('date').value = selectedEntryDate;
+        }
+
+        function closeAddModal() {
+            const modal = document.getElementById('add-record-modal');
+            const addPage = document.getElementById('page-add');
+            if (!modal || !addPage) return;
+            modal.classList.add('hidden');
+            addPage.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function openRecordDetail(index) {
+            const item = data[index];
+            const modal = document.getElementById('record-detail-modal');
+            const content = document.getElementById('record-detail-content');
+            if (!item || !modal || !content) return;
+            const sign = recordSign(item);
+            const project = projectById(item.projectId);
+            const safeIcon = item.subCatIcon || '📝';
+            const iconHtml = safeIcon.startsWith('data:image')
+                ? `<img src="${safeIcon}" class="w-20 h-20 rounded-full object-cover">`
+                : `<span class="text-5xl">${escapeHTML(safeIcon)}</span>`;
+            content.innerHTML = `
+                <div class="bg-gradient-to-br from-gray-100 to-gray-200 p-5 min-h-[180px] relative">
+                    <button onclick="closeRecordDetail()" class="absolute top-4 left-4 w-10 h-10 rounded-full bg-white/40 text-white text-3xl leading-none">×</button>
+                    <div class="absolute top-4 right-4 flex gap-2">
+                        <button onclick="duplicateRecord(${index})" class="w-10 h-10 rounded-full bg-white/40 text-white text-lg">⧉</button>
+                        <button onclick="editRecord(${index})" class="w-10 h-10 rounded-full bg-white/40 text-white text-lg">✎</button>
+                        <button onclick="deleteRecordFromDetail(${index})" class="w-10 h-10 rounded-full bg-white/40 text-white text-lg">🗑</button>
+                    </div>
+                    <div class="h-full min-h-[140px] flex flex-col items-center justify-end pt-14 text-white">
+                        <div class="w-24 h-24 rounded-full border-2 border-white flex items-center justify-center bg-white/10">${iconHtml}</div>
+                        <div class="mt-3 text-sm font-semibold">${escapeHTML(displayLabel(item.mainCat || item.type))}</div>
+                    </div>
+                </div>
+                <div class="p-5 bg-gray-900 text-white">
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="min-w-0">
+                            <div class="text-2xl font-bold truncate">${escapeHTML(displayLabel(item.name))}</div>
+                            <div class="text-xs text-white/50 mt-1">${escapeHTML(displayLabel(item.type))}${item.installmentCount ? ` · ${escapeHTML(t('installmentBadge', item.installmentIndex, item.installmentCount))}` : ''}</div>
+                        </div>
+                        <div class="text-2xl font-bold shrink-0">${sign}${formatPrivateMoney(item.price, item.currency)}</div>
+                    </div>
+                    <div class="border-t border-white/10 pt-4 grid grid-cols-2 gap-3 text-sm">
+                        <div class="text-white/70">💳 ${escapeHTML(displayLabel(item.account || t('uncategorized')))}</div>
+                        <div class="text-white/70">🏷 ${project ? escapeHTML(project.name) : '-'}</div>
+                        <div class="text-white/70">📅 ${escapeHTML(formatEntryDateLabel(item.date))}</div>
+                        <div class="text-white/70">🗂 ${escapeHTML(displayLabel(item.subCatName || item.mainCat || t('uncategorized')))}</div>
+                    </div>
+                </div>
+            `;
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeRecordDetail() {
+            const modal = document.getElementById('record-detail-modal');
+            if (!modal) return;
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function selectedMonthKey() {
+            return selectedEntryDate.substring(0, 7);
+        }
+
+        function openMonthlyReportModal() {
+            renderMonthlyReport();
+            const modal = document.getElementById('monthly-report-modal');
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMonthlyReportModal() {
+            const modal = document.getElementById('monthly-report-modal');
+            if (!modal) return;
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function renderMonthlyReport() {
+            const monthKeyValue = selectedMonthKey();
+            const title = document.getElementById('monthly-report-month');
+            const container = document.getElementById('monthly-report-content');
+            if (!title || !container) return;
+            title.textContent = monthKeyValue.replace('-', '/');
+            const monthRecords = data.filter(item => (item.date || '').substring(0, 7) === monthKeyValue);
+            let income = 0;
+            let expense = 0;
+            const categories = {};
+            monthRecords.forEach(item => {
+                const value = toJPY(item.price, item.currency || '¥');
+                if (['收入', '應收帳款'].includes(item.type)) income += value;
+                if (['支出', '應付帳款', '系統'].includes(item.type)) {
+                    expense += value;
+                    categories[item.mainCat || item.subCatName || t('uncategorized')] = (categories[item.mainCat || item.subCatName || t('uncategorized')] || 0) + value;
+                }
+            });
+            const net = income - expense;
+            const categoryEntries = Object.entries(categories).sort((a, b) => b[1] - a[1]);
+            container.innerHTML = `
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="surface p-3 shadow-none">
+                        <div class="text-[10px] text-gray-400 font-semibold">${t('monthlyIncome')}</div>
+                        <div class="text-sm font-bold text-green-600 mt-1">${formatPrivateJPY(income, '¥')}</div>
+                    </div>
+                    <div class="surface p-3 shadow-none">
+                        <div class="text-[10px] text-gray-400 font-semibold">${t('monthlyExpense')}</div>
+                        <div class="text-sm font-bold text-red-500 mt-1">${formatPrivateJPY(expense, '¥')}</div>
+                    </div>
+                    <div class="surface p-3 shadow-none">
+                        <div class="text-[10px] text-gray-400 font-semibold">${t('monthlyNet')}</div>
+                        <div class="text-sm font-bold ${net < 0 ? 'text-red-500' : 'text-gray-800'} mt-1">${formatPrivateJPY(net, '¥')}</div>
+                    </div>
+                </div>
+                <div class="surface p-4">
+                    <div class="text-xs text-gray-500 font-medium mb-3">${t('monthlyTopCategories')}</div>
+                    <div class="space-y-3">
+                        ${categoryEntries.length ? categoryEntries.slice(0, 6).map(([name, amount], index) => {
+                            const ratio = expense ? Math.round((amount / expense) * 100) : 0;
+                            const color = chartColors[index % chartColors.length];
+                            return `
+                                <div>
+                                    <div class="flex items-center justify-between gap-3 text-xs mb-1">
+                                        <span class="font-semibold text-gray-700 truncate">${escapeHTML(displayLabel(name))}</span>
+                                        <span class="text-gray-500 shrink-0">${formatPrivateJPY(amount, '¥')} · ${ratio}%</span>
+                                    </div>
+                                    <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+                                        <div class="h-full rounded-full" style="width:${ratio}%; background:${color}"></div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('') : `<div class="empty-state">${t('monthlyNoData')}</div>`}
+                    </div>
+                </div>
+            `;
+        }
+
+        function refreshAfterRecordChange() {
+            localStorage.setItem('myBudget', JSON.stringify(data));
+            renderDailyRecords();
+            if (!document.getElementById('monthly-report-modal')?.classList.contains('hidden')) renderMonthlyReport();
+            renderList();
+            updateBalances();
+        }
+
+        function deleteRecordFromDetail(index) {
+            if (!confirm(t('confirmDelete'))) return;
+            data.splice(index, 1);
+            closeRecordDetail();
+            refreshAfterRecordChange();
+            showToast(t('toastDeleted'));
+        }
+
+        function duplicateRecord(index) {
+            const item = data[index];
+            if (!item || !confirm(t('confirmDuplicateRecord'))) return;
+            data.push({ ...item, date: selectedEntryDate, photoData: item.photoData || null });
+            data.sort((a, b) => new Date(b.date) - new Date(a.date));
+            closeRecordDetail();
+            refreshAfterRecordChange();
+            showToast(t('toastRecordDuplicated'));
+        }
+
+        function editRecord(index) {
+            const item = data[index];
+            if (!item) return;
+            const nextName = prompt(t('promptEditRecordName'), item.name);
+            if (!nextName || !nextName.trim()) return;
+            const nextAmount = prompt(t('promptEditRecordAmount'), item.price);
+            const parsedAmount = parseFloat(nextAmount);
+            if (!parsedAmount || parsedAmount <= 0) return;
+            const nextDate = prompt(t('promptEditRecordDate'), item.date);
+            if (!nextDate || !/^\d{4}-\d{2}-\d{2}$/.test(nextDate.trim())) return;
+            item.name = nextName.trim();
+            item.price = String(parsedAmount);
+            item.date = nextDate.trim();
+            selectedEntryDate = item.date;
+            localStorage.setItem('mySelectedEntryDate', selectedEntryDate);
+            data.sort((a, b) => new Date(b.date) - new Date(a.date));
+            closeRecordDetail();
+            renderDashboardDatePicker();
+            refreshAfterRecordChange();
+            showToast(t('toastRecordUpdated'));
         }
 
         function formatMoney(value, currency = '¥') {
@@ -1100,6 +1574,27 @@
             statsRange = value;
             localStorage.setItem('myStatsRange', statsRange);
             renderCharts();
+        }
+
+        function openStatsModal() {
+            const modal = document.getElementById('stats-modal');
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            const statsRangeSelect = document.getElementById('stats-range');
+            if (statsRangeSelect) statsRangeSelect.value = statsRange;
+            setTimeout(renderCharts, 50);
+        }
+
+        function closeStatsModal() {
+            const modal = document.getElementById('stats-modal');
+            if (!modal) return;
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+            if (trendChartObj) trendChartObj.destroy();
+            if (categoryChartObj) categoryChartObj.destroy();
+            if (currencyChartObj) currencyChartObj.destroy();
+            trendChartObj = categoryChartObj = currencyChartObj = null;
         }
 
         function showToast(message) {
@@ -1304,6 +1799,8 @@
         // 渲染圖表邏輯
         function renderCharts() {
             if (typeof Chart === 'undefined') return;
+            const modal = document.getElementById('stats-modal');
+            if (modal && modal.classList.contains('hidden')) return;
             const insightContainer = document.getElementById('chart-insights');
             const topCategoryList = document.getElementById('top-category-list');
             const currencyBreakdown = document.getElementById('currency-breakdown');
@@ -1457,13 +1954,21 @@
             });
 
             let totalNet = 0;
+            let totalAssets = 0;
+            let totalLiabilities = 0;
             const listContainer = document.getElementById('account-balances-list');
             listContainer.innerHTML = '';
 
             const groupedAccounts = {};
             accountGroups.forEach(group => groupedAccounts[group] = []);
             userAccounts.forEach(acc => {
-                totalNet += toJPY(currentBalances[acc], getAccountCurrency(acc));
+                const balanceJPY = toJPY(currentBalances[acc], getAccountCurrency(acc));
+                totalNet += balanceJPY;
+                if (balanceJPY >= 0) {
+                    totalAssets += balanceJPY;
+                } else {
+                    totalLiabilities += Math.abs(balanceJPY);
+                }
                 const group = accountGroupMap[acc] || '未分類';
                 if (!groupedAccounts[group]) groupedAccounts[group] = [];
                 if (!isPrimaryAccount(acc)) groupedAccounts[group].push(acc);
@@ -1515,10 +2020,13 @@
 
             document.getElementById('total-net-worth').innerText = amountsHidden ? `¥${t('hiddenAmount')}` : `¥${Math.round(totalNet).toLocaleString()}`;
             document.getElementById('total-net-worth').className = `text-4xl font-bold mt-2 relative z-10 ${totalNet < 0 ? 'text-red-500' : 'text-gray-800'}`;
+            document.getElementById('total-assets').innerText = amountsHidden ? `¥${t('hiddenAmount')}` : `¥${Math.round(totalAssets).toLocaleString()}`;
+            document.getElementById('total-liabilities').innerText = amountsHidden ? `¥${t('hiddenAmount')}` : `¥${Math.round(totalLiabilities).toLocaleString()}`;
 
             renderCharts();
             renderAccountGroupSettings();
             renderBudgetProjectsDashboard();
+            renderDailyRecords();
         }
 
         function setInitialBalance(acc) {
@@ -2115,7 +2623,7 @@
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.page === id));
             if(id === 'report') renderList();
             if(id === 'add') { renderTypes(); renderAccounts(); renderProjectButtons(); toggleInstallmentFields(); }
-            if(id === 'dashboard') updateBalances();
+            if(id === 'dashboard') { renderDashboardDatePicker(); updateBalances(); }
             if(id === 'more') { renderAccountGroupSettings(); renderExchangeRateSettings(); renderBudgetProjectSettings(); }
         }
 
@@ -2189,6 +2697,8 @@
             }
             data.sort((a, b) => new Date(b.date) - new Date(a.date));
             localStorage.setItem('myBudget', JSON.stringify(data));
+            selectedEntryDate = date;
+            localStorage.setItem('mySelectedEntryDate', selectedEntryDate);
             
             nameInput.value = '';
             nameInput.dataset.rawValue = '';
@@ -2199,7 +2709,10 @@
             toggleInstallmentFields();
             setTodayDate();
 
+            closeAddModal();
             switchPage('dashboard');
+            renderDashboardDatePicker();
+            renderDailyRecords();
             showToast(t('toastSaved'));
         }
 
@@ -2267,6 +2780,7 @@
                 data.splice(index, 1);
                 localStorage.setItem('myBudget', JSON.stringify(data));
                 renderList();
+                renderDailyRecords();
                 updateBalances();
                 showToast(t('toastDeleted'));
             }
@@ -2330,6 +2844,7 @@
         applyAppearance();
         applyLanguage();
         setTodayDate();
+        renderDashboardDatePicker();
         renderTypes(); 
         renderAccounts(); 
         toggleInstallmentFields();
