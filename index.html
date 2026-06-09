@@ -1430,6 +1430,12 @@
             showToast(t('toastRecordUpdated'));
         }
 
+        window.openRecordDetail = openRecordDetail;
+        window.closeRecordDetail = closeRecordDetail;
+        window.duplicateRecord = duplicateRecord;
+        window.deleteRecordFromDetail = deleteRecordFromDetail;
+        window.editRecord = editRecord;
+
         function formatMoney(value, currency = '¥') {
             return `${currency}${Math.round(parseFloat(value) || 0).toLocaleString()}`;
         }
@@ -2748,7 +2754,7 @@
                 const projectBadge = project ? `<span class="text-[10px] px-1.5 py-0.5 rounded font-medium text-blue-600 bg-blue-50">${escapeHTML(project.name)}</span>` : '';
                 const installmentBadge = item.installmentCount ? `<span class="text-[10px] px-1.5 py-0.5 rounded font-medium text-purple-600 bg-purple-50">${escapeHTML(t('installmentBadge', item.installmentIndex, item.installmentCount))}</span>` : '';
                 return `
-                <div class="surface p-3 flex items-center justify-between gap-3">
+                <div onclick="openRecordDetail(${index})" class="surface p-3 flex items-center justify-between gap-3 cursor-pointer hover:bg-gray-50 transition">
                     <div class="flex items-center gap-3 min-w-0">
                         ${item.photoData ? `<img src="${item.photoData}" class="w-14 h-14 object-cover rounded-xl border border-gray-100 shrink-0">` : `<div class="w-12 h-12 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center shrink-0">${catIconHtml}</div>`}
                         <div class="min-w-0">
@@ -2768,7 +2774,7 @@
                         <span class="font-bold text-sm tracking-tight ${item.type === '轉帳' ? 'text-blue-600' : ''}">${sign}${formatPrivateMoney(item.price, item.currency)}</span>
                         <div class="flex gap-2 items-center">
                             <span class="text-[10px] text-gray-400">${escapeHTML(item.date)}</span>
-                            <button onclick="deleteItem(${index})" class="text-gray-400 hover:text-red-500 bg-gray-50 rounded-lg px-2 py-1 text-xs">${t('delete')}</button>
+                            <button onclick="event.stopPropagation(); deleteItem(${index})" class="text-gray-400 hover:text-red-500 bg-gray-50 rounded-lg px-2 py-1 text-xs">${t('delete')}</button>
                         </div>
                     </div>
                 </div>
