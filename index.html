@@ -36,6 +36,16 @@
             --accent: #2f7d57;
             background: linear-gradient(180deg, #f4f1df 0%, #fffdf4 38%);
         }
+        body.night-mode {
+            color-scheme: dark;
+            --ink: #edf2f7;
+            --muted: #9aa8bb;
+            --line: #243244;
+            --panel: #121a27;
+            --soft: #0b1220;
+            --accent: #60a5fa;
+            background: linear-gradient(180deg, #07111f 0%, #101827 42%);
+        }
         * { box-sizing: border-box; }
         body {
             font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
@@ -62,6 +72,43 @@
         .lang-toggle { position: fixed; top: 14px; right: max(14px, calc((100vw - 448px) / 2 + 14px)); z-index: 55; }
         .empty-state { border: 1px dashed #d8dee8; background: #f8fafc; border-radius: 14px; padding: 18px; text-align: center; color: var(--muted); font-size: 13px; }
         body.eye-care .empty-state { background: #faf7ea; border-color: #d9dec9; }
+        body.night-mode .surface { box-shadow: 0 16px 36px rgba(0, 0, 0, .28); }
+        body.night-mode .empty-state { background: #0f172a; border-color: #263347; }
+        body.night-mode nav { background: rgba(10, 16, 28, .94) !important; border-color: #1f2a3a !important; }
+        body.night-mode .lang-toggle,
+        body.night-mode .bg-white,
+        body.night-mode .bg-white\/90,
+        body.night-mode .bg-white\/95,
+        body.night-mode .bg-gray-50,
+        body.night-mode .bg-blue-50,
+        body.night-mode .bg-green-50 { background-color: #162033 !important; }
+        body.night-mode .text-gray-300 { color: #64748b !important; }
+        body.night-mode .text-gray-400,
+        body.night-mode .text-gray-500,
+        body.night-mode .text-gray-600,
+        body.night-mode .text-gray-700 { color: #a8b4c6 !important; }
+        body.night-mode .text-blue-600,
+        body.night-mode .text-blue-700 { color: #93c5fd !important; }
+        body.night-mode .text-green-700 { color: #86efac !important; }
+        body.night-mode .border-gray-100,
+        body.night-mode .border-gray-200,
+        body.night-mode .border-t { border-color: #243244 !important; }
+        body.night-mode .hover\:bg-gray-50:hover,
+        body.night-mode .hover\:bg-gray-100:hover,
+        body.night-mode .hover\:bg-blue-100:hover,
+        body.night-mode .hover\:bg-green-100:hover { background-color: #1d2a3f !important; }
+        body.night-mode .nav-btn.active { background: rgba(37, 99, 235, .22); }
+        body.night-mode .nav-fab { border-color: #1e3a5f; box-shadow: 0 16px 28px rgba(0, 0, 0, .34); }
+        body.night-mode .date-chip.active { background: rgba(56, 189, 248, .14); }
+        .record-detail-card { background: var(--panel); color: var(--ink); }
+        .record-detail-hero { background: linear-gradient(135deg, #e9eef5 0%, #f7fafc 100%); color: #243244; }
+        .record-detail-action { background: rgba(255, 255, 255, .82); color: #243244; border: 1px solid rgba(148, 163, 184, .32); box-shadow: 0 10px 20px rgba(31, 41, 51, .08); }
+        .record-detail-icon { border-color: rgba(36, 50, 68, .32); background: rgba(255, 255, 255, .7); }
+        .record-detail-muted { color: var(--muted); }
+        .record-detail-divider { border-color: var(--line); }
+        body.night-mode .record-detail-hero { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #f8fafc; }
+        body.night-mode .record-detail-action { background: rgba(15, 23, 42, .8); color: #f8fafc; border-color: rgba(148, 163, 184, .22); }
+        body.night-mode .record-detail-icon { border-color: rgba(248, 250, 252, .5); background: rgba(255, 255, 255, .08); }
         details.settings-section > summary { list-style: none; cursor: pointer; }
         details.settings-section > summary::-webkit-details-marker { display: none; }
         .toast { position: fixed; left: 50%; bottom: 92px; transform: translateX(-50%) translateY(16px); opacity: 0; pointer-events: none; transition: opacity 180ms ease, transform 180ms ease; z-index: 60; }
@@ -236,10 +283,10 @@
 
         <section id="page-report" class="page">
             <div class="mb-5">
-                <p class="section-label mb-1" data-i18n="historyKicker">History</p>
-                <h1 class="text-2xl font-bold tracking-tight" data-i18n="historyTitle">紀錄列表</h1>
+                <p class="section-label mb-1" data-i18n="savingsKicker">Japan Savings</p>
+                <h1 class="text-2xl font-bold tracking-tight" data-i18n="savingsTitle">日本省錢資訊</h1>
             </div>
-            <div id="list-container" class="space-y-3"></div>
+            <div id="list-container" class="space-y-4"></div>
         </section>
 
         <section id="page-more" class="page">
@@ -288,10 +335,14 @@
                     </div>
                     <span class="text-gray-300">⌄</span>
                 </summary>
-                <div class="pt-4 mt-4 border-t border-gray-100">
+                <div class="pt-4 mt-4 border-t border-gray-100 space-y-2">
                     <button onclick="toggleEyeCareMode()" class="w-full text-left p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition flex items-center justify-between">
                         <span class="text-sm font-semibold" data-i18n="eyeCareMode">護眼模式</span>
                         <span id="eye-care-status" class="text-xs text-gray-500">Off</span>
+                    </button>
+                    <button onclick="toggleNightMode()" class="w-full text-left p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition flex items-center justify-between">
+                        <span class="text-sm font-semibold" data-i18n="nightMode">夜晚模式</span>
+                        <span id="night-mode-status" class="text-xs text-gray-500">Off</span>
                     </button>
                 </div>
             </details>
@@ -423,7 +474,7 @@
 
     <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white/95 backdrop-blur border-t border-gray-100 px-2 pt-2 pb-5 grid grid-cols-5 items-end gap-1 shadow-[0_-8px_24px_rgba(31,41,51,0.07)] z-50">
         <button data-page="dashboard" onclick="switchPage('dashboard')" class="nav-btn active p-2 text-xs font-semibold flex flex-col items-center justify-center"><span class="text-lg mb-1">📊</span><span data-i18n="navDashboard">總覽</span></button>
-        <button data-page="report" onclick="switchPage('report')" class="nav-btn p-2 text-xs font-semibold flex flex-col items-center justify-center"><span class="text-lg mb-1">📋</span><span data-i18n="navReport">列表</span></button>
+        <button data-page="report" onclick="switchPage('report')" class="nav-btn p-2 text-xs font-semibold flex flex-col items-center justify-center"><span class="text-lg mb-1">💴</span><span data-i18n="navReport">省錢</span></button>
         <button data-page="add" onclick="openAddWithSelectedDate()" class="nav-btn nav-fab flex items-center justify-center" aria-label="新增">+</button>
         <button onclick="openMonthlyReportModal()" class="nav-btn p-2 text-xs font-semibold flex flex-col items-center justify-center"><span class="text-lg mb-1">📈</span><span data-i18n="navMonthly">月報</span></button>
         <button data-page="more" onclick="switchPage('more')" class="nav-btn p-2 text-xs font-semibold flex flex-col items-center justify-center"><span class="text-lg mb-1">⚙️</span><span data-i18n="navMore">設定</span></button>
@@ -476,6 +527,7 @@
         let accountGroupCollapsed = JSON.parse(localStorage.getItem('myAccountGroupCollapsed')) || {};
         let amountsHidden = JSON.parse(localStorage.getItem('myAmountsHidden')) || false;
         let eyeCareMode = JSON.parse(localStorage.getItem('myEyeCareMode')) || false;
+        let nightMode = JSON.parse(localStorage.getItem('myNightMode')) || false;
         const legacyAccountGroups = ['日常資金', '卡片與支付'];
         function isPrimaryAccount(acc) { return defaultAccountGroups.includes(acc); }
         function childAccountsForGroup(group) {
@@ -568,6 +620,7 @@
         let currentLang = localStorage.getItem('myBudgetLang') || 'zh';
         let statsRange = localStorage.getItem('myStatsRange') || '6m';
         let selectedEntryDate = localStorage.getItem('mySelectedEntryDate') || todayString();
+        let dailyRecordsExpanded = false;
         const SUPABASE_URL = 'https://ymxjnjrkndzemepflymc.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlteGpuanJrbmR6ZW1lcGZseW1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5Mzg2MDUsImV4cCI6MjA5NjUxNDYwNX0.eDKpQocEdSk0VoNqfGmegMuIRbfhwQLQuBaGajLyD5o';
         const SITE_URL = 'https://riven520job-commits.github.io/minekakeibo/';
@@ -583,6 +636,9 @@
                 todayButton: '今天',
                 dailyRecordsTitle: '當日紀錄',
                 dailyRecordsEmpty: '這天還沒有紀錄，按下方＋新增。',
+                dailyRecordsCollapsedHint: count => `另有 ${count} 筆紀錄已收合`,
+                expandDailyRecords: '展開全部',
+                collapseDailyRecords: '收合紀錄',
                 recordDetailTitle: '紀錄明細',
                 editRecord: '修改',
                 duplicateRecord: '複製',
@@ -649,6 +705,23 @@
                 saveButton: '確認儲存',
                 historyKicker: 'History',
                 historyTitle: '紀錄列表',
+                savingsKicker: 'Japan Savings',
+                savingsTitle: '日本省錢資訊',
+                savingsIntro: '把常用的日本生活省錢工具集中在這裡，先從ふるさと納税可捐額估算開始。',
+                furusatoTitle: 'ふるさと納税 模擬器',
+                furusatoHint: '此為簡易估算，實際上限會依住民稅、所得扣除、住宅貸款與保險等條件不同。',
+                annualIncomeLabel: '年收入',
+                familyTypeLabel: '家庭狀況',
+                familySingle: '單身 / 雙薪無扶養',
+                familyCouple: '夫妻一方扶養',
+                familyOneChild: '扶養 1 名',
+                familyTwoChildren: '扶養 2 名以上',
+                calculateFurusato: '估算上限',
+                furusatoResultTitle: '建議寄付上限',
+                furusatoSelfPay: '實質自付約 ¥2,000',
+                furusatoResultHint: '建議保守抓估算值的 80-90%，避免超過控除上限。',
+                savingsTipsTitle: '省錢提醒',
+                savingsTips: ['善用ふるさと納税返禮品補日用品與食材', '定期檢查行動支付、信用卡點數活動', '固定支出先用月報確認是否有異常增加'],
                 settingsKicker: 'Settings',
                 settingsTitle: '系統設定',
                 exportCsv: '📥 匯出 CSV 報表',
@@ -679,13 +752,16 @@
                 eyeCareMode: '護眼模式',
                 eyeCareOn: '開啟',
                 eyeCareOff: '關閉',
+                nightMode: '夜晚模式',
+                nightModeOn: '開啟',
+                nightModeOff: '關閉',
                 accountGroupsTitle: '帳戶折疊分類',
                 accountGroupsHint: '建立現金、信用卡、交通卡等大分類，並在底下新增子帳戶',
                 addButton: '新增',
                 resetData: '🗑️ 重置所有系統資料',
                 navDashboard: '總覽',
                 navAdd: '新增',
-                navReport: '列表',
+                navReport: '省錢',
                 navMonthly: '月報',
                 navMore: '設定',
                 monthlyReportTitle: '每月報表',
@@ -778,6 +854,9 @@
                 todayButton: '今日',
                 dailyRecordsTitle: '当日の記録',
                 dailyRecordsEmpty: 'この日の記録はまだありません。下中央の＋で追加します。',
+                dailyRecordsCollapsedHint: count => `ほか ${count} 件の記録を折りたたみ中`,
+                expandDailyRecords: 'すべて表示',
+                collapseDailyRecords: '折りたたむ',
                 recordDetailTitle: '記録詳細',
                 editRecord: '編集',
                 duplicateRecord: '複製',
@@ -844,6 +923,23 @@
                 saveButton: '保存する',
                 historyKicker: '履歴',
                 historyTitle: '記録一覧',
+                savingsKicker: 'Japan Savings',
+                savingsTitle: '日本の節約情報',
+                savingsIntro: '日本生活で使いやすい節約ツールをまとめます。まずはふるさと納税の目安額を試算できます。',
+                furusatoTitle: 'ふるさと納税シミュレーター',
+                furusatoHint: '簡易試算です。実際の上限額は住民税、所得控除、住宅ローン、保険料などで変わります。',
+                annualIncomeLabel: '年収',
+                familyTypeLabel: '家族構成',
+                familySingle: '独身 / 共働き扶養なし',
+                familyCouple: '夫婦・配偶者扶養',
+                familyOneChild: '扶養 1 人',
+                familyTwoChildren: '扶養 2 人以上',
+                calculateFurusato: '上限を試算',
+                furusatoResultTitle: '寄付上限の目安',
+                furusatoSelfPay: '実質自己負担は約 ¥2,000',
+                furusatoResultHint: '上限超過を避けるため、試算額の 80-90% 程度で見るのがおすすめです。',
+                savingsTipsTitle: '節約メモ',
+                savingsTips: ['ふるさと納税の返礼品で日用品や食材を補う', 'スマホ決済・クレカのポイント還元を定期確認する', '固定費は月報で増加していないか確認する'],
                 settingsKicker: '設定',
                 settingsTitle: '設定',
                 exportCsv: '📥 CSV レポートを書き出す',
@@ -874,13 +970,16 @@
                 eyeCareMode: '目にやさしいモード',
                 eyeCareOn: 'オン',
                 eyeCareOff: 'オフ',
+                nightMode: '夜間モード',
+                nightModeOn: 'オン',
+                nightModeOff: 'オフ',
                 accountGroupsTitle: '折りたたみ口座分類',
                 accountGroupsHint: '現金、カード、交通カードなどの分類を作り、その下に子口座を追加できます',
                 addButton: '追加',
                 resetData: '🗑️ すべてのデータをリセット',
                 navDashboard: '総覧',
                 navAdd: '追加',
-                navReport: '一覧',
+                navReport: '節約',
                 navMonthly: '月報',
                 navMore: '設定',
                 monthlyReportTitle: '月次レポート',
@@ -1071,9 +1170,11 @@
             document.getElementById('lang-toggle').textContent = t('langToggle');
             renderAmountVisibilityButton();
             renderEyeCareStatus();
+            renderNightModeStatus();
             renderDashboardDatePicker();
             const statsRangeSelect = document.getElementById('stats-range');
             if (statsRangeSelect) statsRangeSelect.value = statsRange;
+            if (document.getElementById('page-report')?.classList.contains('active')) renderList();
             if (!document.getElementById('monthly-report-modal')?.classList.contains('hidden')) renderMonthlyReport();
             const selectedType = document.getElementById('selected-type').value;
             document.getElementById('label-account-from').textContent = selectedType === '轉帳' ? t('transferFrom') : t('paymentMethod');
@@ -1158,6 +1259,7 @@
         function selectDashboardDate(dateString) {
             if (!dateString) return;
             selectedEntryDate = dateString;
+            dailyRecordsExpanded = false;
             localStorage.setItem('mySelectedEntryDate', selectedEntryDate);
             renderDashboardDatePicker();
             renderDailyRecords();
@@ -1203,7 +1305,9 @@
                 container.innerHTML = `<div class="empty-state">${t('dailyRecordsEmpty')}</div>`;
                 return;
             }
-            container.innerHTML = records.map(({ item, index }) => {
+            const shouldCollapse = records.length > 5 && !dailyRecordsExpanded;
+            const visibleRecords = shouldCollapse ? records.slice(0, 5) : records;
+            const rowsHtml = visibleRecords.map(({ item, index }) => {
                 const sign = recordSign(item);
                 const project = projectById(item.projectId);
                 const safeIcon = item.subCatIcon || '📝';
@@ -1226,6 +1330,17 @@
                     </button>
                 `;
             }).join('');
+            const toggleHtml = records.length > 5 ? `
+                <button onclick="toggleDailyRecordsExpanded()" class="w-full p-3 rounded-2xl border border-dashed border-gray-200 text-sm font-semibold text-gray-500 bg-gray-50 hover:bg-gray-100 transition">
+                    ${dailyRecordsExpanded ? t('collapseDailyRecords') : `${t('dailyRecordsCollapsedHint', records.length - 5)} · ${t('expandDailyRecords')}`}
+                </button>
+            ` : '';
+            container.innerHTML = rowsHtml + toggleHtml;
+        }
+
+        function toggleDailyRecordsExpanded() {
+            dailyRecordsExpanded = !dailyRecordsExpanded;
+            renderDailyRecords();
         }
 
         function openAddModal() {
@@ -1266,31 +1381,31 @@
                 ? `<img src="${safeIcon}" class="w-20 h-20 rounded-full object-cover">`
                 : `<span class="text-5xl">${escapeHTML(safeIcon)}</span>`;
             content.innerHTML = `
-                <div class="bg-gradient-to-br from-gray-100 to-gray-200 p-5 min-h-[180px] relative">
-                    <button onclick="closeRecordDetail()" class="absolute top-4 left-4 w-10 h-10 rounded-full bg-white/40 text-white text-3xl leading-none">×</button>
+                <div class="record-detail-hero p-5 min-h-[180px] relative">
+                    <button onclick="closeRecordDetail()" class="record-detail-action absolute top-4 left-4 w-10 h-10 rounded-full text-3xl leading-none" aria-label="Close">×</button>
                     <div class="absolute top-4 right-4 flex gap-2">
-                        <button onclick="duplicateRecord(${index})" class="w-10 h-10 rounded-full bg-white/40 text-white text-lg">⧉</button>
-                        <button onclick="editRecord(${index})" class="w-10 h-10 rounded-full bg-white/40 text-white text-lg">✎</button>
-                        <button onclick="deleteRecordFromDetail(${index})" class="w-10 h-10 rounded-full bg-white/40 text-white text-lg">🗑</button>
+                        <button onclick="duplicateRecord(${index})" class="record-detail-action w-10 h-10 rounded-full text-lg" aria-label="${escapeHTML(t('duplicateRecord'))}">⧉</button>
+                        <button onclick="editRecord(${index})" class="record-detail-action w-10 h-10 rounded-full text-lg" aria-label="${escapeHTML(t('editRecord'))}">✎</button>
+                        <button onclick="deleteRecordFromDetail(${index})" class="record-detail-action w-10 h-10 rounded-full text-lg" aria-label="${escapeHTML(t('delete'))}">🗑</button>
                     </div>
-                    <div class="h-full min-h-[140px] flex flex-col items-center justify-end pt-14 text-white">
-                        <div class="w-24 h-24 rounded-full border-2 border-white flex items-center justify-center bg-white/10">${iconHtml}</div>
+                    <div class="h-full min-h-[140px] flex flex-col items-center justify-end pt-14">
+                        <div class="record-detail-icon w-24 h-24 rounded-full border-2 flex items-center justify-center">${iconHtml}</div>
                         <div class="mt-3 text-sm font-semibold">${escapeHTML(displayLabel(item.mainCat || item.type))}</div>
                     </div>
                 </div>
-                <div class="p-5 bg-gray-900 text-white">
+                <div class="record-detail-card p-5">
                     <div class="flex items-start justify-between gap-3 mb-4">
                         <div class="min-w-0">
                             <div class="text-2xl font-bold truncate">${escapeHTML(displayLabel(item.name))}</div>
-                            <div class="text-xs text-white/50 mt-1">${escapeHTML(displayLabel(item.type))}${item.installmentCount ? ` · ${escapeHTML(t('installmentBadge', item.installmentIndex, item.installmentCount))}` : ''}</div>
+                            <div class="record-detail-muted text-xs mt-1">${escapeHTML(displayLabel(item.type))}${item.installmentCount ? ` · ${escapeHTML(t('installmentBadge', item.installmentIndex, item.installmentCount))}` : ''}</div>
                         </div>
                         <div class="text-2xl font-bold shrink-0">${sign}${formatPrivateMoney(item.price, item.currency)}</div>
                     </div>
-                    <div class="border-t border-white/10 pt-4 grid grid-cols-2 gap-3 text-sm">
-                        <div class="text-white/70">💳 ${escapeHTML(displayLabel(item.account || t('uncategorized')))}</div>
-                        <div class="text-white/70">🏷 ${project ? escapeHTML(project.name) : '-'}</div>
-                        <div class="text-white/70">📅 ${escapeHTML(formatEntryDateLabel(item.date))}</div>
-                        <div class="text-white/70">🗂 ${escapeHTML(displayLabel(item.subCatName || item.mainCat || t('uncategorized')))}</div>
+                    <div class="record-detail-divider border-t pt-4 grid grid-cols-2 gap-3 text-sm">
+                        <div class="record-detail-muted">💳 ${escapeHTML(displayLabel(item.account || t('uncategorized')))}</div>
+                        <div class="record-detail-muted">🏷 ${project ? escapeHTML(project.name) : '-'}</div>
+                        <div class="record-detail-muted">📅 ${escapeHTML(formatEntryDateLabel(item.date))}</div>
+                        <div class="record-detail-muted">🗂 ${escapeHTML(displayLabel(item.subCatName || item.mainCat || t('uncategorized')))}</div>
                     </div>
                 </div>
             `;
@@ -1435,6 +1550,8 @@
         window.duplicateRecord = duplicateRecord;
         window.deleteRecordFromDetail = deleteRecordFromDetail;
         window.editRecord = editRecord;
+        window.toggleDailyRecordsExpanded = toggleDailyRecordsExpanded;
+        window.calculateFurusato = calculateFurusato;
 
         function formatMoney(value, currency = '¥') {
             return `${currency}${Math.round(parseFloat(value) || 0).toLocaleString()}`;
@@ -1476,9 +1593,11 @@
 
         function applyAppearance() {
             document.body.classList.toggle('eye-care', eyeCareMode);
+            document.body.classList.toggle('night-mode', nightMode);
             const themeMeta = document.querySelector('meta[name="theme-color"]');
-            if (themeMeta) themeMeta.setAttribute('content', eyeCareMode ? '#fffdf4' : '#ffffff');
+            if (themeMeta) themeMeta.setAttribute('content', nightMode ? '#07111f' : (eyeCareMode ? '#fffdf4' : '#ffffff'));
             renderEyeCareStatus();
+            renderNightModeStatus();
         }
 
         function renderEyeCareStatus() {
@@ -1487,9 +1606,21 @@
             status.textContent = eyeCareMode ? t('eyeCareOn') : t('eyeCareOff');
         }
 
+        function renderNightModeStatus() {
+            const status = document.getElementById('night-mode-status');
+            if (!status) return;
+            status.textContent = nightMode ? t('nightModeOn') : t('nightModeOff');
+        }
+
         function toggleEyeCareMode() {
             eyeCareMode = !eyeCareMode;
             localStorage.setItem('myEyeCareMode', JSON.stringify(eyeCareMode));
+            applyAppearance();
+        }
+
+        function toggleNightMode() {
+            nightMode = !nightMode;
+            localStorage.setItem('myNightMode', JSON.stringify(nightMode));
             applyAppearance();
         }
 
@@ -1731,7 +1862,8 @@
                     lang: currentLang,
                     statsRange,
                     amountsHidden,
-                    eyeCareMode
+                    eyeCareMode,
+                    nightMode
                 }
             };
         }
@@ -1752,6 +1884,7 @@
                 localStorage.setItem('myStatsRange', payload.settings.statsRange || '6m');
                 localStorage.setItem('myAmountsHidden', JSON.stringify(!!payload.settings.amountsHidden));
                 localStorage.setItem('myEyeCareMode', JSON.stringify(!!payload.settings.eyeCareMode));
+                localStorage.setItem('myNightMode', JSON.stringify(!!payload.settings.nightMode));
             }
         }
 
@@ -2629,7 +2762,7 @@
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.page === id));
             if(id === 'report') renderList();
             if(id === 'add') { renderTypes(); renderAccounts(); renderProjectButtons(); toggleInstallmentFields(); }
-            if(id === 'dashboard') { renderDashboardDatePicker(); updateBalances(); }
+            if(id === 'dashboard') { renderDashboardDatePicker(); renderDailyRecords(); updateBalances(); }
             if(id === 'more') { renderAccountGroupSettings(); renderExchangeRateSettings(); renderBudgetProjectSettings(); }
         }
 
@@ -2704,6 +2837,7 @@
             data.sort((a, b) => new Date(b.date) - new Date(a.date));
             localStorage.setItem('myBudget', JSON.stringify(data));
             selectedEntryDate = date;
+            dailyRecordsExpanded = true;
             localStorage.setItem('mySelectedEntryDate', selectedEntryDate);
             
             nameInput.value = '';
@@ -2724,61 +2858,89 @@
 
         function renderList() {
             const container = document.getElementById('list-container');
-            if (!data.length) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="text-2xl mb-2">📋</div>
-                        <div class="font-semibold text-gray-700 mb-1">${t('emptyTitle')}</div>
-                        <div>${t('emptyBody')}</div>
-                    </div>
-                `;
-                return;
-            }
-            container.innerHTML = data.map((item, index) => {
-                let typeColor = 'text-gray-500 bg-gray-100';
-                let sign = '';
-                if (['支出', '應付帳款', '系統'].includes(item.type)) { typeColor = 'text-red-600 bg-red-50'; sign = '-'; }
-                if (['收入', '應收帳款'].includes(item.type)) { typeColor = 'text-green-600 bg-green-50'; sign = '+'; }
-                if (item.type === '轉帳') { typeColor = 'text-blue-600 bg-blue-50'; }
-                
-                const safeIcon = item.subCatIcon || '📝';
-                const catIconHtml = safeIcon.startsWith('data:image') 
-                    ? `<img src="${safeIcon}" class="w-5 h-5 rounded-full object-cover">`
-                    : `<span>${escapeHTML(safeIcon)}</span>`;
-
-                const accountDisplay = item.type === '轉帳' 
-                    ? `<span class="text-blue-600">${escapeHTML(displayLabel(item.account || ''))} ➔ ${escapeHTML(displayLabel(item.toAccount || ''))}</span>` 
-                    : escapeHTML(displayLabel(item.account || t('uncategorized')));
-
-                const project = projectById(item.projectId);
-                const projectBadge = project ? `<span class="text-[10px] px-1.5 py-0.5 rounded font-medium text-blue-600 bg-blue-50">${escapeHTML(project.name)}</span>` : '';
-                const installmentBadge = item.installmentCount ? `<span class="text-[10px] px-1.5 py-0.5 rounded font-medium text-purple-600 bg-purple-50">${escapeHTML(t('installmentBadge', item.installmentIndex, item.installmentCount))}</span>` : '';
-                return `
-                <div onclick="openRecordDetail(${index})" class="surface p-3 flex items-center justify-between gap-3 cursor-pointer hover:bg-gray-50 transition">
-                    <div class="flex items-center gap-3 min-w-0">
-                        ${item.photoData ? `<img src="${item.photoData}" class="w-14 h-14 object-cover rounded-xl border border-gray-100 shrink-0">` : `<div class="w-12 h-12 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center shrink-0">${catIconHtml}</div>`}
-                        <div class="min-w-0">
-                            <div class="font-semibold text-sm flex items-center gap-2 min-w-0">
-                                ${item.photoData ? `<span class="flex items-center justify-center bg-gray-50 p-1 rounded-md border border-gray-100 shrink-0">${catIconHtml}</span>` : ''}
-                                <span class="truncate">${escapeHTML(displayLabel(item.name))}</span>
-                            </div>
-                            <div class="text-xs mt-1 flex gap-2 items-center text-gray-500">
-                                <span class="text-[10px] px-1.5 py-0.5 rounded font-medium ${typeColor}">${escapeHTML(displayLabel(item.type))}</span>
-                                ${projectBadge}
-                                ${installmentBadge}
-                                <span class="truncate max-w-[120px] font-medium">${accountDisplay}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex flex-col items-end gap-1 shrink-0">
-                        <span class="font-bold text-sm tracking-tight ${item.type === '轉帳' ? 'text-blue-600' : ''}">${sign}${formatPrivateMoney(item.price, item.currency)}</span>
-                        <div class="flex gap-2 items-center">
-                            <span class="text-[10px] text-gray-400">${escapeHTML(item.date)}</span>
-                            <button onclick="event.stopPropagation(); deleteItem(${index})" class="text-gray-400 hover:text-red-500 bg-gray-50 rounded-lg px-2 py-1 text-xs">${t('delete')}</button>
+            if (!container) return;
+            const tips = Array.isArray(t('savingsTips')) ? t('savingsTips') : [];
+            container.innerHTML = `
+                <div class="surface p-4">
+                    <div class="flex items-start gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-2xl shrink-0">🏯</div>
+                        <div>
+                            <div class="font-bold text-base mb-1">${t('savingsTitle')}</div>
+                            <p class="text-sm text-gray-500 leading-relaxed">${t('savingsIntro')}</p>
                         </div>
                     </div>
                 </div>
-            `}).join('');
+
+                <div class="surface p-4 space-y-4">
+                    <div>
+                        <div class="font-bold text-base">${t('furusatoTitle')}</div>
+                        <p class="text-xs text-gray-500 mt-1 leading-relaxed">${t('furusatoHint')}</p>
+                    </div>
+                    <div>
+                        <label for="furusato-income" class="text-xs text-gray-500 font-semibold">${t('annualIncomeLabel')}</label>
+                        <div class="mt-1 flex items-center gap-2">
+                            <span class="text-gray-400 font-semibold">¥</span>
+                            <input id="furusato-income" type="number" min="0" inputmode="numeric" class="notion-input text-lg font-semibold" placeholder="5000000">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="furusato-family" class="text-xs text-gray-500 font-semibold">${t('familyTypeLabel')}</label>
+                        <select id="furusato-family" class="notion-input mt-1">
+                            <option value="single">${t('familySingle')}</option>
+                            <option value="couple">${t('familyCouple')}</option>
+                            <option value="oneChild">${t('familyOneChild')}</option>
+                            <option value="twoChildren">${t('familyTwoChildren')}</option>
+                        </select>
+                    </div>
+                    <button onclick="calculateFurusato()" class="w-full primary-btn py-3 font-semibold">${t('calculateFurusato')}</button>
+                    <div id="furusato-result" class="rounded-2xl bg-gray-50 border border-gray-100 p-4">
+                        <div class="text-xs text-gray-500 font-semibold">${t('furusatoResultTitle')}</div>
+                        <div class="text-3xl font-bold tracking-tight mt-1">¥0</div>
+                        <div class="text-xs text-gray-400 mt-2">${t('furusatoSelfPay')}</div>
+                    </div>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">${t('furusatoResultHint')}</p>
+                </div>
+
+                <div class="surface p-4">
+                    <div class="font-bold text-base mb-3">${t('savingsTipsTitle')}</div>
+                    <div class="space-y-2">
+                        ${tips.map(tip => `
+                            <div class="flex gap-2 text-sm text-gray-600 leading-relaxed">
+                                <span class="text-blue-500 shrink-0">•</span>
+                                <span>${escapeHTML(tip)}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function estimateFurusatoLimit(income, familyType) {
+            const brackets = [
+                [3000000, 0.0065],
+                [5000000, 0.0115],
+                [7000000, 0.0155],
+                [10000000, 0.0195],
+                [15000000, 0.0235],
+                [Infinity, 0.028]
+            ];
+            const rate = brackets.find(([limit]) => income <= limit)?.[1] || 0.012;
+            const familyAdjustments = { single: 1, couple: 0.78, oneChild: 0.7, twoChildren: 0.58 };
+            const adjusted = income * rate * (familyAdjustments[familyType] || 1);
+            return Math.max(0, Math.floor(adjusted / 1000) * 1000);
+        }
+
+        function calculateFurusato() {
+            const income = parseFloat(document.getElementById('furusato-income')?.value || '0');
+            const familyType = document.getElementById('furusato-family')?.value || 'single';
+            const limit = estimateFurusatoLimit(income, familyType);
+            const result = document.getElementById('furusato-result');
+            if (!result) return;
+            result.innerHTML = `
+                <div class="text-xs text-gray-500 font-semibold">${t('furusatoResultTitle')}</div>
+                <div class="text-3xl font-bold tracking-tight mt-1">¥${limit.toLocaleString()}</div>
+                <div class="text-xs text-gray-400 mt-2">${t('furusatoSelfPay')}</div>
+            `;
         }
 
         function deleteItem(index) {
@@ -2806,6 +2968,7 @@
                 amountsHidden = false;
                 statsRange = '6m';
                 eyeCareMode = false;
+                nightMode = false;
                 customCategories = {};
                 Object.keys(defaultCategories).forEach(type => {
                     customCategories[type] = {};
@@ -2825,6 +2988,7 @@
                 localStorage.removeItem('myAmountsHidden');
                 localStorage.removeItem('myStatsRange');
                 localStorage.removeItem('myEyeCareMode');
+                localStorage.removeItem('myNightMode');
                 applyAppearance();
                 
                 renderTypes();
@@ -2846,7 +3010,38 @@
             showToast(t('toastExported'));
         }
 
+        const APP_VERSION = '20260610-01';
+
+        function registerServiceWorker() {
+            if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
+            let refreshed = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (refreshed) return;
+                refreshed = true;
+                window.location.reload();
+            });
+            window.addEventListener('load', async () => {
+                try {
+                    const registration = await navigator.serviceWorker.register(`./sw.js?v=${APP_VERSION}`);
+                    await registration.update();
+                    if (registration.waiting) registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                    registration.addEventListener('updatefound', () => {
+                        const worker = registration.installing;
+                        if (!worker) return;
+                        worker.addEventListener('statechange', () => {
+                            if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+                                worker.postMessage({ type: 'SKIP_WAITING' });
+                            }
+                        });
+                    });
+                } catch (error) {
+                    console.warn('Service worker registration failed', error);
+                }
+            });
+        }
+
         // 系統啟動
+        registerServiceWorker();
         applyAppearance();
         applyLanguage();
         setTodayDate();

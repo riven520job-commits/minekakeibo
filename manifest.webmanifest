@@ -2,6 +2,7 @@
   "name": "家計簿",
   "short_name": "家計簿",
   "description": "Budget Manager",
+  "id": "./",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
