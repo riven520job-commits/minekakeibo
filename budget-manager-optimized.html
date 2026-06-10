@@ -25,17 +25,17 @@
             --line: #e8edf2;
             --panel: #ffffff;
             --soft: #f6f8fb;
-            --accent: #2563eb;
+            --accent: #111827;
         }
         html, body { overscroll-behavior-y: none; }
         body.eye-care {
-            --ink: #243026;
-            --muted: #71806f;
-            --line: #dce5d4;
-            --panel: #fffdf4;
-            --soft: #f5f3e7;
-            --accent: #2f7d57;
-            background: linear-gradient(180deg, #f4f1df 0%, #fffdf4 38%);
+            --ink: #1f2933;
+            --muted: #6b7280;
+            --line: #e5e7eb;
+            --panel: #ffffff;
+            --soft: #f5f5f5;
+            --accent: #111827;
+            background: linear-gradient(180deg, #f4f4f5 0%, #ffffff 38%);
         }
         body.night-mode {
             color-scheme: dark;
@@ -44,8 +44,8 @@
             --line: #243244;
             --panel: #121a27;
             --soft: #0b1220;
-            --accent: #60a5fa;
-            background: linear-gradient(180deg, #07111f 0%, #101827 42%);
+            --accent: #f8fafc;
+            background: linear-gradient(180deg, #050505 0%, #111111 42%);
         }
         * { box-sizing: border-box; }
         body {
@@ -65,16 +65,16 @@
         .section-label { color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
         .surface { background: color-mix(in srgb, var(--panel) 92%, transparent); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 6px 16px rgba(31, 41, 51, .04); }
         .notion-input { background: var(--panel); border: 1px solid var(--line); padding: 13px 14px; border-radius: 12px; outline: none; width: 100%; transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease; }
-        .notion-input:focus { border-color: #93c5fd; box-shadow: 0 0 0 4px rgba(37, 99, 235, .1); }
+        .notion-input:focus { border-color: #111827; box-shadow: 0 0 0 4px rgba(17, 24, 39, .08); }
         .primary-btn { background: var(--ink); color: white; border-radius: 14px; box-shadow: 0 14px 24px rgba(31, 41, 51, .18); transition: transform 160ms ease, opacity 160ms ease; }
         .primary-btn:active { transform: translateY(1px) scale(.99); }
         .nav-btn { color: #8993a4; border-radius: 14px; min-width: 56px; transition: color 160ms ease, background 160ms ease; }
-        .nav-btn.active { color: var(--accent); background: #eff6ff; }
-        .nav-fab { width: 72px; height: 72px; margin-top: -34px; border: 5px solid #e0f2fe; border-radius: 9999px; background: #ffffff; color: var(--accent); box-shadow: 0 16px 28px rgba(37, 99, 235, .18); line-height: 1; overflow: hidden; padding: 7px; }
+        .nav-btn.active { color: var(--accent); background: #f3f4f6; }
+        .nav-fab { width: 68px; height: 68px; margin-top: -32px; border: 1px solid var(--line); border-radius: 18px; background: #ffffff; color: var(--ink); box-shadow: 0 14px 28px rgba(31, 41, 51, .12); line-height: 1; }
         .nav-btn.nav-fab.active { background: #ffffff !important; }
-        .nav-fab img { width: 100%; height: 100%; object-fit: contain; border-radius: 9999px; display: block; mix-blend-mode: multiply; opacity: .96; }
+        .nav-fab-symbol { display: grid; place-items: center; width: 100%; height: 100%; font-size: 2.25rem; font-weight: 300; line-height: 1; }
         .date-chip { border-radius: 9999px; transition: border-color 160ms ease, color 160ms ease, background 160ms ease; }
-        .date-chip.active { border-color: #38bdf8; color: var(--ink); background: #f0f9ff; }
+        .date-chip.active { border-color: #111827; color: var(--ink); background: #f3f4f6; }
         nav { padding-bottom: max(1.25rem, env(safe-area-inset-bottom)); box-shadow: none !important; }
         nav .nav-btn span[data-i18n] { display: none; }
         nav .nav-btn span.text-lg { margin-bottom: 0 !important; font-size: 1.65rem; line-height: 1; }
@@ -97,8 +97,8 @@
         body.night-mode .text-gray-600,
         body.night-mode .text-gray-700 { color: #a8b4c6 !important; }
         body.night-mode .text-blue-600,
-        body.night-mode .text-blue-700 { color: #93c5fd !important; }
-        body.night-mode .text-green-700 { color: #86efac !important; }
+        body.night-mode .text-blue-700,
+        body.night-mode .text-green-700 { color: #f8fafc !important; }
         body.night-mode .border-gray-100,
         body.night-mode .border-gray-200,
         body.night-mode .border-t { border-color: #243244 !important; }
@@ -106,10 +106,10 @@
         body.night-mode .hover\:bg-gray-100:hover,
         body.night-mode .hover\:bg-blue-100:hover,
         body.night-mode .hover\:bg-green-100:hover { background-color: #1d2a3f !important; }
-        body.night-mode .nav-btn.active { background: rgba(37, 99, 235, .22); }
-        body.night-mode .nav-btn.nav-fab.active { background: #ffffff !important; }
-        body.night-mode .nav-fab { border-color: #1e3a5f; box-shadow: 0 16px 28px rgba(0, 0, 0, .34); }
-        body.night-mode .date-chip.active { background: rgba(56, 189, 248, .14); }
+        body.night-mode .nav-btn.active { background: rgba(248, 250, 252, .08); }
+        body.night-mode .nav-btn.nav-fab.active { background: #111827 !important; }
+        body.night-mode .nav-fab { border-color: #243244; background: #111827; box-shadow: 0 16px 28px rgba(0, 0, 0, .34); color: #f8fafc; }
+        body.night-mode .date-chip.active { background: rgba(248, 250, 252, .08); border-color: #f8fafc; }
         .record-detail-card { background: var(--panel); color: var(--ink); }
         .record-detail-hero { background: linear-gradient(135deg, #e9eef5 0%, #f7fafc 100%); color: #243244; }
         .record-detail-action { background: rgba(255, 255, 255, .82); color: #243244; border: 1px solid rgba(148, 163, 184, .32); box-shadow: 0 10px 20px rgba(31, 41, 51, .08); }
@@ -137,9 +137,17 @@
         .asset-chart { height: 122px; display: flex; align-items: end; gap: 10px; justify-content: center; padding: 16px 6px 0; border-top: 1px solid var(--line); margin-top: 14px; }
         .asset-chart-group { width: 30px; height: 84px; display: flex; align-items: end; gap: 5px; position: relative; }
         .asset-chart-bar { width: 12px; border-radius: 4px 4px 0 0; min-height: 6px; }
-        .asset-chart-bar.asset { background: #9bbcf8; }
-        .asset-chart-bar.liability { background: #f4a5a5; }
+        .asset-chart-bar.asset { background: #111827; }
+        .asset-chart-bar.liability { background: #9ca3af; }
         .asset-chart-label { color: var(--muted); font-size: 10px; text-align: center; margin-top: 6px; }
+        .asset-analysis-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+        .asset-analysis-actions button { border: 1px solid var(--line); border-radius: 12px; padding: 12px; background: var(--soft); color: var(--ink); text-align: left; font-size: .78rem; font-weight: 700; }
+        .asset-analysis-actions small { display: block; color: var(--muted); font-size: .66rem; margin-top: 3px; font-weight: 600; }
+        .asset-pie-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .asset-pie { width: 132px; height: 132px; border-radius: 50%; margin: 0 auto 12px; background: conic-gradient(#111827 0 100%); position: relative; }
+        .asset-pie::after { content: ""; position: absolute; inset: 29px; border-radius: 50%; background: var(--panel); border: 1px solid var(--line); }
+        .asset-analysis-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); font-size: .82rem; }
+        .asset-analysis-dot { width: 10px; height: 10px; border-radius: 9999px; background: #111827; flex: 0 0 auto; }
         .dark-section-title { color: var(--ink); font-size: .78rem; font-weight: 700; margin: 18px 0 10px; letter-spacing: .08em; text-transform: uppercase; }
         .report-modal > div { background: #ffffff !important; color: var(--ink); border-radius: 0 !important; top: 0 !important; }
         .report-modal button { color: var(--ink) !important; background: var(--soft) !important; border-color: var(--line) !important; }
@@ -156,6 +164,43 @@
         .donut-ring span { width: 62px; height: 62px; border-radius: 50%; background: #ffffff; display: grid; place-items: center; color: var(--muted); font-size: 13px; }
         .top-record-row { display: grid; grid-template-columns: 56px 1fr auto; gap: 12px; align-items: center; padding: 12px 0; }
         .top-record-icon { width: 50px; height: 50px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.12); font-size: 1.35rem; }
+        .calculator-grid { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: var(--panel); }
+        .calculator-grid button { min-height: 58px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); font-size: 1.45rem; font-weight: 600; background: var(--panel); color: var(--ink); }
+        .calculator-grid button:nth-child(4n) { border-right: 0; }
+        .calculator-grid button:nth-last-child(-n+4) { border-bottom: 0; }
+        .calculator-grid button:active { background: var(--soft); }
+        .quick-amounts { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; }
+        .quick-amounts button { white-space: nowrap; border: 1px solid var(--line); background: var(--soft); border-radius: 12px; padding: 8px 14px; font-weight: 700; color: var(--ink); }
+        .account-picker { position: fixed; inset: 0; z-index: 95; background: rgba(15, 23, 42, .22); backdrop-filter: blur(4px); }
+        .account-picker-panel { position: absolute; inset: auto 0 0 0; max-width: 448px; margin: 0 auto; max-height: 86vh; overflow-y: auto; border-radius: 24px 24px 0 0; background: var(--panel); border: 1px solid var(--line); padding: 18px; }
+        .account-choice { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--panel); text-align: left; }
+        .account-choice.active { border-color: #111827; background: #f3f4f6; color: #111827; }
+        .add-field-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+        .add-field-tile { min-width: 0; }
+        .add-summary-tile { min-height: 78px; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); padding: 12px; text-align: center; }
+        .add-summary-label { color: var(--muted); font-size: 11px; font-weight: 700; line-height: 1; }
+        .add-summary-value { color: var(--ink); font-size: 1rem; font-weight: 700; line-height: 1.2; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .add-summary-input { width: 100%; border: 0; outline: 0; background: transparent; text-align: center; color: var(--ink); font-size: 1rem; font-weight: 700; min-width: 0; }
+        .add-summary-input::placeholder { color: var(--muted); font-weight: 600; }
+        .add-field-tile .notion-input { min-height: 78px; }
+        .add-field-tile .account-choice { min-height: 78px; padding: 10px 12px; }
+        .add-field-tile .account-choice span { min-width: 0; }
+        .add-field-tile .account-choice .block { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .add-field-tile.expanded { grid-column: 1 / -1; }
+        .project-picker { position: fixed; inset: 0; z-index: 96; background: rgba(15, 23, 42, .22); backdrop-filter: blur(4px); }
+        .project-picker-panel { position: absolute; inset: auto 0 0 0; max-width: 448px; margin: 0 auto; max-height: 70vh; overflow-y: auto; border-radius: 24px 24px 0 0; background: var(--panel); border: 1px solid var(--line); padding: 18px; }
+        .amount-eye-icon { width: 22px; height: 22px; display: block; }
+        .monochrome-action { color: var(--ink) !important; background: var(--soft) !important; border: 1px solid var(--line) !important; }
+        .text-blue-300, .text-blue-500, .text-blue-600, .text-blue-700,
+        .text-green-300, .text-green-600, .text-green-700,
+        .text-red-200, .text-red-400, .text-red-500,
+        .text-\[\#8bd85a\], .text-\[\#f05a68\] { color: var(--ink) !important; }
+        .bg-blue-50, .bg-blue-100, .bg-green-50, .bg-green-100,
+        .bg-red-50, .bg-red-100 { background-color: var(--soft) !important; }
+        .bg-blue-600, .bg-red-500, .bg-green-600 { background-color: var(--ink) !important; }
+        .border-blue-500, .border-red-100 { border-color: var(--line) !important; }
+        .hover\:bg-red-50:hover { background-color: var(--soft) !important; }
+        .asset-subtotals strong { color: var(--ink) !important; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         canvas { max-width: 100%; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -209,32 +254,42 @@
 
         <section id="page-dashboard" class="page asset-dashboard">
             <div class="mb-5 flex items-center justify-between gap-3">
-                <button onclick="toggleAmountVisibility()" class="w-10 h-10 rounded-full border border-gray-100 bg-gray-50 text-lg">◉</button>
+                <button id="amount-visibility-toggle" onclick="toggleAmountVisibility()" class="w-10 h-10 rounded-full border border-gray-100 bg-gray-50 flex items-center justify-center" aria-label="顯示金額"></button>
                 <h1 class="text-2xl font-bold tracking-tight" data-i18n="dashboardTitle">資產總覽</h1>
                 <button onclick="addAccountGroup()" class="w-10 h-10 rounded-full border border-gray-100 bg-gray-50 text-2xl leading-none">+</button>
             </div>
             
             <div class="asset-hero">
-                <div class="text-sm text-white/70 font-semibold" data-i18n="netWorthLabel">總資產淨額 (JPY)</div>
+                <div class="text-sm text-gray-500 font-semibold" data-i18n="netWorthLabel">總資產淨額 (JPY)</div>
                 <div class="asset-total" id="total-net-worth">¥0</div>
                 <div class="asset-subtotals">
                     <span><span data-i18n="totalAssetsLabel">總資產</span> <strong id="total-assets" class="text-[#8bd85a]">¥0</strong></span>
                     <span><span data-i18n="totalLiabilitiesLabel">總負債</span> <strong id="total-liabilities" class="text-[#f05a68]">¥0</strong></span>
                 </div>
-                <div id="asset-mini-chart" class="asset-chart"></div>
+                <div class="asset-analysis-actions">
+                    <button onclick="openAssetAnalysisModal('group')">
+                        <span data-i18n="assetGroupShare">各分組佔比</span>
+                        <small data-i18n="assetGroupShareHint">依帳戶分類查看資產與負債</small>
+                    </button>
+                    <button onclick="openAssetAnalysisModal('currency')">
+                        <span data-i18n="assetCurrencyShare">各幣種佔比</span>
+                        <small data-i18n="assetCurrencyShareHint">依幣值查看資產與負債</small>
+                    </button>
+                </div>
             </div>
 
             <h3 class="dark-section-title flex justify-between items-center">
                 <span data-i18n="budgetProjectsTitle">預算專案</span>
-                <button onclick="addBudgetProject()" class="text-[10px] text-blue-600 font-semibold normal-case" data-i18n="addProjectShort">＋新增專案</button>
+                <button onclick="addBudgetProject()" class="text-[10px] text-blue-600 font-semibold normal-case monochrome-action px-2 py-1 rounded-lg" data-i18n="addProjectShort">＋新增專案</button>
             </h3>
             <div id="budget-projects-dashboard" class="space-y-3 mb-8"></div>
 
             <h3 class="dark-section-title flex justify-between items-center">
                 <span data-i18n="accountBalances">各帳戶餘額</span>
-                <span class="flex items-center gap-3">
-                    <button onclick="setAllAccountGroupsCollapsed(false)" class="text-[10px] text-blue-600 font-semibold normal-case" data-i18n="expandAllAccounts">全部展開</button>
-                    <button onclick="addAccountGroup()" class="text-[10px] text-blue-600 font-semibold normal-case" data-i18n="addGroupShort">＋新增小分類</button>
+                <span class="flex items-center gap-2">
+                    <button onclick="setAllAccountGroupsCollapsed(false)" class="text-[10px] font-semibold normal-case monochrome-action px-2 py-1 rounded-lg" data-i18n="expandAllAccounts">全部展開</button>
+                    <button onclick="setAllAccountGroupsCollapsed(true)" class="text-[10px] font-semibold normal-case monochrome-action px-2 py-1 rounded-lg" data-i18n="collapseAllAccounts">全部折疊</button>
+                    <button onclick="addAccountGroup()" class="text-[10px] font-semibold normal-case monochrome-action px-2 py-1 rounded-lg" data-i18n="addGroupShort">＋新增小分類</button>
                 </span>
             </h3>
             <div id="account-balances-list" class="space-y-3 mb-8"></div>
@@ -258,8 +313,8 @@
             <input type="hidden" id="selected-main-cat" value="飲食">
             <input type="hidden" id="selected-sub-cat-name" value="">
             <input type="hidden" id="selected-sub-cat-icon" value="">
-            <input type="hidden" id="selected-account-group" value="💵 現金">
-            <input type="hidden" id="selected-account" value="💵 現金">
+            <input type="hidden" id="selected-account-group" value="📱 行動支付">
+            <input type="hidden" id="selected-account" value="Paypay">
             <input type="hidden" id="selected-to-account-group" value="🪪 交通卡">
             <input type="hidden" id="selected-to-account" value="🪪 交通卡">
             <input type="hidden" id="selected-project-id" value="">
@@ -272,50 +327,120 @@
 
             <div class="space-y-4 border-t border-gray-100 pt-4">
                 <input type="date" id="date" class="notion-input text-gray-600">
-                <input type="text" id="name" placeholder="項目名稱 (選填)" data-i18n-placeholder="namePlaceholder" class="notion-input" oninput="this.dataset.autoFilled='false'">
-                <div class="surface p-3 shadow-none">
-                    <div class="text-xs text-gray-500 mb-2 font-medium" data-i18n="budgetProjectLabel">預算專案</div>
-                    <div id="project-buttons" class="flex gap-2 overflow-x-auto no-scrollbar pb-1"></div>
-                </div>
-                
-                <div class="surface p-3 shadow-none">
-                    <div class="text-xs text-gray-500 mb-2 font-medium" id="label-account-from" data-i18n="paymentMethod">付款方式</div>
-                    <div id="account-buttons" class="flex gap-2 overflow-x-auto no-scrollbar pb-1"></div>
-                    <div id="sub-account-container" class="mt-3 pt-3 border-t border-gray-100">
-                        <div class="text-xs text-gray-500 mb-2 font-medium" data-i18n="subAccountLabel">子帳戶</div>
-                        <div id="sub-account-buttons" class="flex gap-2 overflow-x-auto no-scrollbar pb-1"></div>
+                <div class="add-field-grid">
+                    <div class="add-field-tile">
+                        <label class="add-summary-tile">
+                            <span class="add-summary-label" data-i18n="merchantNameLabel">商家</span>
+                            <input type="text" id="name" placeholder="商家名稱" data-i18n-placeholder="merchantNamePlaceholder" class="add-summary-input" oninput="this.dataset.autoFilled='false'">
+                        </label>
+                    </div>
+
+                    <div class="add-field-tile">
+                        <button type="button" onclick="openProjectPicker()" class="add-summary-tile">
+                            <span class="add-summary-label" data-i18n="budgetProjectLabel">預算專案</span>
+                            <span id="selected-project-summary" class="add-summary-value">省錢大作戰</span>
+                        </button>
+                        <div id="project-buttons" class="hidden"></div>
                     </div>
                     
-                    <div id="to-account-container" class="hidden mt-4 pt-4 border-t border-gray-200 border-dashed">
-                        <div class="text-xs text-gray-500 mb-2 font-medium flex items-center gap-1"><span data-i18n="toAccount">➡️ 轉入帳戶</span></div>
-                        <div id="to-account-buttons" class="flex gap-2 overflow-x-auto no-scrollbar pb-1"></div>
-                        <div id="to-sub-account-container" class="mt-3 pt-3 border-t border-gray-100">
-                            <div class="text-xs text-gray-500 mb-2 font-medium" data-i18n="toSubAccountLabel">轉入子帳戶</div>
-                            <div id="to-sub-account-buttons" class="flex gap-2 overflow-x-auto no-scrollbar pb-1"></div>
+                    <div class="add-field-tile">
+                        <button type="button" onclick="openAccountPicker('from')" class="add-summary-tile">
+                            <span id="label-account-from" class="add-summary-label" data-i18n="paymentMethod">付款方式</span>
+                            <span id="selected-account-summary" class="add-summary-value">Paypay</span>
+                        </button>
+                        <div class="hidden">
+                            <span data-i18n="currentPaymentAccount">目前付款帳戶</span>
+                        </div>
+                        <div id="account-buttons" class="hidden"></div>
+                        <div id="sub-account-container" class="hidden">
+                            <div id="sub-account-buttons" class="hidden"></div>
+                        </div>
+
+                        <div id="to-account-container" class="hidden mt-3">
+                            <button type="button" onclick="openAccountPicker('to')" class="add-summary-tile">
+                                <span class="add-summary-label" data-i18n="toAccount">➡️ 轉入帳戶</span>
+                                <span id="selected-to-account-summary" class="add-summary-value">尚無子帳戶</span>
+                            </button>
+                            <div class="hidden">
+                                <span data-i18n="currentTransferAccount">目前轉入帳戶</span>
+                            </div>
+                            <div id="to-account-buttons" class="hidden"></div>
+                            <div id="to-sub-account-container" class="hidden">
+                                <div id="to-sub-account-buttons" class="hidden"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="installment-card" class="add-field-tile">
+                        <label class="add-summary-tile cursor-pointer">
+                            <span class="add-summary-label" data-i18n="installmentLabel">費用分期</span>
+                            <span id="installment-summary" class="add-summary-value" data-i18n="installmentSingle">單次</span>
+                            <input type="checkbox" id="installment-enabled" onchange="toggleInstallmentFields()" class="sr-only">
+                        </label>
+                        <div id="installment-fields" class="hidden mt-3 surface p-3 shadow-none grid grid-cols-[1fr_auto] gap-3 items-center">
+                            <label for="installment-count" class="text-xs text-gray-500" data-i18n="installmentCount">分期期數</label>
+                            <input type="number" id="installment-count" min="2" max="60" value="3" inputmode="numeric" onchange="renderInstallmentSummary()" oninput="renderInstallmentSummary()" class="notion-input w-24 py-2 text-sm text-right">
+                            <p class="col-span-2 text-[11px] text-gray-400 leading-relaxed" data-i18n="installmentHint">輸入總金額，系統會從所選日期開始每月建立一筆紀錄。</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="flex gap-2">
-                    <input type="number" id="price" placeholder="金額 *" data-i18n-placeholder="pricePlaceholder" min="0" inputmode="decimal" class="w-2/3 notion-input text-lg font-semibold">
-                    <select id="currency" class="w-1/3 notion-input">
-                        <option value="¥">JPY</option>
-                        <option value="NT$">TWD</option>
-                        <option value="₩">KRW</option>
-                        <option value="$">USD</option>
-                        <option value="€">EUR</option>
-                    </select>
+                <div id="project-picker" class="project-picker hidden">
+                    <div class="project-picker-panel">
+                        <div class="flex items-center justify-between gap-3 mb-4">
+                            <div>
+                                <p class="section-label mb-1">Project</p>
+                                <h2 class="text-xl font-bold tracking-tight" data-i18n="budgetProjectLabel">預算專案</h2>
+                            </div>
+                            <button type="button" onclick="closeProjectPicker()" class="w-10 h-10 rounded-full bg-gray-50 border border-gray-100 text-2xl text-gray-500 leading-none">×</button>
+                        </div>
+                        <div id="project-picker-content" class="space-y-2"></div>
+                    </div>
                 </div>
-
-                <div id="installment-card" class="surface p-3 shadow-none">
-                    <label class="flex items-center justify-between gap-3">
-                        <span class="text-xs text-gray-500 font-medium" data-i18n="installmentLabel">費用分期</span>
-                        <input type="checkbox" id="installment-enabled" onchange="toggleInstallmentFields()" class="h-5 w-5 accent-blue-600">
-                    </label>
-                    <div id="installment-fields" class="hidden mt-3 pt-3 border-t border-gray-100 grid grid-cols-[1fr_auto] gap-3 items-center">
-                        <label for="installment-count" class="text-xs text-gray-500" data-i18n="installmentCount">分期期數</label>
-                        <input type="number" id="installment-count" min="2" max="60" value="3" inputmode="numeric" class="notion-input w-24 py-2 text-sm text-right">
-                        <p class="col-span-2 text-[11px] text-gray-400 leading-relaxed" data-i18n="installmentHint">輸入總金額，系統會從所選日期開始每月建立一筆紀錄。</p>
+                
+                <div class="surface p-3 shadow-none space-y-3">
+                    <div class="flex gap-2">
+                        <input type="text" id="price" placeholder="金額 *" data-i18n-placeholder="pricePlaceholder" inputmode="none" readonly onclick="showCalculator()" onfocus="showCalculator()" class="w-2/3 notion-input text-xl font-semibold text-right cursor-pointer">
+                        <select id="currency" class="w-1/3 notion-input">
+                            <option value="¥">JPY</option>
+                            <option value="NT$">TWD</option>
+                            <option value="₩">KRW</option>
+                            <option value="$">USD</option>
+                            <option value="€">EUR</option>
+                        </select>
+                    </div>
+                    <div id="calculator-panel" class="hidden space-y-3">
+                        <div class="quick-amounts no-scrollbar">
+                            <button type="button" onclick="calculatorQuick(538)">538</button>
+                            <button type="button" onclick="calculatorQuick(1299)">1,299</button>
+                            <button type="button" onclick="calculatorQuick(587)">587</button>
+                            <button type="button" onclick="calculatorQuick(2026)">2,026</button>
+                            <button type="button" onclick="calculatorQuick(799)">799</button>
+                            <button type="button" onclick="calculatorQuick(868)">868</button>
+                        </div>
+                        <div id="calculator-expression" class="min-h-[1rem] text-right text-xs text-gray-400"></div>
+                        <div class="calculator-grid" aria-label="calculator">
+                            <button type="button" onclick="calculatorPress('÷')">÷</button>
+                            <button type="button" onclick="calculatorPress('×')">×</button>
+                            <button type="button" onclick="calculatorPress('−')">−</button>
+                            <button type="button" onclick="calculatorPress('+')">+</button>
+                            <button type="button" onclick="calculatorPress('7')">7</button>
+                            <button type="button" onclick="calculatorPress('8')">8</button>
+                            <button type="button" onclick="calculatorPress('9')">9</button>
+                            <button type="button" onclick="calculatorPress('⌫')">⌫</button>
+                            <button type="button" onclick="calculatorPress('4')">4</button>
+                            <button type="button" onclick="calculatorPress('5')">5</button>
+                            <button type="button" onclick="calculatorPress('6')">6</button>
+                            <button type="button" onclick="calculatorPress('C')">C</button>
+                            <button type="button" onclick="calculatorPress('1')">1</button>
+                            <button type="button" onclick="calculatorPress('2')">2</button>
+                            <button type="button" onclick="calculatorPress('3')">3</button>
+                            <button type="button" onclick="calculatorPress('↵')">↵</button>
+                            <button type="button" onclick="calculatorPress('.')">.</button>
+                            <button type="button" onclick="calculatorPress('0')">0</button>
+                            <button type="button" onclick="calculatorPress('00')">00</button>
+                            <button type="button" onclick="calculatorPress('✓')">✓</button>
+                        </div>
                     </div>
                 </div>
                 
@@ -323,6 +448,19 @@
                 <input type="file" id="photo" accept="image/*" class="w-full text-sm text-gray-500 bg-gray-50 rounded-lg p-2 border border-gray-100">
                 
                 <button onclick="addExpense()" class="w-full primary-btn py-3.5 font-semibold mt-2" data-i18n="saveButton">確認儲存</button>
+            </div>
+
+            <div id="account-picker" class="account-picker hidden">
+                <div class="account-picker-panel">
+                    <div class="flex items-center justify-between gap-3 mb-4">
+                        <div>
+                            <p class="section-label mb-1">Account</p>
+                            <h2 id="account-picker-title" class="text-xl font-bold tracking-tight">選擇帳戶</h2>
+                        </div>
+                        <button type="button" onclick="closeAccountPicker()" class="w-10 h-10 rounded-full bg-gray-50 border border-gray-100 text-2xl text-gray-500 leading-none">×</button>
+                    </div>
+                    <div id="account-picker-content" class="space-y-3"></div>
+                </div>
             </div>
         </section>
 
@@ -516,13 +654,26 @@
         </div>
     </div>
 
+    <div id="asset-analysis-modal" class="hidden fixed inset-0 z-[74] bg-black/40 backdrop-blur-sm">
+        <div class="absolute inset-x-0 bottom-0 top-8 max-w-md mx-auto bg-white rounded-t-3xl shadow-2xl overflow-hidden flex flex-col">
+            <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between gap-3">
+                <div>
+                    <p class="section-label mb-1" data-i18n="dashboardTitle">資產總覽</p>
+                    <h2 id="asset-analysis-title" class="text-xl font-bold tracking-tight">各分組佔比</h2>
+                </div>
+                <button onclick="closeAssetAnalysisModal()" class="w-10 h-10 rounded-full bg-gray-100 text-gray-500 font-bold">×</button>
+            </div>
+            <div id="asset-analysis-content" class="px-5 py-4 overflow-y-auto space-y-5"></div>
+        </div>
+    </div>
+
     <div id="toast" class="toast bg-gray-900 text-white text-sm px-4 py-3 rounded-full shadow-xl"></div>
 
     <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white/95 backdrop-blur border-t border-gray-100 px-2 pt-2 pb-5 grid grid-cols-5 items-end gap-1 shadow-[0_-8px_24px_rgba(31,41,51,0.07)] z-50">
         <button data-page="dashboard" onclick="switchPage('dashboard')" class="nav-btn p-2 text-xs font-semibold flex flex-col items-center justify-center"><span class="text-lg mb-1">📊</span><span data-i18n="navDashboard">總覽</span></button>
         <button data-page="report" onclick="switchPage('report')" class="nav-btn p-2 text-xs font-semibold flex flex-col items-center justify-center"><span class="text-lg mb-1">💴</span><span data-i18n="navReport">省錢</span></button>
         <button data-page="record" data-center-action="true" onclick="handleCenterAction()" class="nav-btn nav-fab active flex items-center justify-center" aria-label="新增">
-            <img src="icons/miffy-head-button.png" alt="">
+            <span class="nav-fab-symbol">+</span>
         </button>
         <button onclick="openMonthlyReportModal()" class="nav-btn p-2 text-xs font-semibold flex flex-col items-center justify-center"><span class="text-lg mb-1">📈</span><span data-i18n="navMonthly">月報</span></button>
         <button data-page="more" onclick="switchPage('more')" class="nav-btn p-2 text-xs font-semibold flex flex-col items-center justify-center"><span class="text-lg mb-1">⚙️</span><span data-i18n="navMore">設定</span></button>
@@ -576,6 +727,8 @@
         let amountsHidden = JSON.parse(localStorage.getItem('myAmountsHidden')) || false;
         let eyeCareMode = JSON.parse(localStorage.getItem('myEyeCareMode')) || false;
         let nightMode = JSON.parse(localStorage.getItem('myNightMode')) || false;
+        let activeAccountPickerType = 'from';
+        let calculatorExpression = '';
         if (!localStorage.getItem('myWhiteNotionDefaultedV1')) {
             nightMode = false;
             localStorage.setItem('myNightMode', JSON.stringify(false));
@@ -676,11 +829,13 @@
         let categoryChartObj = null;
         let currencyChartObj = null;
         
-        const chartColors = ['#2563eb', '#16a34a', '#f59e0b', '#ef4444', '#8b5cf6', '#0891b2', '#64748b', '#db2777', '#475569'];
+        const chartColors = ['#111827', '#374151', '#4b5563', '#6b7280', '#9ca3af', '#d1d5db', '#27272a', '#52525b', '#a1a1aa'];
         let currentLang = localStorage.getItem('myBudgetLang') || 'zh';
         let statsRange = localStorage.getItem('myStatsRange') || '6m';
         let selectedEntryDate = localStorage.getItem('mySelectedEntryDate') || todayString();
         let dailyRecordsExpanded = false;
+        let assetAnalysisData = { group: { assets: [], liabilities: [] }, currency: { assets: [], liabilities: [] } };
+        let activeAssetAnalysisKind = 'group';
         const SUPABASE_URL = 'https://ymxjnjrkndzemepflymc.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlteGpuanJrbmR6ZW1lcGZseW1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5Mzg2MDUsImV4cCI6MjA5NjUxNDYwNX0.eDKpQocEdSk0VoNqfGmegMuIRbfhwQLQuBaGajLyD5o';
         const SITE_URL = 'https://riven520job-commits.github.io/minekakeibo/';
@@ -711,6 +866,14 @@
                 netWorthHint: '包含初始金額與截至今日的歷史紀錄',
                 totalAssetsLabel: '總資產',
                 totalLiabilitiesLabel: '總負債',
+                assetGroupShare: '各分組佔比',
+                assetGroupShareHint: '依帳戶分類查看資產與負債',
+                assetCurrencyShare: '各幣種佔比',
+                assetCurrencyShareHint: '依幣值查看資產與負債',
+                assetGroupAnalysisTitle: '分組統計',
+                assetCurrencyAnalysisTitle: '幣種統計',
+                assetPositivePie: '資產',
+                assetNegativePie: '負債',
                 accountBalances: '各帳戶餘額',
                 budgetProjectsTitle: '預算專案',
                 budgetProjectsHint: '設定與修改專案預算，追蹤期間內支出',
@@ -749,17 +912,26 @@
                 statsModalTitle: '支出分析',
                 addKicker: 'Add Record',
                 addTitle: '新增紀錄',
-                namePlaceholder: '項目名稱 (選填)',
+                namePlaceholder: '商家名稱 / 項目名稱 (選填)',
+                merchantNameLabel: '商家',
+                merchantNamePlaceholder: '商家名稱',
                 paymentMethod: '付款方式',
                 subAccountLabel: '子帳戶',
                 transferFrom: '📤 轉出帳戶',
                 toAccount: '➡️ 轉入帳戶',
                 toSubAccountLabel: '轉入子帳戶',
+                accountPickerTitle: '選擇帳戶',
+                accountPickerToTitle: '選擇轉入帳戶',
+                currentPaymentAccount: '目前付款帳戶',
+                currentTransferAccount: '目前轉入帳戶',
+                calculatorLabel: '計算機',
                 pricePlaceholder: '金額 *',
                 hideAmounts: '隱藏金額',
                 showAmounts: '顯示金額',
                 hiddenAmount: '••••',
                 installmentLabel: '費用分期',
+                installmentSingle: '單次',
+                installmentMultiple: count => `分期 ${count} 期`,
                 installmentCount: '分期期數',
                 installmentHint: '輸入總金額，系統會從所選日期開始每月建立一筆紀錄。',
                 installmentBadge: (index, count) => `分期 ${index}/${count}`,
@@ -832,6 +1004,16 @@
                 monthlyExpense: '本月支出',
                 monthlyNet: '本月淨額',
                 monthlyTopCategories: '支出分類排行',
+                monthlyTabDetail: '明細',
+                monthlyTabCategory: '類別',
+                monthlyTabRanking: '排行',
+                monthlyTabAccount: '帳戶',
+                monthlyTabProject: '專案',
+                monthlyTabAccountGroup: '帳戶分類',
+                monthlyTabName: '名稱',
+                monthlyTabMerchant: '商家',
+                monthlyTabTag: '標籤',
+                monthlyTabTarget: '對象',
                 monthlyNoData: '這個月份還沒有支出紀錄',
                 initialPrefix: '初始',
                 accountCount: '個帳戶',
@@ -932,6 +1114,14 @@
                 netWorthHint: '初期金額と今日までの履歴を含みます',
                 totalAssetsLabel: '総資産',
                 totalLiabilitiesLabel: '総負債',
+                assetGroupShare: '各グループ比率',
+                assetGroupShareHint: '口座分類ごとに資産と負債を表示',
+                assetCurrencyShare: '各通貨比率',
+                assetCurrencyShareHint: '通貨ごとに資産と負債を表示',
+                assetGroupAnalysisTitle: 'グループ統計',
+                assetCurrencyAnalysisTitle: '通貨統計',
+                assetPositivePie: '資産',
+                assetNegativePie: '負債',
                 accountBalances: '口座残高',
                 budgetProjectsTitle: '予算プロジェクト',
                 budgetProjectsHint: 'プロジェクト予算を設定・編集し、期間内の支出を追跡します',
@@ -970,17 +1160,26 @@
                 statsModalTitle: '支出分析',
                 addKicker: '記録追加',
                 addTitle: '記録を追加',
-                namePlaceholder: '項目名 (任意)',
+                namePlaceholder: '店舗名 / 項目名 (任意)',
+                merchantNameLabel: '店舗',
+                merchantNamePlaceholder: '店舗名',
                 paymentMethod: '支払い方法',
                 subAccountLabel: '子口座',
                 transferFrom: '📤 振替元口座',
                 toAccount: '➡️ 振替先口座',
                 toSubAccountLabel: '振替先の子口座',
+                accountPickerTitle: '口座を選択',
+                accountPickerToTitle: '振替先口座を選択',
+                currentPaymentAccount: '現在の支払い口座',
+                currentTransferAccount: '現在の振替先口座',
+                calculatorLabel: '電卓',
                 pricePlaceholder: '金額 *',
                 hideAmounts: '金額を隠す',
                 showAmounts: '金額を表示',
                 hiddenAmount: '••••',
                 installmentLabel: '分割払い',
+                installmentSingle: '単発',
+                installmentMultiple: count => `分割 ${count} 回`,
                 installmentCount: '分割回数',
                 installmentHint: '合計金額を入力すると、選択した日付から毎月1件ずつ記録します。',
                 installmentBadge: (index, count) => `分割 ${index}/${count}`,
@@ -1053,6 +1252,16 @@
                 monthlyExpense: '今月の支出',
                 monthlyNet: '今月の純額',
                 monthlyTopCategories: '支出カテゴリランキング',
+                monthlyTabDetail: '明細',
+                monthlyTabCategory: 'カテゴリ',
+                monthlyTabRanking: 'ランキング',
+                monthlyTabAccount: '口座',
+                monthlyTabProject: 'プロジェクト',
+                monthlyTabAccountGroup: '口座分類',
+                monthlyTabName: '名称',
+                monthlyTabMerchant: '店舗',
+                monthlyTabTag: 'タグ',
+                monthlyTabTarget: '対象',
                 monthlyNoData: 'この月の支出記録はまだありません',
                 initialPrefix: '初期',
                 accountCount: '口座',
@@ -1242,8 +1451,18 @@
             if (statsRangeSelect) statsRangeSelect.value = statsRange;
             if (document.getElementById('page-report')?.classList.contains('active')) renderList();
             if (!document.getElementById('monthly-report-modal')?.classList.contains('hidden')) renderMonthlyReport();
+            if (!document.getElementById('asset-analysis-modal')?.classList.contains('hidden')) openAssetAnalysisModal(activeAssetAnalysisKind);
             const selectedType = document.getElementById('selected-type').value;
             document.getElementById('label-account-from').textContent = selectedType === '轉帳' ? t('transferFrom') : t('paymentMethod');
+            renderAccountSummaries();
+            renderProjectSummary();
+            renderInstallmentSummary();
+            if (!document.getElementById('account-picker')?.classList.contains('hidden')) {
+                const title = document.getElementById('account-picker-title');
+                if (title) title.textContent = activeAccountPickerType === 'to' ? t('accountPickerToTitle') : t('accountPickerTitle');
+                renderAccountPicker();
+            }
+            if (!document.getElementById('project-picker')?.classList.contains('hidden')) renderProjectPicker();
         }
 
         function toggleLanguage() {
@@ -1547,12 +1766,12 @@
             const categoryEntries = Object.entries(categories).sort((a, b) => b[1] - a[1]);
             const maxSummary = Math.max(expense, income, transferOut, transferIn, Math.abs(adjustment), Math.abs(net), 1);
             const summaryRows = [
-                { label: displayLabel('支出'), count: counts.expense, amount: -expense, color: '#f05a68' },
-                { label: displayLabel('收入'), count: counts.income, amount: income, color: '#8bd85a' },
-                { label: displayLabel('轉帳') + '-', count: counts.transferOut, amount: -transferOut, color: '#e28a3a' },
-                { label: displayLabel('轉帳') + '+', count: counts.transferIn, amount: transferIn, color: '#f5d79b' },
-                { label: displayLabel('餘額調整'), count: counts.adjustment, amount: adjustment, color: '#6f78d8' },
-                { label: t('monthlyNet'), count: monthRecords.length, amount: net, color: '#a46ad6' }
+                { label: displayLabel('支出'), count: counts.expense, amount: -expense, color: '#111827' },
+                { label: displayLabel('收入'), count: counts.income, amount: income, color: '#374151' },
+                { label: displayLabel('轉帳') + '-', count: counts.transferOut, amount: -transferOut, color: '#4b5563' },
+                { label: displayLabel('轉帳') + '+', count: counts.transferIn, amount: transferIn, color: '#6b7280' },
+                { label: displayLabel('餘額調整'), count: counts.adjustment, amount: adjustment, color: '#9ca3af' },
+                { label: t('monthlyNet'), count: monthRecords.length, amount: net, color: '#52525b' }
             ];
             const topExpenseRecords = topRecords
                 .sort((a, b) => toJPY(b.price, b.currency || '¥') - toJPY(a.price, a.currency || '¥'))
@@ -1565,10 +1784,16 @@
                 </div>
                 <div class="monthly-tabs">
                     <span class="active">${t('navDashboard')}</span>
-                    <span>${t('navReport')}</span>
-                    <span>${t('categoryChartTitle')}</span>
-                    <span>${t('topCategoriesTitle')}</span>
-                    <span>${t('accountBalances')}</span>
+                    <span>${t('monthlyTabDetail')}</span>
+                    <span>${t('monthlyTabCategory')}</span>
+                    <span>${t('monthlyTabRanking')}</span>
+                    <span>${t('monthlyTabAccount')}</span>
+                    <span>${t('monthlyTabProject')}</span>
+                    <span>${t('monthlyTabAccountGroup')}</span>
+                    <span>${t('monthlyTabName')}</span>
+                    <span>${t('monthlyTabMerchant')}</span>
+                    <span>${t('monthlyTabTag')}</span>
+                    <span>${t('monthlyTabTarget')}</span>
                 </div>
                 <div>
                     ${summaryRows.map(row => {
@@ -1716,14 +1941,29 @@
         function renderAmountVisibilityButton() {
             const button = document.getElementById('amount-visibility-toggle');
             if (!button) return;
-            button.textContent = amountsHidden ? t('showAmounts') : t('hideAmounts');
+            const title = amountsHidden ? t('showAmounts') : t('hideAmounts');
+            button.setAttribute('aria-label', title);
+            button.setAttribute('title', title);
+            button.innerHTML = amountsHidden ? `
+                <svg class="amount-eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M3 3l18 18"/>
+                    <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/>
+                    <path d="M9.5 5.2A10.8 10.8 0 0 1 12 5c5 0 8.4 4.1 9.5 7a12.4 12.4 0 0 1-2.4 3.6"/>
+                    <path d="M6.6 6.9A12.2 12.2 0 0 0 2.5 12C3.6 14.9 7 19 12 19c1.3 0 2.5-.3 3.6-.8"/>
+                </svg>
+            ` : `
+                <svg class="amount-eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M2.5 12S5.8 5 12 5s9.5 7 9.5 7-3.3 7-9.5 7-9.5-7-9.5-7Z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+            `;
         }
 
         function applyAppearance() {
             document.body.classList.toggle('eye-care', eyeCareMode);
             document.body.classList.toggle('night-mode', nightMode);
             const themeMeta = document.querySelector('meta[name="theme-color"]');
-            if (themeMeta) themeMeta.setAttribute('content', nightMode ? '#07111f' : (eyeCareMode ? '#fffdf4' : '#ffffff'));
+            if (themeMeta) themeMeta.setAttribute('content', nightMode ? '#050505' : '#ffffff');
             renderEyeCareStatus();
             renderNightModeStatus();
         }
@@ -1786,8 +2026,19 @@
         function toggleInstallmentFields() {
             const enabled = document.getElementById('installment-enabled')?.checked;
             const fields = document.getElementById('installment-fields');
+            const card = document.getElementById('installment-card');
             if (!fields) return;
             fields.classList.toggle('hidden', !enabled);
+            card?.classList.toggle('expanded', !!enabled);
+            renderInstallmentSummary();
+        }
+
+        function renderInstallmentSummary() {
+            const summary = document.getElementById('installment-summary');
+            if (!summary) return;
+            const enabled = document.getElementById('installment-enabled')?.checked;
+            const count = document.getElementById('installment-count')?.value || 3;
+            summary.textContent = enabled ? t('installmentMultiple', count) : t('installmentSingle');
         }
 
         function monthKey(date) {
@@ -2144,7 +2395,7 @@
                     datasets: [{
                         label: t('trendDataset'),
                         data: Object.values(monthData),
-                        backgroundColor: '#2563eb',
+                        backgroundColor: '#111827',
                         borderRadius: 8,
                         borderSkipped: false
                     }]
@@ -2153,8 +2404,8 @@
                     responsive: true,
                     plugins: { legend: { display: false }, tooltip: { displayColors: false } },
                     scales: { 
-                        y: { beginAtZero: true, border: {display: false}, grid: {color: '#eef2f7'}, ticks: { color: '#7b8794' } },
-                        x: { grid: {display: false}, ticks: { color: '#7b8794' } }
+                        y: { beginAtZero: true, border: {display: false}, grid: {color: '#e5e7eb'}, ticks: { color: '#6b7280' } },
+                        x: { grid: {display: false}, ticks: { color: '#6b7280' } }
                     }
                 }
             });
@@ -2228,6 +2479,7 @@
 
             const groupedAccounts = {};
             accountGroups.forEach(group => groupedAccounts[group] = []);
+            assetAnalysisData = { group: { assets: [], liabilities: [] }, currency: { assets: [], liabilities: [] } };
             userAccounts.forEach(acc => {
                 const balanceJPY = toJPY(currentBalances[acc], getAccountCurrency(acc));
                 totalNet += balanceJPY;
@@ -2239,7 +2491,12 @@
                 const group = accountGroupMap[acc] || '未分類';
                 if (!groupedAccounts[group]) groupedAccounts[group] = [];
                 if (!isPrimaryAccount(acc)) groupedAccounts[group].push(acc);
+                if (!isPrimaryAccount(acc) && balanceJPY !== 0) {
+                    addAssetAnalysisValue(assetAnalysisData.group, group, balanceJPY);
+                    addAssetAnalysisValue(assetAnalysisData.currency, currencyCodeFromSymbol(getAccountCurrency(acc)), balanceJPY);
+                }
             });
+            sortAssetAnalysisData();
 
             listContainer.innerHTML = Object.keys(groupedAccounts)
                 .map(group => {
@@ -2291,43 +2548,11 @@
             document.getElementById('total-assets').innerText = amountsHidden ? `¥${t('hiddenAmount')}` : `¥${Math.round(totalAssets).toLocaleString()}`;
             document.getElementById('total-liabilities').innerText = amountsHidden ? `¥${t('hiddenAmount')}` : `¥${Math.round(totalLiabilities).toLocaleString()}`;
 
-            const chart = document.getElementById('asset-mini-chart');
-            if (chart) {
-                const now = new Date();
-                const monthKeys = Array.from({ length: 6 }, (_, index) => {
-                    const d = new Date(now.getFullYear(), now.getMonth() - (5 - index), 1);
-                    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-                });
-                const monthData = monthKeys.map(key => {
-                    let income = 0;
-                    let expense = 0;
-                    data.filter(item => (item.date || '').substring(0, 7) === key).forEach(item => {
-                        const value = toJPY(item.price, item.currency || '¥');
-                        if (['收入', '應收帳款'].includes(item.type)) income += value;
-                        if (['支出', '應付帳款', '系統'].includes(item.type)) expense += value;
-                    });
-                    return { key, income, expense };
-                });
-                const maxMonthly = Math.max(...monthData.flatMap(item => [item.income, item.expense]), 1);
-                chart.innerHTML = monthData.map(item => {
-                    const incomeHeight = Math.max(8, Math.round((item.income / maxMonthly) * 120));
-                    const expenseHeight = Math.max(8, Math.round((item.expense / maxMonthly) * 120));
-                    return `
-                        <div>
-                            <div class="asset-chart-group">
-                                <div class="asset-chart-bar liability" style="height:${expenseHeight}px"></div>
-                                <div class="asset-chart-bar asset" style="height:${incomeHeight}px"></div>
-                            </div>
-                            <div class="asset-chart-label">${item.key.slice(5)}</div>
-                        </div>
-                    `;
-                }).join('');
-            }
-
             renderCharts();
             renderAccountGroupSettings();
             renderBudgetProjectsDashboard();
             renderDailyRecords();
+            if (!document.getElementById('asset-analysis-modal')?.classList.contains('hidden')) openAssetAnalysisModal(activeAssetAnalysisKind);
         }
 
         function setInitialBalance(acc) {
@@ -2367,6 +2592,90 @@
             localStorage.setItem('myAccountGroupCollapsed', JSON.stringify(accountGroupCollapsed));
             updateBalances();
         }
+
+        function addAssetAnalysisValue(bucket, key, value) {
+            if (!key || !Number.isFinite(value) || value === 0) return;
+            const target = value >= 0 ? bucket.assets : bucket.liabilities;
+            const amount = Math.abs(value);
+            const existing = target.find(item => item.label === key);
+            if (existing) existing.amount += amount;
+            else target.push({ label: key, amount });
+        }
+
+        function sortAssetAnalysisData() {
+            ['group', 'currency'].forEach(kind => {
+                ['assets', 'liabilities'].forEach(side => {
+                    assetAnalysisData[kind][side].sort((a, b) => b.amount - a.amount);
+                });
+            });
+        }
+
+        function pieGradient(entries) {
+            const total = entries.reduce((sum, item) => sum + item.amount, 0);
+            if (!total) return 'conic-gradient(#e5e7eb 0 100%)';
+            let start = 0;
+            const segments = entries.map((entry, index) => {
+                const ratio = entry.amount / total;
+                const end = start + ratio * 100;
+                const color = chartColors[index % chartColors.length];
+                const segment = `${color} ${start}% ${end}%`;
+                start = end;
+                return segment;
+            });
+            return `conic-gradient(${segments.join(', ')})`;
+        }
+
+        function renderAssetPieSection(title, entries) {
+            const total = entries.reduce((sum, item) => sum + item.amount, 0);
+            const rows = entries.length ? entries.map((entry, index) => {
+                const ratio = total ? Math.round((entry.amount / total) * 100) : 0;
+                const color = chartColors[index % chartColors.length];
+                return `
+                    <div class="asset-analysis-row">
+                        <span class="flex items-center gap-2 min-w-0">
+                            <span class="asset-analysis-dot" style="background:${color}"></span>
+                            <span class="font-semibold truncate">${escapeHTML(displayLabel(entry.label))}</span>
+                        </span>
+                        <span class="text-gray-500 shrink-0">${formatPrivateJPY(entry.amount, '¥')} · ${ratio}%</span>
+                    </div>
+                `;
+            }).join('') : `<div class="empty-state">${t('noChartData')}</div>`;
+            return `
+                <div class="surface p-4">
+                    <h3 class="dark-section-title mt-0">${title}</h3>
+                    <div class="asset-pie" style="background:${pieGradient(entries)}"></div>
+                    <div>${rows}</div>
+                </div>
+            `;
+        }
+
+        function openAssetAnalysisModal(kind) {
+            const modal = document.getElementById('asset-analysis-modal');
+            const title = document.getElementById('asset-analysis-title');
+            const content = document.getElementById('asset-analysis-content');
+            if (!modal || !title || !content) return;
+            activeAssetAnalysisKind = kind || 'group';
+            const dataSet = assetAnalysisData[kind] || assetAnalysisData.group;
+            title.textContent = kind === 'currency' ? t('assetCurrencyAnalysisTitle') : t('assetGroupAnalysisTitle');
+            content.innerHTML = `
+                <div class="asset-pie-grid">
+                    ${renderAssetPieSection(t('assetPositivePie'), dataSet.assets)}
+                    ${renderAssetPieSection(t('assetNegativePie'), dataSet.liabilities)}
+                </div>
+            `;
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAssetAnalysisModal() {
+            document.getElementById('asset-analysis-modal')?.classList.add('hidden');
+            if (document.getElementById('monthly-report-modal')?.classList.contains('hidden') && document.getElementById('add-record-modal')?.classList.contains('hidden')) {
+                document.body.style.overflow = '';
+            }
+        }
+
+        window.openAssetAnalysisModal = openAssetAnalysisModal;
+        window.closeAssetAnalysisModal = closeAssetAnalysisModal;
 
         function addSubAccount(group) {
             const newAcc = prompt(t('promptAddSubAccount', displayLabel(group)));
@@ -2588,11 +2897,79 @@
             }).join('');
             html += `<button onclick="addBudgetProject()" class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium bg-gray-50 text-gray-400 border border-dashed border-gray-300 hover:bg-gray-100 transition">${t('addProjectShort')}</button>`;
             container.innerHTML = html;
+            renderProjectSummary();
+            if (!document.getElementById('project-picker')?.classList.contains('hidden')) renderProjectPicker();
         }
 
         function selectProject(projectId) {
             document.getElementById('selected-project-id').value = projectId;
             renderProjectButtons();
+        }
+
+        function projectSummaryText() {
+            const project = projectById(document.getElementById('selected-project-id')?.value);
+            return project ? project.name : t('noProject');
+        }
+
+        function renderProjectSummary() {
+            const summary = document.getElementById('selected-project-summary');
+            if (summary) summary.textContent = projectSummaryText();
+        }
+
+        function openProjectPicker() {
+            renderProjectPicker();
+            document.getElementById('project-picker')?.classList.remove('hidden');
+        }
+
+        function closeProjectPicker() {
+            document.getElementById('project-picker')?.classList.add('hidden');
+        }
+
+        function renderProjectPicker() {
+            const container = document.getElementById('project-picker-content');
+            if (!container) return;
+            const currentId = document.getElementById('selected-project-id')?.value || '';
+            const noneActive = !currentId;
+            const rows = [
+                `<button type="button" onclick="selectProject(''); closeProjectPicker();" class="account-choice ${noneActive ? 'active' : ''}">
+                    <span class="font-semibold">${t('noProject')}</span>
+                    <span class="text-gray-300">${noneActive ? '✓' : '›'}</span>
+                </button>`
+            ];
+            rows.push(...budgetProjects.map(project => {
+                const isActive = project.id === currentId;
+                return `
+                    <button type="button" onclick="selectProject('${project.id}'); closeProjectPicker();" class="account-choice ${isActive ? 'active' : ''}">
+                        <span>
+                            <span class="block text-sm font-semibold">${escapeHTML(project.name)}</span>
+                            <span class="block text-[11px] text-gray-400 mt-1">${formatPrivateMoney(project.budget || 0, project.currency || '¥')}</span>
+                        </span>
+                        <span class="text-gray-300">${isActive ? '✓' : '›'}</span>
+                    </button>
+                `;
+            }));
+            rows.push(`<button type="button" onclick="addBudgetProject(); renderProjectPicker();" class="account-choice border-dashed text-blue-600 font-semibold">${t('addProjectShort')}</button>`);
+            container.innerHTML = rows.join('');
+        }
+
+        function ensurePreferredAddSelections() {
+            const selectedAccount = document.getElementById('selected-account');
+            const selectedGroup = document.getElementById('selected-account-group');
+            if (selectedAccount && (!selectedAccount.value || isPrimaryAccount(selectedAccount.value))) {
+                const preferredAccount = userAccounts.find(acc => !isPrimaryAccount(acc) && /paypay/i.test(acc));
+                if (preferredAccount) {
+                    selectedAccount.value = preferredAccount;
+                    if (selectedGroup) selectedGroup.value = accountGroupMap[preferredAccount] || selectedGroup.value;
+                    document.getElementById('currency').value = getAccountCurrency(preferredAccount);
+                }
+            }
+            const selectedProject = document.getElementById('selected-project-id');
+            if (selectedProject && !selectedProject.value) {
+                const preferredProject = budgetProjects.find(project => project.name === '省錢大作戰' || project.name === '節約大作戦');
+                if (preferredProject) selectedProject.value = preferredProject.id;
+            }
+            renderProjectSummary();
+            renderAccountSummaries();
         }
 
         function renderBudgetProjectSettings() {
@@ -2761,7 +3138,177 @@
                 return `<button onclick="selectAccount(decodeURIComponent('${encodeURIComponent(acc)}'), 'to')" class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium transition ${activeClass}">${escapeHTML(displayLabel(acc))}</button>`;
             }).join('') : `<span class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium bg-gray-50 text-gray-400 border border-dashed border-gray-200">${t('noSubAccount')}</span>`;
             containerToSub.innerHTML += `<button onclick="addSubAccount(decodeURIComponent('${encodeURIComponent(currentToGroup)}'))" class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium bg-gray-50 text-gray-400 border border-dashed border-gray-300 hover:bg-gray-100 transition">${t('addSubAccount')}</button>`;
+            renderAccountSummaries();
+            if (!document.getElementById('account-picker')?.classList.contains('hidden')) renderAccountPicker();
         }
+
+        function accountSummaryText(type = 'from') {
+            const group = document.getElementById(type === 'to' ? 'selected-to-account-group' : 'selected-account-group')?.value || '';
+            const acc = document.getElementById(type === 'to' ? 'selected-to-account' : 'selected-account')?.value || '';
+            if (!acc) return t('noSubAccount');
+            const accountLabel = displayLabel(acc);
+            return accountLabel;
+        }
+
+        function renderAccountSummaries() {
+            const fromSummary = document.getElementById('selected-account-summary');
+            const toSummary = document.getElementById('selected-to-account-summary');
+            if (fromSummary) fromSummary.textContent = accountSummaryText('from');
+            if (toSummary) toSummary.textContent = accountSummaryText('to');
+        }
+
+        function openAccountPicker(type = 'from') {
+            activeAccountPickerType = type;
+            const picker = document.getElementById('account-picker');
+            const title = document.getElementById('account-picker-title');
+            if (title) title.textContent = type === 'to' ? t('accountPickerToTitle') : t('accountPickerTitle');
+            renderAccountPicker();
+            picker?.classList.remove('hidden');
+        }
+
+        function closeAccountPicker() {
+            document.getElementById('account-picker')?.classList.add('hidden');
+        }
+
+        function currencyCodeFromSymbol(symbol) {
+            return supportedCurrencies.find(curr => curr.symbol === symbol)?.code || symbol || 'JPY';
+        }
+
+        function renderAccountPicker() {
+            const container = document.getElementById('account-picker-content');
+            if (!container) return;
+            const type = activeAccountPickerType;
+            const currentGroup = document.getElementById(type === 'to' ? 'selected-to-account-group' : 'selected-account-group')?.value || '';
+            const currentAcc = document.getElementById(type === 'to' ? 'selected-to-account' : 'selected-account')?.value || '';
+            container.innerHTML = accountGroups.map(group => {
+                const children = childAccountsForGroup(group);
+                const childHtml = children.length ? children.map(acc => {
+                    const isActive = acc === currentAcc;
+                    const currency = getAccountCurrency(acc);
+                    return `
+                        <button type="button" onclick="selectAccountGroup(decodeURIComponent('${encodeURIComponent(group)}'), '${type}'); selectAccount(decodeURIComponent('${encodeURIComponent(acc)}'), '${type}'); closeAccountPicker();" class="account-choice ${isActive ? 'active' : ''}">
+                            <span>
+                                <span class="block text-sm font-semibold">${escapeHTML(displayLabel(acc))}</span>
+                                <span class="block text-[11px] text-gray-400 mt-1">${escapeHTML(displayLabel(group))} · ${escapeHTML(currencyCodeFromSymbol(currency))}</span>
+                            </span>
+                            <span class="text-gray-300">${isActive ? '✓' : '›'}</span>
+                        </button>
+                    `;
+                }).join('') : `<div class="rounded-xl border border-dashed border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-400">${t('noSubAccount')}</div>`;
+                return `
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between gap-3">
+                            <div class="text-xs font-bold uppercase tracking-[.12em] text-gray-400">${escapeHTML(displayLabel(group))}</div>
+                            <button type="button" onclick="addSubAccount(decodeURIComponent('${encodeURIComponent(group)}')); renderAccountPicker();" class="text-xs font-semibold text-blue-600">${t('addSubAccount')}</button>
+                        </div>
+                        ${childHtml}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderCalculator() {
+            const input = document.getElementById('price');
+            const expressionEl = document.getElementById('calculator-expression');
+            if (!input || !expressionEl) return;
+            const displayExpression = calculatorExpression
+                .replace(/\*/g, ' × ')
+                .replace(/\//g, ' ÷ ')
+                .replace(/-/g, ' − ')
+                .replace(/\+/g, ' + ')
+                .replace(/\s+/g, ' ')
+                .trim();
+            expressionEl.textContent = /[+\-*/]/.test(calculatorExpression) ? displayExpression : '';
+            if (!/[+\-*/]/.test(calculatorExpression)) input.value = calculatorExpression;
+        }
+
+        function showCalculator() {
+            document.getElementById('calculator-panel')?.classList.remove('hidden');
+        }
+
+        function hideCalculator() {
+            document.getElementById('calculator-panel')?.classList.add('hidden');
+        }
+
+        function evaluateCalculatorExpression() {
+            const input = document.getElementById('price');
+            const expressionEl = document.getElementById('calculator-expression');
+            const raw = calculatorExpression || input?.value || '';
+            if (!raw) return;
+            if (!/^[0-9+\-*/. ()]+$/.test(raw)) return;
+            try {
+                const result = Function(`"use strict"; return (${raw});`)();
+                if (!Number.isFinite(result)) return;
+                const rounded = Math.round(result * 100) / 100;
+                calculatorExpression = String(rounded);
+                if (input) input.value = calculatorExpression;
+                if (expressionEl) expressionEl.textContent = '';
+            } catch (error) {
+                showToast(t('toastEnterAmount'));
+            }
+        }
+
+        function calculatorPress(key) {
+            const input = document.getElementById('price');
+            if (!input) return;
+            showCalculator();
+            const operators = { '÷': '/', '×': '*', '−': '-', '+': '+' };
+            if (key === 'C') {
+                calculatorExpression = '';
+                input.value = '';
+                renderCalculator();
+                return;
+            }
+            if (key === '⌫') {
+                calculatorExpression = (calculatorExpression || input.value || '').slice(0, -1);
+                renderCalculator();
+                return;
+            }
+            if (key === '✓' || key === '↵') {
+                evaluateCalculatorExpression();
+                renderCalculator();
+                hideCalculator();
+                return;
+            }
+            if (operators[key]) {
+                const base = calculatorExpression || input.value || '';
+                if (!base) return;
+                calculatorExpression = base.replace(/[+\-*/.]$/, '') + operators[key];
+                renderCalculator();
+                return;
+            }
+            if (key === '.') {
+                const currentNumber = (calculatorExpression || input.value || '').split(/[+\-*/]/).pop();
+                if (currentNumber.includes('.')) return;
+            }
+            calculatorExpression = (calculatorExpression || input.value || '') + key;
+            renderCalculator();
+        }
+
+        function calculatorQuick(value) {
+            showCalculator();
+            calculatorExpression = String(value);
+            const input = document.getElementById('price');
+            if (input) input.value = calculatorExpression;
+            renderCalculator();
+        }
+
+        window.showCalculator = showCalculator;
+        window.hideCalculator = hideCalculator;
+        window.openProjectPicker = openProjectPicker;
+        window.closeProjectPicker = closeProjectPicker;
+        window.renderInstallmentSummary = renderInstallmentSummary;
+        window.openAccountPicker = openAccountPicker;
+        window.closeAccountPicker = closeAccountPicker;
+        window.calculatorPress = calculatorPress;
+        window.calculatorQuick = calculatorQuick;
+
+        document.addEventListener('click', event => {
+            if (!document.getElementById('page-add')?.classList.contains('active')) return;
+            const target = event.target;
+            if (target?.closest?.('#price, #calculator-panel')) return;
+            hideCalculator();
+        });
 
         function selectAccountGroup(group, type) {
             const children = childAccountsForGroup(group);
@@ -2924,7 +3471,7 @@
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.page === id));
             if(id === 'record') { renderDashboardDatePicker(); renderDailyRecords(); }
             if(id === 'report') renderList();
-            if(id === 'add') { renderTypes(); renderAccounts(); renderProjectButtons(); toggleInstallmentFields(); }
+            if(id === 'add') { renderTypes(); renderAccounts(); renderProjectButtons(); ensurePreferredAddSelections(); toggleInstallmentFields(); hideCalculator(); }
             if(id === 'dashboard') { updateBalances(); }
             if(id === 'more') { renderAccountGroupSettings(); renderExchangeRateSettings(); renderBudgetProjectSettings(); }
         }
@@ -3035,7 +3582,10 @@
             nameInput.value = '';
             nameInput.dataset.rawValue = '';
             nameInput.dataset.autoFilled = 'true'; 
+            calculatorExpression = '';
             document.getElementById('price').value = '';
+            renderCalculator();
+            hideCalculator();
             document.getElementById('photo').value = '';
             document.getElementById('installment-enabled').checked = false;
             toggleInstallmentFields();
@@ -3202,7 +3752,7 @@
             showToast(t('toastExported'));
         }
 
-        const APP_VERSION = '20260610-14';
+        const APP_VERSION = '20260611-01';
 
         function registerServiceWorker() {
             if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;

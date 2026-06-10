@@ -1,12 +1,10 @@
-const CACHE_NAME = 'minekakeibo-v20260610-14';
+const CACHE_NAME = 'minekakeibo-v20260611-01';
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.webmanifest',
   './icons/favicon-32.png',
   './icons/apple-touch-icon.png',
-  './icons/miffy-center-button.png',
-  './icons/miffy-head-button.png',
   './icons/icon-192.png',
   './icons/icon-512.png'
 ];
