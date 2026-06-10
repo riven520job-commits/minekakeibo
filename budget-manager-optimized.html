@@ -27,6 +27,7 @@
             --soft: #f6f8fb;
             --accent: #2563eb;
         }
+        html, body { overscroll-behavior-y: none; }
         body.eye-care {
             --ink: #243026;
             --muted: #71806f;
@@ -51,26 +52,32 @@
             font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
             background: linear-gradient(180deg, #f7f9fc 0%, #ffffff 36%);
             color: var(--ink);
+            font-size: 14px;
             min-height: 100vh;
             padding-bottom: calc(6rem + env(safe-area-inset-bottom));
         }
+        h1 { font-size: 1.5rem !important; line-height: 1.25 !important; letter-spacing: 0 !important; }
+        h2 { font-size: 1.125rem !important; line-height: 1.35 !important; letter-spacing: 0 !important; }
+        h3 { letter-spacing: 0 !important; }
         .app-shell { min-height: 100vh; }
-        .page { display: none; animation: fadeIn 160ms ease-out; }
+        .page { display: none; animation: fadeIn 120ms ease-out; }
         .page.active { display: block; }
         .section-label { color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
-        .surface { background: color-mix(in srgb, var(--panel) 92%, transparent); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 12px 28px rgba(31, 41, 51, .06); }
+        .surface { background: color-mix(in srgb, var(--panel) 92%, transparent); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 6px 16px rgba(31, 41, 51, .04); }
         .notion-input { background: var(--panel); border: 1px solid var(--line); padding: 13px 14px; border-radius: 12px; outline: none; width: 100%; transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease; }
         .notion-input:focus { border-color: #93c5fd; box-shadow: 0 0 0 4px rgba(37, 99, 235, .1); }
         .primary-btn { background: var(--ink); color: white; border-radius: 14px; box-shadow: 0 14px 24px rgba(31, 41, 51, .18); transition: transform 160ms ease, opacity 160ms ease; }
         .primary-btn:active { transform: translateY(1px) scale(.99); }
-        .nav-btn { color: #8993a4; border-radius: 14px; min-width: 62px; transition: color 160ms ease, background 160ms ease; }
+        .nav-btn { color: #8993a4; border-radius: 14px; min-width: 56px; transition: color 160ms ease, background 160ms ease; }
         .nav-btn.active { color: var(--accent); background: #eff6ff; }
         .nav-fab { width: 72px; height: 72px; margin-top: -34px; border: 5px solid #e0f2fe; border-radius: 9999px; background: #ffffff; color: var(--accent); box-shadow: 0 16px 28px rgba(37, 99, 235, .18); line-height: 1; overflow: hidden; padding: 7px; }
         .nav-btn.nav-fab.active { background: #ffffff !important; }
         .nav-fab img { width: 100%; height: 100%; object-fit: contain; border-radius: 9999px; display: block; mix-blend-mode: multiply; opacity: .96; }
         .date-chip { border-radius: 9999px; transition: border-color 160ms ease, color 160ms ease, background 160ms ease; }
         .date-chip.active { border-color: #38bdf8; color: var(--ink); background: #f0f9ff; }
-        nav { padding-bottom: max(1.25rem, env(safe-area-inset-bottom)); }
+        nav { padding-bottom: max(1.25rem, env(safe-area-inset-bottom)); box-shadow: none !important; }
+        nav .nav-btn span[data-i18n] { display: none; }
+        nav .nav-btn span.text-lg { margin-bottom: 0 !important; font-size: 1.65rem; line-height: 1; }
         .lang-toggle { position: fixed; top: 14px; right: max(14px, calc((100vw - 448px) / 2 + 14px)); z-index: 55; }
         .empty-state { border: 1px dashed #d8dee8; background: #f8fafc; border-radius: 14px; padding: 18px; text-align: center; color: var(--muted); font-size: 13px; }
         body.eye-care .empty-state { background: #faf7ea; border-color: #d9dec9; }
@@ -116,7 +123,40 @@
         details.settings-section > summary::-webkit-details-marker { display: none; }
         .toast { position: fixed; left: 50%; bottom: 92px; transform: translateX(-50%) translateY(16px); opacity: 0; pointer-events: none; transition: opacity 180ms ease, transform 180ms ease; z-index: 60; }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        .asset-dashboard {
+            background: transparent;
+            color: var(--ink);
+        }
+        .asset-dashboard .section-label,
+        .report-modal .section-label { color: var(--muted); }
+        .asset-hero { text-align: left; padding: 18px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); box-shadow: 0 6px 16px rgba(31, 41, 51, .04); margin-bottom: 22px; }
+        .asset-total { font-size: 2rem; line-height: 1.1; color: var(--ink); font-weight: 700; letter-spacing: 0; margin-top: 6px; }
+        .asset-subtotals { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; color: var(--muted); font-size: .78rem; margin-top: 14px; }
+        .asset-subtotals span { border: 1px solid var(--line); border-radius: 12px; padding: 10px; background: var(--soft); }
+        .asset-subtotals strong { display: block; font-size: .95rem; margin-top: 3px; }
+        .asset-chart { height: 122px; display: flex; align-items: end; gap: 10px; justify-content: center; padding: 16px 6px 0; border-top: 1px solid var(--line); margin-top: 14px; }
+        .asset-chart-group { width: 30px; height: 84px; display: flex; align-items: end; gap: 5px; position: relative; }
+        .asset-chart-bar { width: 12px; border-radius: 4px 4px 0 0; min-height: 6px; }
+        .asset-chart-bar.asset { background: #9bbcf8; }
+        .asset-chart-bar.liability { background: #f4a5a5; }
+        .asset-chart-label { color: var(--muted); font-size: 10px; text-align: center; margin-top: 6px; }
+        .dark-section-title { color: var(--ink); font-size: .78rem; font-weight: 700; margin: 18px 0 10px; letter-spacing: .08em; text-transform: uppercase; }
+        .report-modal > div { background: #ffffff !important; color: var(--ink); border-radius: 0 !important; top: 0 !important; }
+        .report-modal button { color: var(--ink) !important; background: var(--soft) !important; border-color: var(--line) !important; }
+        .monthly-tabs { display: flex; gap: 18px; overflow-x: auto; border-bottom: 1px solid var(--line); margin: 0 -20px; padding: 0 20px; }
+        .monthly-tabs span { color: var(--muted); padding: 11px 0 9px; white-space: nowrap; font-weight: 600; font-size: .82rem; }
+        .monthly-tabs span.active { color: var(--ink); border-bottom: 2px solid var(--ink); }
+        .monthly-row { display: grid; grid-template-columns: 78px 36px 1fr 92px; align-items: center; gap: 9px; color: var(--ink); padding: 7px 0; font-size: .86rem; }
+        .monthly-count { width: 32px; height: 32px; border-radius: 9999px; display: grid; place-items: center; font-size: 12px; color: #fff; font-weight: 800; }
+        .monthly-bar { height: 7px; border-radius: 9999px; opacity: .95; }
+        .monthly-amount { text-align: right; font-weight: 800; }
+        .donut-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+        .donut-card { text-align: center; }
+        .donut-ring { width: 86px; height: 86px; border-radius: 50%; display: grid; place-items: center; margin: 0 auto 10px; }
+        .donut-ring span { width: 62px; height: 62px; border-radius: 50%; background: #ffffff; display: grid; place-items: center; color: var(--muted); font-size: 13px; }
+        .top-record-row { display: grid; grid-template-columns: 56px 1fr auto; gap: 12px; align-items: center; padding: 12px 0; }
+        .top-record-icon { width: 50px; height: 50px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.12); font-size: 1.35rem; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         canvas { max-width: 100%; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -167,37 +207,30 @@
             </div>
         </section>
 
-        <section id="page-dashboard" class="page">
-            <div class="mb-5">
-                <p class="section-label mb-1">Budget Manager</p>
+        <section id="page-dashboard" class="page asset-dashboard">
+            <div class="mb-5 flex items-center justify-between gap-3">
+                <button onclick="toggleAmountVisibility()" class="w-10 h-10 rounded-full border border-gray-100 bg-gray-50 text-lg">◉</button>
                 <h1 class="text-2xl font-bold tracking-tight" data-i18n="dashboardTitle">資產總覽</h1>
+                <button onclick="addAccountGroup()" class="w-10 h-10 rounded-full border border-gray-100 bg-gray-50 text-2xl leading-none">+</button>
             </div>
             
-            <div class="surface p-6 mb-6 relative overflow-hidden bg-gradient-to-br from-white via-white to-blue-50">
-                <div class="absolute -top-7 -right-7 h-28 w-28 rounded-full bg-blue-100"></div>
-                <button id="amount-visibility-toggle" onclick="toggleAmountVisibility()" class="absolute top-4 right-4 z-20 text-[10px] font-semibold text-gray-600 bg-white/90 border border-gray-200 px-3 py-1.5 rounded-full shadow-sm" data-i18n="hideAmounts">隱藏金額</button>
-                <p class="text-xs text-gray-500 relative z-10" data-i18n="netWorthLabel">總資產淨額 (JPY)</p>
-                <div class="text-4xl font-bold mt-2 relative z-10" id="total-net-worth">¥0</div>
-                <div class="grid grid-cols-2 gap-3 mt-4 relative z-10">
-                    <div class="rounded-xl bg-white/70 border border-white/80 p-3">
-                        <div class="text-[10px] text-gray-400 font-semibold" data-i18n="totalAssetsLabel">總資產</div>
-                        <div id="total-assets" class="text-sm font-bold text-green-600 mt-1">¥0</div>
-                    </div>
-                    <div class="rounded-xl bg-white/70 border border-white/80 p-3">
-                        <div class="text-[10px] text-gray-400 font-semibold" data-i18n="totalLiabilitiesLabel">總負債</div>
-                        <div id="total-liabilities" class="text-sm font-bold text-red-500 mt-1">¥0</div>
-                    </div>
+            <div class="asset-hero">
+                <div class="text-sm text-white/70 font-semibold" data-i18n="netWorthLabel">總資產淨額 (JPY)</div>
+                <div class="asset-total" id="total-net-worth">¥0</div>
+                <div class="asset-subtotals">
+                    <span><span data-i18n="totalAssetsLabel">總資產</span> <strong id="total-assets" class="text-[#8bd85a]">¥0</strong></span>
+                    <span><span data-i18n="totalLiabilitiesLabel">總負債</span> <strong id="total-liabilities" class="text-[#f05a68]">¥0</strong></span>
                 </div>
-                <p class="text-xs text-gray-400 mt-3 relative z-10" data-i18n="netWorthHint">包含初始金額與所有歷史紀錄</p>
+                <div id="asset-mini-chart" class="asset-chart"></div>
             </div>
 
-            <h3 class="section-label mb-3 flex justify-between items-center">
+            <h3 class="dark-section-title flex justify-between items-center">
                 <span data-i18n="budgetProjectsTitle">預算專案</span>
                 <button onclick="addBudgetProject()" class="text-[10px] text-blue-600 font-semibold normal-case" data-i18n="addProjectShort">＋新增專案</button>
             </h3>
             <div id="budget-projects-dashboard" class="space-y-3 mb-8"></div>
 
-            <h3 class="section-label mb-3 flex justify-between items-center">
+            <h3 class="dark-section-title flex justify-between items-center">
                 <span data-i18n="accountBalances">各帳戶餘額</span>
                 <span class="flex items-center gap-3">
                     <button onclick="setAllAccountGroupsCollapsed(false)" class="text-[10px] text-blue-600 font-semibold normal-case" data-i18n="expandAllAccounts">全部展開</button>
@@ -469,14 +502,15 @@
         </div>
     </div>
 
-    <div id="monthly-report-modal" class="hidden fixed inset-0 z-[72] bg-black/40 backdrop-blur-sm">
-        <div class="absolute inset-x-0 bottom-0 top-8 max-w-md mx-auto bg-white rounded-t-3xl shadow-2xl overflow-hidden flex flex-col">
-            <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between gap-3">
-                <div>
+    <div id="monthly-report-modal" class="report-modal hidden fixed inset-0 z-[72] bg-black/40">
+        <div class="absolute inset-x-0 bottom-0 top-0 max-w-md mx-auto overflow-hidden flex flex-col">
+            <div class="px-5 py-5 flex items-center justify-between gap-3">
+                <button onclick="closeMonthlyReportModal()" class="w-10 h-10 rounded-full border border-gray-100 bg-gray-50 text-gray-500 text-xl">‹</button>
+                <div class="text-center">
                     <p class="section-label mb-1" data-i18n="monthlyReportTitle">每月報表</p>
                     <h2 id="monthly-report-month" class="text-xl font-bold tracking-tight">2026/06</h2>
                 </div>
-                <button onclick="closeMonthlyReportModal()" class="w-10 h-10 rounded-full bg-gray-100 text-gray-500 font-bold">×</button>
+                <button onclick="closeMonthlyReportModal()" class="w-10 h-10 rounded-full border border-gray-100 bg-gray-50 text-gray-500 text-xl">☰</button>
             </div>
             <div id="monthly-report-content" class="px-5 py-4 overflow-y-auto space-y-4"></div>
         </div>
@@ -542,6 +576,18 @@
         let amountsHidden = JSON.parse(localStorage.getItem('myAmountsHidden')) || false;
         let eyeCareMode = JSON.parse(localStorage.getItem('myEyeCareMode')) || false;
         let nightMode = JSON.parse(localStorage.getItem('myNightMode')) || false;
+        if (!localStorage.getItem('myWhiteNotionDefaultedV1')) {
+            nightMode = false;
+            localStorage.setItem('myNightMode', JSON.stringify(false));
+            localStorage.setItem('myWhiteNotionDefaultedV1', 'true');
+        }
+        if (!localStorage.getItem('myWhiteNotionDefaultedV2')) {
+            eyeCareMode = false;
+            nightMode = false;
+            localStorage.setItem('myEyeCareMode', JSON.stringify(false));
+            localStorage.setItem('myNightMode', JSON.stringify(false));
+            localStorage.setItem('myWhiteNotionDefaultedV2', 'true');
+        }
         const legacyAccountGroups = ['日常資金', '卡片與支付'];
         function isPrimaryAccount(acc) { return defaultAccountGroups.includes(acc); }
         function childAccountsForGroup(group) {
@@ -1460,6 +1506,16 @@
             document.body.style.overflow = '';
         }
 
+        function shiftEntryMonth(direction) {
+            const date = parseLocalDate(selectedEntryDate);
+            date.setMonth(date.getMonth() + direction);
+            selectedEntryDate = formatLocalDate(date);
+            localStorage.setItem('mySelectedEntryDate', selectedEntryDate);
+            renderDashboardDatePicker();
+            renderDailyRecords();
+            renderMonthlyReport();
+        }
+
         function renderMonthlyReport() {
             const monthKeyValue = selectedMonthKey();
             const title = document.getElementById('monthly-report-month');
@@ -1469,48 +1525,98 @@
             const monthRecords = data.filter(item => (item.date || '').substring(0, 7) === monthKeyValue);
             let income = 0;
             let expense = 0;
+            let transferOut = 0;
+            let transferIn = 0;
+            let adjustment = 0;
+            const counts = { expense: 0, income: 0, transferOut: 0, transferIn: 0, adjustment: 0 };
             const categories = {};
+            const topRecords = [];
             monthRecords.forEach(item => {
                 const value = toJPY(item.price, item.currency || '¥');
-                if (['收入', '應收帳款'].includes(item.type)) income += value;
+                if (['收入', '應收帳款'].includes(item.type)) { income += value; counts.income++; }
+                if (item.type === '轉帳') { transferOut += value; transferIn += value; counts.transferOut++; counts.transferIn++; }
+                if (item.type === '系統') { adjustment -= value; counts.adjustment++; }
                 if (['支出', '應付帳款', '系統'].includes(item.type)) {
                     expense += value;
+                    counts.expense++;
                     categories[item.mainCat || item.subCatName || t('uncategorized')] = (categories[item.mainCat || item.subCatName || t('uncategorized')] || 0) + value;
+                    topRecords.push(item);
                 }
             });
             const net = income - expense;
             const categoryEntries = Object.entries(categories).sort((a, b) => b[1] - a[1]);
+            const maxSummary = Math.max(expense, income, transferOut, transferIn, Math.abs(adjustment), Math.abs(net), 1);
+            const summaryRows = [
+                { label: displayLabel('支出'), count: counts.expense, amount: -expense, color: '#f05a68' },
+                { label: displayLabel('收入'), count: counts.income, amount: income, color: '#8bd85a' },
+                { label: displayLabel('轉帳') + '-', count: counts.transferOut, amount: -transferOut, color: '#e28a3a' },
+                { label: displayLabel('轉帳') + '+', count: counts.transferIn, amount: transferIn, color: '#f5d79b' },
+                { label: displayLabel('餘額調整'), count: counts.adjustment, amount: adjustment, color: '#6f78d8' },
+                { label: t('monthlyNet'), count: monthRecords.length, amount: net, color: '#a46ad6' }
+            ];
+            const topExpenseRecords = topRecords
+                .sort((a, b) => toJPY(b.price, b.currency || '¥') - toJPY(a.price, a.currency || '¥'))
+                .slice(0, 3);
             container.innerHTML = `
-                <div class="grid grid-cols-3 gap-2">
-                    <div class="surface p-3 shadow-none">
-                        <div class="text-[10px] text-gray-400 font-semibold">${t('monthlyIncome')}</div>
-                        <div class="text-sm font-bold text-green-600 mt-1">${formatPrivateJPY(income, '¥')}</div>
-                    </div>
-                    <div class="surface p-3 shadow-none">
-                        <div class="text-[10px] text-gray-400 font-semibold">${t('monthlyExpense')}</div>
-                        <div class="text-sm font-bold text-red-500 mt-1">${formatPrivateJPY(expense, '¥')}</div>
-                    </div>
-                    <div class="surface p-3 shadow-none">
-                        <div class="text-[10px] text-gray-400 font-semibold">${t('monthlyNet')}</div>
-                        <div class="text-sm font-bold ${net < 0 ? 'text-red-500' : 'text-gray-800'} mt-1">${formatPrivateJPY(net, '¥')}</div>
-                    </div>
+                <div class="flex items-center justify-center gap-3 text-base font-semibold">
+                    <button onclick="shiftEntryMonth(-1)" class="text-gray-500">‹</button>
+                    <span>${monthKeyValue.replace('-', '/')} / 01 - ${monthKeyValue.replace('-', '/')} / ${String(new Date(Number(monthKeyValue.slice(0,4)), Number(monthKeyValue.slice(5,7)), 0).getDate()).padStart(2, '0')}</span>
+                    <button onclick="shiftEntryMonth(1)" class="text-gray-500">›</button>
                 </div>
-                <div class="surface p-4">
-                    <div class="text-xs text-gray-500 font-medium mb-3">${t('monthlyTopCategories')}</div>
-                    <div class="space-y-3">
-                        ${categoryEntries.length ? categoryEntries.slice(0, 6).map(([name, amount], index) => {
+                <div class="monthly-tabs">
+                    <span class="active">${t('navDashboard')}</span>
+                    <span>${t('navReport')}</span>
+                    <span>${t('categoryChartTitle')}</span>
+                    <span>${t('topCategoriesTitle')}</span>
+                    <span>${t('accountBalances')}</span>
+                </div>
+                <div>
+                    ${summaryRows.map(row => {
+                        const width = Math.max(6, Math.round((Math.abs(row.amount) / maxSummary) * 100));
+                        const amountText = amountsHidden ? `¥${t('hiddenAmount')}` : `${row.amount < 0 ? '-' : '+'}¥${Math.round(Math.abs(row.amount)).toLocaleString()}`;
+                        return `
+                            <div class="monthly-row">
+                                <div>${escapeHTML(row.label)}</div>
+                                <div class="monthly-count" style="background:${row.color}">${row.count}</div>
+                                <div class="monthly-bar" style="width:${width}%; background:${row.color}"></div>
+                                <div class="monthly-amount" style="color:${row.color}">${amountText}</div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+                <div>
+                    <h3 class="dark-section-title">${t('categoryChartTitle')}</h3>
+                    <div class="donut-grid">
+                        ${categoryEntries.length ? categoryEntries.slice(0, 3).map(([name, amount], index) => {
                             const ratio = expense ? Math.round((amount / expense) * 100) : 0;
                             const color = chartColors[index % chartColors.length];
                             return `
-                                <div>
-                                    <div class="flex items-center justify-between gap-3 text-xs mb-1">
-                                        <span class="font-semibold text-gray-700 truncate">${escapeHTML(displayLabel(name))}</span>
-                                        <span class="text-gray-500 shrink-0">${formatPrivateJPY(amount, '¥')} · ${ratio}%</span>
+                                <div class="donut-card">
+                                    <div class="donut-ring" style="background: conic-gradient(${color} ${ratio}%, rgba(255,255,255,.14) 0)">
+                                        <span>${ratio}%</span>
                                     </div>
-                                    <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-                                        <div class="h-full rounded-full" style="width:${ratio}%; background:${color}"></div>
-                                    </div>
+                                    <div class="font-semibold text-sm">${escapeHTML(displayLabel(name))}</div>
+                                    <div class="text-red-400 font-bold">${formatPrivateJPY(amount, '¥')}</div>
                                 </div>
+                            `;
+                        }).join('') : `<div class="empty-state col-span-3">${t('monthlyNoData')}</div>`}
+                    </div>
+                </div>
+                <div>
+                    <h3 class="dark-section-title">TOP 3</h3>
+                    <div>
+                        ${topExpenseRecords.length ? topExpenseRecords.map(item => {
+                            const safeIcon = item.subCatIcon || '📝';
+                            const iconHtml = safeIcon.startsWith('data:image') ? `<img src="${safeIcon}" class="w-full h-full rounded-full object-cover">` : escapeHTML(safeIcon);
+                            return `
+                                <button onclick="closeMonthlyReportModal(); openRecordDetail(${data.indexOf(item)})" class="top-record-row w-full text-left">
+                                    <span class="top-record-icon">${iconHtml}</span>
+                                    <span class="min-w-0">
+                                        <span class="block text-base font-semibold truncate">${escapeHTML(displayLabel(item.name))}</span>
+                                        <span class="block text-xs text-gray-400 truncate">${escapeHTML(projectById(item.projectId)?.name || displayLabel(item.account || ''))}</span>
+                                    </span>
+                                    <span class="text-red-500 text-base font-bold">¥${Math.round(toJPY(item.price, item.currency || '¥')).toLocaleString()}</span>
+                                </button>
                             `;
                         }).join('') : `<div class="empty-state">${t('monthlyNoData')}</div>`}
                     </div>
@@ -1573,6 +1679,7 @@
         window.editRecord = editRecord;
         window.toggleDailyRecordsExpanded = toggleDailyRecordsExpanded;
         window.calculateFurusato = calculateFurusato;
+        window.shiftEntryMonth = shiftEntryMonth;
 
         function formatMoney(value, currency = '¥') {
             return `${currency}${Math.round(parseFloat(value) || 0).toLocaleString()}`;
@@ -2178,10 +2285,44 @@
                     `;
                 }).join('');
 
-            document.getElementById('total-net-worth').innerText = amountsHidden ? `¥${t('hiddenAmount')}` : `¥${Math.round(totalNet).toLocaleString()}`;
-            document.getElementById('total-net-worth').className = `text-4xl font-bold mt-2 relative z-10 ${totalNet < 0 ? 'text-red-500' : 'text-gray-800'}`;
+            const totalNetEl = document.getElementById('total-net-worth');
+            totalNetEl.innerText = amountsHidden ? `¥${t('hiddenAmount')}` : `¥${Math.round(totalNet).toLocaleString()}`;
+            totalNetEl.className = `asset-total ${totalNet < 0 ? 'text-red-500' : ''}`;
             document.getElementById('total-assets').innerText = amountsHidden ? `¥${t('hiddenAmount')}` : `¥${Math.round(totalAssets).toLocaleString()}`;
             document.getElementById('total-liabilities').innerText = amountsHidden ? `¥${t('hiddenAmount')}` : `¥${Math.round(totalLiabilities).toLocaleString()}`;
+
+            const chart = document.getElementById('asset-mini-chart');
+            if (chart) {
+                const now = new Date();
+                const monthKeys = Array.from({ length: 6 }, (_, index) => {
+                    const d = new Date(now.getFullYear(), now.getMonth() - (5 - index), 1);
+                    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+                });
+                const monthData = monthKeys.map(key => {
+                    let income = 0;
+                    let expense = 0;
+                    data.filter(item => (item.date || '').substring(0, 7) === key).forEach(item => {
+                        const value = toJPY(item.price, item.currency || '¥');
+                        if (['收入', '應收帳款'].includes(item.type)) income += value;
+                        if (['支出', '應付帳款', '系統'].includes(item.type)) expense += value;
+                    });
+                    return { key, income, expense };
+                });
+                const maxMonthly = Math.max(...monthData.flatMap(item => [item.income, item.expense]), 1);
+                chart.innerHTML = monthData.map(item => {
+                    const incomeHeight = Math.max(8, Math.round((item.income / maxMonthly) * 120));
+                    const expenseHeight = Math.max(8, Math.round((item.expense / maxMonthly) * 120));
+                    return `
+                        <div>
+                            <div class="asset-chart-group">
+                                <div class="asset-chart-bar liability" style="height:${expenseHeight}px"></div>
+                                <div class="asset-chart-bar asset" style="height:${incomeHeight}px"></div>
+                            </div>
+                            <div class="asset-chart-label">${item.key.slice(5)}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
 
             renderCharts();
             renderAccountGroupSettings();
@@ -3061,7 +3202,7 @@
             showToast(t('toastExported'));
         }
 
-        const APP_VERSION = '20260610-10';
+        const APP_VERSION = '20260610-14';
 
         function registerServiceWorker() {
             if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
