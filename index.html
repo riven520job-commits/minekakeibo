@@ -143,11 +143,15 @@
         .asset-analysis-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
         .asset-analysis-actions button { border: 1px solid var(--line); border-radius: 12px; padding: 12px; background: var(--soft); color: var(--ink); text-align: left; font-size: .78rem; font-weight: 700; }
         .asset-analysis-actions small { display: block; color: var(--muted); font-size: .66rem; margin-top: 3px; font-weight: 600; }
-        .asset-pie-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-        .asset-pie { width: 132px; height: 132px; border-radius: 50%; margin: 0 auto 12px; background: conic-gradient(#111827 0 100%); position: relative; }
-        .asset-pie::after { content: ""; position: absolute; inset: 29px; border-radius: 50%; background: var(--panel); border: 1px solid var(--line); }
-        .asset-analysis-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); font-size: .82rem; }
+        .asset-analysis-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .asset-analysis-switch button { border: 1px solid var(--line); border-radius: 12px; background: var(--soft); color: var(--muted); padding: 10px 12px; font-size: .82rem; font-weight: 800; }
+        .asset-analysis-switch button.active { background: var(--ink); color: var(--panel); border-color: var(--ink); }
+        .asset-pie { width: min(220px, 68vw); height: min(220px, 68vw); border-radius: 50%; margin: 4px auto 18px; background: conic-gradient(#111827 0 100%); position: relative; }
+        .asset-pie::after { content: ""; position: absolute; inset: 24%; border-radius: 50%; background: var(--panel); border: 1px solid var(--line); }
+        .asset-analysis-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); font-size: .82rem; }
         .asset-analysis-dot { width: 10px; height: 10px; border-radius: 9999px; background: #111827; flex: 0 0 auto; }
+        .asset-analysis-name { min-width: 0; overflow-wrap: anywhere; line-height: 1.35; }
+        .asset-analysis-amount { text-align: right; color: var(--muted); white-space: nowrap; line-height: 1.35; }
         .dark-section-title { color: var(--ink); font-size: .78rem; font-weight: 700; margin: 18px 0 10px; letter-spacing: .08em; text-transform: uppercase; }
         .report-modal > div { background: #ffffff !important; color: var(--ink); border-radius: 0 !important; top: 0 !important; }
         .report-modal button { color: var(--ink) !important; background: var(--soft) !important; border-color: var(--line) !important; }
@@ -267,11 +271,11 @@
                     <span><span data-i18n="totalLiabilitiesLabel">總負債</span> <strong id="total-liabilities" class="text-[#f05a68]">¥0</strong></span>
                 </div>
                 <div class="asset-analysis-actions">
-                    <button onclick="openAssetAnalysisModal('group')">
+                    <button onclick="openAssetAnalysisModal('group', 'assets')">
                         <span data-i18n="assetGroupShare">各分組佔比</span>
                         <small data-i18n="assetGroupShareHint">依帳戶分類查看資產與負債</small>
                     </button>
-                    <button onclick="openAssetAnalysisModal('currency')">
+                    <button onclick="openAssetAnalysisModal('currency', 'assets')">
                         <span data-i18n="assetCurrencyShare">各幣種佔比</span>
                         <small data-i18n="assetCurrencyShareHint">依幣值查看資產與負債</small>
                     </button>
@@ -829,13 +833,14 @@
         let categoryChartObj = null;
         let currencyChartObj = null;
         
-        const chartColors = ['#111827', '#374151', '#4b5563', '#6b7280', '#9ca3af', '#d1d5db', '#27272a', '#52525b', '#a1a1aa'];
+        const chartColors = ['#111827', '#6b7280', '#a16207', '#0f766e', '#7c3aed', '#be123c', '#2563eb', '#15803d', '#c2410c'];
         let currentLang = localStorage.getItem('myBudgetLang') || 'zh';
         let statsRange = localStorage.getItem('myStatsRange') || '6m';
         let selectedEntryDate = localStorage.getItem('mySelectedEntryDate') || todayString();
         let dailyRecordsExpanded = false;
         let assetAnalysisData = { group: { assets: [], liabilities: [] }, currency: { assets: [], liabilities: [] } };
         let activeAssetAnalysisKind = 'group';
+        let activeAssetAnalysisSide = 'assets';
         const SUPABASE_URL = 'https://ymxjnjrkndzemepflymc.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlteGpuanJrbmR6ZW1lcGZseW1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5Mzg2MDUsImV4cCI6MjA5NjUxNDYwNX0.eDKpQocEdSk0VoNqfGmegMuIRbfhwQLQuBaGajLyD5o';
         const SITE_URL = 'https://riven520job-commits.github.io/minekakeibo/';
@@ -2632,11 +2637,11 @@
                 const color = chartColors[index % chartColors.length];
                 return `
                     <div class="asset-analysis-row">
-                        <span class="flex items-center gap-2 min-w-0">
+                        <span class="flex items-start gap-2 min-w-0">
                             <span class="asset-analysis-dot" style="background:${color}"></span>
-                            <span class="font-semibold truncate">${escapeHTML(displayLabel(entry.label))}</span>
+                            <span class="asset-analysis-name font-semibold">${escapeHTML(displayLabel(entry.label))}</span>
                         </span>
-                        <span class="text-gray-500 shrink-0">${formatPrivateJPY(entry.amount, '¥')} · ${ratio}%</span>
+                        <span class="asset-analysis-amount">${formatPrivateJPY(entry.amount, '¥')}<br>${ratio}%</span>
                     </div>
                 `;
             }).join('') : `<div class="empty-state">${t('noChartData')}</div>`;
@@ -2649,19 +2654,28 @@
             `;
         }
 
-        function openAssetAnalysisModal(kind) {
+        function setAssetAnalysisSide(side) {
+            activeAssetAnalysisSide = side === 'liabilities' ? 'liabilities' : 'assets';
+            openAssetAnalysisModal(activeAssetAnalysisKind, activeAssetAnalysisSide);
+        }
+
+        function openAssetAnalysisModal(kind, side = activeAssetAnalysisSide) {
             const modal = document.getElementById('asset-analysis-modal');
             const title = document.getElementById('asset-analysis-title');
             const content = document.getElementById('asset-analysis-content');
             if (!modal || !title || !content) return;
             activeAssetAnalysisKind = kind || 'group';
+            activeAssetAnalysisSide = side === 'liabilities' ? 'liabilities' : 'assets';
             const dataSet = assetAnalysisData[kind] || assetAnalysisData.group;
             title.textContent = kind === 'currency' ? t('assetCurrencyAnalysisTitle') : t('assetGroupAnalysisTitle');
+            const activeEntries = dataSet[activeAssetAnalysisSide] || [];
+            const sideTitle = activeAssetAnalysisSide === 'liabilities' ? t('assetNegativePie') : t('assetPositivePie');
             content.innerHTML = `
-                <div class="asset-pie-grid">
-                    ${renderAssetPieSection(t('assetPositivePie'), dataSet.assets)}
-                    ${renderAssetPieSection(t('assetNegativePie'), dataSet.liabilities)}
+                <div class="asset-analysis-switch">
+                    <button type="button" onclick="setAssetAnalysisSide('assets')" class="${activeAssetAnalysisSide === 'assets' ? 'active' : ''}">${t('assetPositivePie')}</button>
+                    <button type="button" onclick="setAssetAnalysisSide('liabilities')" class="${activeAssetAnalysisSide === 'liabilities' ? 'active' : ''}">${t('assetNegativePie')}</button>
                 </div>
+                ${renderAssetPieSection(sideTitle, activeEntries)}
             `;
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
@@ -2676,6 +2690,7 @@
 
         window.openAssetAnalysisModal = openAssetAnalysisModal;
         window.closeAssetAnalysisModal = closeAssetAnalysisModal;
+        window.setAssetAnalysisSide = setAssetAnalysisSide;
 
         function addSubAccount(group) {
             const newAcc = prompt(t('promptAddSubAccount', displayLabel(group)));
@@ -3752,7 +3767,7 @@
             showToast(t('toastExported'));
         }
 
-        const APP_VERSION = '20260611-01';
+        const APP_VERSION = '20260611-03';
 
         function registerServiceWorker() {
             if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
