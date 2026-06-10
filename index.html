@@ -65,7 +65,9 @@
         .primary-btn:active { transform: translateY(1px) scale(.99); }
         .nav-btn { color: #8993a4; border-radius: 14px; min-width: 62px; transition: color 160ms ease, background 160ms ease; }
         .nav-btn.active { color: var(--accent); background: #eff6ff; }
-        .nav-fab { width: 68px; height: 68px; margin-top: -30px; border: 5px solid #e0f2fe; border-radius: 9999px; background: var(--panel); color: var(--accent); box-shadow: 0 16px 28px rgba(37, 99, 235, .18); font-size: 38px; line-height: 1; }
+        .nav-fab { width: 72px; height: 72px; margin-top: -34px; border: 5px solid #e0f2fe; border-radius: 9999px; background: #ffffff; color: var(--accent); box-shadow: 0 16px 28px rgba(37, 99, 235, .18); line-height: 1; overflow: hidden; padding: 7px; }
+        .nav-btn.nav-fab.active { background: #ffffff !important; }
+        .nav-fab img { width: 100%; height: 100%; object-fit: contain; border-radius: 9999px; display: block; mix-blend-mode: multiply; opacity: .96; }
         .date-chip { border-radius: 9999px; transition: border-color 160ms ease, color 160ms ease, background 160ms ease; }
         .date-chip.active { border-color: #38bdf8; color: var(--ink); background: #f0f9ff; }
         nav { padding-bottom: max(1.25rem, env(safe-area-inset-bottom)); }
@@ -98,6 +100,7 @@
         body.night-mode .hover\:bg-blue-100:hover,
         body.night-mode .hover\:bg-green-100:hover { background-color: #1d2a3f !important; }
         body.night-mode .nav-btn.active { background: rgba(37, 99, 235, .22); }
+        body.night-mode .nav-btn.nav-fab.active { background: #ffffff !important; }
         body.night-mode .nav-fab { border-color: #1e3a5f; box-shadow: 0 16px 28px rgba(0, 0, 0, .34); }
         body.night-mode .date-chip.active { background: rgba(56, 189, 248, .14); }
         .record-detail-card { background: var(--panel); color: var(--ink); }
@@ -127,10 +130,12 @@
     <button id="lang-toggle" onclick="toggleLanguage()" class="lang-toggle bg-white/95 backdrop-blur border border-gray-200 text-gray-700 text-xs font-bold px-3 py-2 rounded-full shadow-sm">日本語</button>
 
     <main class="px-5 pt-6 pb-28">
-        <section id="page-dashboard" class="page active">
+        <section id="page-record" class="page active">
             <div class="mb-5">
-                <p class="section-label mb-1">Budget Manager</p>
-                <h1 class="text-2xl font-bold tracking-tight" data-i18n="dashboardTitle">資產總覽</h1>
+                <div>
+                    <p class="section-label mb-1" data-i18n="recordKicker">Record</p>
+                    <h1 class="text-2xl font-bold tracking-tight" data-i18n="recordTitle">記帳</h1>
+                </div>
             </div>
 
             <div class="surface p-4 mb-5">
@@ -159,6 +164,13 @@
                     <span id="daily-record-total" class="text-[11px] text-gray-400 font-semibold normal-case">¥0</span>
                 </h3>
                 <div id="daily-record-list" class="space-y-3"></div>
+            </div>
+        </section>
+
+        <section id="page-dashboard" class="page">
+            <div class="mb-5">
+                <p class="section-label mb-1">Budget Manager</p>
+                <h1 class="text-2xl font-bold tracking-tight" data-i18n="dashboardTitle">資產總覽</h1>
             </div>
             
             <div class="surface p-6 mb-6 relative overflow-hidden bg-gradient-to-br from-white via-white to-blue-50">
@@ -473,9 +485,11 @@
     <div id="toast" class="toast bg-gray-900 text-white text-sm px-4 py-3 rounded-full shadow-xl"></div>
 
     <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white/95 backdrop-blur border-t border-gray-100 px-2 pt-2 pb-5 grid grid-cols-5 items-end gap-1 shadow-[0_-8px_24px_rgba(31,41,51,0.07)] z-50">
-        <button data-page="dashboard" onclick="switchPage('dashboard')" class="nav-btn active p-2 text-xs font-semibold flex flex-col items-center justify-center"><span class="text-lg mb-1">📊</span><span data-i18n="navDashboard">總覽</span></button>
+        <button data-page="dashboard" onclick="switchPage('dashboard')" class="nav-btn p-2 text-xs font-semibold flex flex-col items-center justify-center"><span class="text-lg mb-1">📊</span><span data-i18n="navDashboard">總覽</span></button>
         <button data-page="report" onclick="switchPage('report')" class="nav-btn p-2 text-xs font-semibold flex flex-col items-center justify-center"><span class="text-lg mb-1">💴</span><span data-i18n="navReport">省錢</span></button>
-        <button data-page="add" onclick="openAddWithSelectedDate()" class="nav-btn nav-fab flex items-center justify-center" aria-label="新增">+</button>
+        <button data-page="record" data-center-action="true" onclick="handleCenterAction()" class="nav-btn nav-fab active flex items-center justify-center" aria-label="新增">
+            <img src="icons/miffy-head-button.png" alt="">
+        </button>
         <button onclick="openMonthlyReportModal()" class="nav-btn p-2 text-xs font-semibold flex flex-col items-center justify-center"><span class="text-lg mb-1">📈</span><span data-i18n="navMonthly">月報</span></button>
         <button data-page="more" onclick="switchPage('more')" class="nav-btn p-2 text-xs font-semibold flex flex-col items-center justify-center"><span class="text-lg mb-1">⚙️</span><span data-i18n="navMore">設定</span></button>
     </nav>
@@ -630,6 +644,8 @@
         const translations = {
             zh: {
                 langToggle: '日本語',
+                recordKicker: 'Record',
+                recordTitle: '記帳',
                 dashboardTitle: '資產總覽',
                 entryDateLabel: '記帳日期',
                 entryDateHint: '可切換週或用日曆選任意日期，再按底部中間的＋新增紀錄。',
@@ -759,6 +775,7 @@
                 accountGroupsHint: '建立現金、信用卡、交通卡等大分類，並在底下新增子帳戶',
                 addButton: '新增',
                 resetData: '🗑️ 重置所有系統資料',
+                navRecord: '記帳',
                 navDashboard: '總覽',
                 navAdd: '新增',
                 navReport: '省錢',
@@ -848,6 +865,8 @@
             },
             ja: {
                 langToggle: '繁體中文',
+                recordKicker: '記録',
+                recordTitle: '記帳',
                 dashboardTitle: '資産サマリー',
                 entryDateLabel: '記録日',
                 entryDateHint: '週を切り替えるかカレンダーで日付を選び、下中央の＋で記録を追加します。',
@@ -977,6 +996,7 @@
                 accountGroupsHint: '現金、カード、交通カードなどの分類を作り、その下に子口座を追加できます',
                 addButton: '追加',
                 resetData: '🗑️ すべてのデータをリセット',
+                navRecord: '記帳',
                 navDashboard: '総覧',
                 navAdd: '追加',
                 navReport: '節約',
@@ -1191,6 +1211,7 @@
             renderProjectButtons();
             const activePage = document.querySelector('.page.active')?.id;
             if (activePage === 'page-report') renderList();
+            if (activePage === 'page-record') { renderDashboardDatePicker(); renderDailyRecords(); }
             if (activePage === 'page-more') { renderAccountGroupSettings(); renderExchangeRateSettings(); renderBudgetProjectSettings(); }
         }
 
@@ -2760,10 +2781,40 @@
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById('page-' + id).classList.add('active');
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.page === id));
+            if(id === 'record') { renderDashboardDatePicker(); renderDailyRecords(); }
             if(id === 'report') renderList();
             if(id === 'add') { renderTypes(); renderAccounts(); renderProjectButtons(); toggleInstallmentFields(); }
-            if(id === 'dashboard') { renderDashboardDatePicker(); renderDailyRecords(); updateBalances(); }
+            if(id === 'dashboard') { updateBalances(); }
             if(id === 'more') { renderAccountGroupSettings(); renderExchangeRateSettings(); renderBudgetProjectSettings(); }
+        }
+
+        window.switchPage = switchPage;
+
+        function handleCenterAction() {
+            const activePage = document.querySelector('.page.active')?.id;
+            if (activePage === 'page-record') {
+                openAddWithSelectedDate();
+                return;
+            }
+            switchPage('record');
+        }
+
+        window.handleCenterAction = handleCenterAction;
+
+        function bindNavigationButtons() {
+            document.querySelectorAll('.nav-btn[data-page]:not([data-center-action])').forEach(button => {
+                if (button.dataset.bound === 'true') return;
+                button.dataset.bound = 'true';
+                button.addEventListener('click', () => {
+                    const page = button.dataset.page;
+                    switchPage(page);
+                });
+            });
+            document.querySelectorAll('[data-switch-page]').forEach(button => {
+                if (button.dataset.bound === 'true') return;
+                button.dataset.bound = 'true';
+                button.addEventListener('click', () => switchPage(button.dataset.switchPage));
+            });
         }
 
         async function addExpense() {
@@ -2850,7 +2901,7 @@
             setTodayDate();
 
             closeAddModal();
-            switchPage('dashboard');
+            switchPage('record');
             renderDashboardDatePicker();
             renderDailyRecords();
             showToast(t('toastSaved'));
@@ -2993,7 +3044,7 @@
                 
                 renderTypes();
                 renderAccounts();
-                switchPage('dashboard');
+                switchPage('record');
                 showToast(t('toastReset'));
             }
         }
@@ -3010,7 +3061,7 @@
             showToast(t('toastExported'));
         }
 
-        const APP_VERSION = '20260610-01';
+        const APP_VERSION = '20260610-10';
 
         function registerServiceWorker() {
             if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
@@ -3042,10 +3093,12 @@
 
         // 系統啟動
         registerServiceWorker();
+        bindNavigationButtons();
         applyAppearance();
         applyLanguage();
         setTodayDate();
         renderDashboardDatePicker();
+        renderDailyRecords();
         renderTypes(); 
         renderAccounts(); 
         toggleInstallmentFields();
