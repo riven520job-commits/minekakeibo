@@ -79,13 +79,11 @@
         nav { padding-bottom: max(1.25rem, env(safe-area-inset-bottom)); box-shadow: none !important; }
         nav .nav-btn span[data-i18n] { display: none; }
         nav .nav-btn span.text-lg { margin-bottom: 0 !important; font-size: 1.65rem; line-height: 1; }
-        .lang-toggle { position: fixed; top: 14px; right: max(14px, calc((100vw - 448px) / 2 + 14px)); z-index: 55; }
         .empty-state { border: 1px dashed #d8dee8; background: #f8fafc; border-radius: 14px; padding: 18px; text-align: center; color: var(--muted); font-size: 13px; }
         body.eye-care .empty-state { background: #faf7ea; border-color: #d9dec9; }
         body.night-mode .surface { box-shadow: 0 16px 36px rgba(0, 0, 0, .28); }
         body.night-mode .empty-state { background: #0f172a; border-color: #263347; }
         body.night-mode nav { background: rgba(10, 16, 28, .94) !important; border-color: #1f2a3a !important; }
-        body.night-mode .lang-toggle,
         body.night-mode .bg-white,
         body.night-mode .bg-white\/90,
         body.night-mode .bg-white\/95,
@@ -117,6 +115,7 @@
         .record-detail-icon { border-color: rgba(36, 50, 68, .32); background: rgba(255, 255, 255, .7); }
         .record-detail-muted { color: var(--muted); }
         .record-detail-divider { border-color: var(--line); }
+        .record-detail-note { border: 1px solid var(--line); border-radius: 14px; background: var(--soft); padding: 12px; color: var(--ink); line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
         body.night-mode .record-detail-hero { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #f8fafc; }
         body.night-mode .record-detail-action { background: rgba(15, 23, 42, .8); color: #f8fafc; border-color: rgba(148, 163, 184, .22); }
         body.night-mode .record-detail-icon { border-color: rgba(248, 250, 252, .5); background: rgba(255, 255, 255, .08); }
@@ -130,10 +129,11 @@
         }
         .asset-dashboard .section-label,
         .report-modal .section-label { color: var(--muted); }
-        .asset-hero { text-align: left; padding: 18px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); box-shadow: 0 6px 16px rgba(31, 41, 51, .04); margin-bottom: 22px; }
-        .asset-total { font-size: 2rem; line-height: 1.1; color: var(--ink); font-weight: 700; letter-spacing: 0; margin-top: 6px; }
+        .asset-top-action { width: 3.25rem; height: 3.25rem; border-radius: 9999px; border: 1px solid var(--line); background: var(--panel); display: grid; place-items: center; color: var(--ink); box-shadow: 0 8px 18px rgba(31, 41, 51, .05); }
+        .asset-hero { text-align: center; padding: 20px 14px 16px; border: 0; border-radius: 0; background: transparent; box-shadow: none; margin-bottom: 18px; }
+        .asset-total { font-size: clamp(2.5rem, 15vw, 4rem); line-height: .95; color: #63b916; font-weight: 800; letter-spacing: 0; margin-top: 4px; }
         .asset-subtotals { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; color: var(--muted); font-size: .78rem; margin-top: 14px; }
-        .asset-subtotals span { border: 1px solid var(--line); border-radius: 12px; padding: 10px; background: var(--soft); }
+        .asset-subtotals span { border: 0; border-radius: 0; padding: 4px; background: transparent; }
         .asset-subtotals strong { display: block; font-size: .95rem; margin-top: 3px; }
         .asset-chart { height: 122px; display: flex; align-items: end; gap: 10px; justify-content: center; padding: 16px 6px 0; border-top: 1px solid var(--line); margin-top: 14px; }
         .asset-chart-group { width: 30px; height: 84px; display: flex; align-items: end; gap: 5px; position: relative; }
@@ -144,6 +144,15 @@
         .asset-analysis-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
         .asset-analysis-actions button { border: 1px solid var(--line); border-radius: 12px; padding: 12px; background: var(--soft); color: var(--ink); text-align: left; font-size: .78rem; font-weight: 700; }
         .asset-analysis-actions small { display: block; color: var(--muted); font-size: .66rem; margin-top: 3px; font-weight: 600; }
+        .asset-trend-panel { margin-top: 16px; }
+        .asset-trend-panel svg { width: 100%; height: auto; display: block; overflow: visible; }
+        .asset-trend-legend { display: flex; gap: 14px; align-items: center; justify-content: center; color: var(--muted); font-size: .78rem; margin-top: 8px; }
+        .asset-trend-dot { width: 8px; height: 8px; border-radius: 9999px; display: inline-block; margin-right: 5px; }
+        .account-overview-list { border-top: 1px solid var(--line); }
+        .account-overview-group { border-bottom: 1px solid var(--line); }
+        .account-overview-header { width: 100%; display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 12px; padding: 15px 0; text-align: left; background: transparent; }
+        .account-overview-amount { color: #8c949e; font-weight: 700; white-space: nowrap; }
+        .account-overview-child { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 12px; padding: 11px 0 11px 22px; border-top: 1px solid var(--line); }
         .asset-analysis-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .asset-analysis-switch button { border: 1px solid var(--line); border-radius: 12px; background: var(--soft); color: var(--muted); padding: 10px 12px; font-size: .82rem; font-weight: 800; }
         .asset-analysis-switch button.active { background: var(--ink); color: var(--panel); border-color: var(--ink); }
@@ -193,7 +202,7 @@
         .account-choice.active { border-color: #111827; background: #f3f4f6; color: #111827; }
         .add-field-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
         .add-field-tile { min-width: 0; }
-        .add-summary-tile { min-height: 78px; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); padding: 12px; text-align: center; }
+        .add-summary-tile { min-height: 62px; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); padding: 10px 12px; text-align: center; }
         .add-summary-label { color: var(--muted); font-size: 11px; font-weight: 700; line-height: 1; }
         .add-summary-value { color: var(--ink); font-size: 1rem; font-weight: 700; line-height: 1.2; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .add-summary-input { width: 100%; border: 0; outline: 0; background: transparent; text-align: center; color: var(--ink); font-size: 1rem; font-weight: 700; min-width: 0; }
@@ -203,6 +212,37 @@
         .add-field-tile .account-choice span { min-width: 0; }
         .add-field-tile .account-choice .block { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .add-field-tile.expanded { grid-column: 1 / -1; }
+        .add-modal-shell { background: #fff; color: var(--ink); }
+        .add-modal-action { width: 3.2rem; height: 3.2rem; border-radius: 9999px; background: #fff; border: 1px solid var(--line); box-shadow: 0 10px 24px rgba(31,41,51,.08); display: grid; place-items: center; font-size: 2rem; line-height: 1; color: var(--ink); }
+        .add-modal-check { font-size: 1.7rem; }
+        #add-modal-body { overscroll-behavior: contain; }
+        #category-buttons { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px 12px; }
+        #category-buttons button { min-height: 76px !important; border: 0 !important; background: transparent !important; padding: 0 !important; }
+        #category-buttons button > div,
+        #category-buttons button > img { width: 58px; height: 58px; border-radius: 9999px; display: grid; place-items: center; margin: 0 auto 7px !important; background: #f1f3f5; border: 3px solid transparent; box-shadow: none; object-fit: cover; }
+        #category-buttons button.border-blue-500 > div,
+        #category-buttons button.border-blue-500 > img { border-color: #d4d8dd !important; background: #e9ecef; }
+        .add-compose-grid { display: grid; grid-template-columns: 1fr 2.9fr; gap: 12px; align-items: stretch; }
+        .photo-tile { min-height: 102px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); color: #c4cad1; display: grid; place-items: center; font-size: 2rem; cursor: pointer; }
+        .add-long-field { min-height: 50px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: 8px; padding: 10px 12px; }
+        .add-long-field input { border: 0; outline: 0; background: transparent; min-width: 0; text-align: right; font-size: 1.2rem; font-weight: 700; color: var(--ink); }
+        .add-chip { border-radius: 12px; background: #e5e7eb; color: var(--ink); padding: 7px 12px; font-weight: 700; font-size: .9rem; }
+        .add-note { width: 100%; min-height: 142px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); padding: 14px; outline: 0; resize: vertical; color: var(--ink); font-size: 1rem; }
+        .add-tags { color: var(--muted); font-size: 1.05rem; font-weight: 600; }
+        .calculator-panel-fixed { position: sticky; bottom: 0; background: rgba(243,244,246,.96); margin: 0 -20px -16px; padding: 12px 20px max(18px, env(safe-area-inset-bottom)); backdrop-filter: blur(10px); }
+        @media (max-width: 480px) {
+            .calculator-grid button { min-height: 44px; font-size: 1.25rem; }
+            .quick-amounts button { padding: 7px 12px; }
+            .calculator-panel-fixed { padding-top: 10px; }
+        }
+        @media (max-height: 760px) {
+            #category-buttons { gap: 10px 8px; }
+            #category-buttons button { min-height: 68px !important; }
+            #category-buttons button > div,
+            #category-buttons button > img { width: 50px; height: 50px; }
+            .add-note { min-height: 110px; }
+            .calculator-grid button { min-height: 42px; }
+        }
         .project-picker { position: fixed; inset: 0; z-index: 96; background: rgba(15, 23, 42, .22); backdrop-filter: blur(4px); }
         .project-picker-panel { position: absolute; inset: auto 0 0 0; max-width: 448px; margin: 0 auto; max-height: 70vh; overflow-y: auto; border-radius: 24px 24px 0 0; background: var(--panel); border: 1px solid var(--line); padding: 18px; }
         .amount-eye-icon { width: 22px; height: 22px; display: block; }
@@ -217,6 +257,8 @@
         .border-blue-500, .border-red-100 { border-color: var(--line) !important; }
         .hover\:bg-red-50:hover { background-color: var(--soft) !important; }
         .asset-subtotals strong { color: var(--ink) !important; }
+        #total-assets { color: #63b916 !important; }
+        #total-liabilities { color: #d6525b !important; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         canvas { max-width: 100%; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -228,8 +270,6 @@
     <div class="app-shell">
 
     <div id="error-log" class="hidden bg-red-100 text-red-600 p-2 text-xs text-center"></div>
-    <button id="lang-toggle" onclick="toggleLanguage()" class="lang-toggle bg-white/95 backdrop-blur border border-gray-200 text-gray-700 text-xs font-bold px-3 py-2 rounded-full shadow-sm">日本語</button>
-
     <main class="px-5 pt-6 pb-28">
         <section id="page-record" class="page active">
             <div class="mb-5">
@@ -270,9 +310,12 @@
 
         <section id="page-dashboard" class="page asset-dashboard">
             <div class="mb-5 flex items-center justify-between gap-3">
-                <button id="amount-visibility-toggle" onclick="toggleAmountVisibility()" class="w-10 h-10 rounded-full border border-gray-100 bg-gray-50 flex items-center justify-center" aria-label="顯示金額"></button>
+                <button id="amount-visibility-toggle" onclick="toggleAmountVisibility()" class="asset-top-action" aria-label="顯示金額"></button>
                 <h1 class="text-2xl font-bold tracking-tight" data-i18n="dashboardTitle">資產總覽</h1>
-                <button onclick="addAccountGroup()" class="w-10 h-10 rounded-full border border-gray-100 bg-gray-50 text-2xl leading-none">+</button>
+                <span class="flex items-center gap-2">
+                    <button onclick="openStatsModal()" class="asset-top-action text-2xl" aria-label="Statistics">↗</button>
+                    <button onclick="addAccountGroup()" class="asset-top-action text-3xl leading-none">+</button>
+                </span>
             </div>
             
             <div class="asset-hero">
@@ -292,6 +335,7 @@
                         <small data-i18n="assetCurrencyShareHint">依幣值查看資產與負債</small>
                     </button>
                 </div>
+                <div id="asset-trend-panel" class="asset-trend-panel"></div>
             </div>
 
             <h3 class="dark-section-title flex justify-between items-center">
@@ -320,7 +364,7 @@
         </section>
 
         <section id="page-add" class="page">
-            <div class="mb-5">
+            <div class="hidden">
                 <p class="section-label mb-1" data-i18n="addKicker">Add Record</p>
                 <h1 class="text-2xl font-bold tracking-tight" data-i18n="addTitle">新增紀錄</h1>
             </div>
@@ -335,33 +379,40 @@
             <input type="hidden" id="selected-to-account" value="🪪 交通卡">
             <input type="hidden" id="selected-project-id" value="">
 
-            <div id="type-buttons" class="flex gap-2 overflow-x-auto no-scrollbar mb-3 pb-1"></div>
-            <div id="main-cat-buttons" class="flex gap-2 overflow-x-auto no-scrollbar mb-4 pb-3 border-b border-gray-100"></div>
-            <div id="category-buttons" class="grid grid-cols-4 gap-3 mb-6"></div>
+            <div id="type-buttons" class="flex gap-5 overflow-x-auto no-scrollbar mb-3 pb-2 border-b border-gray-100"></div>
+            <div id="main-cat-buttons" class="flex gap-2 overflow-x-auto no-scrollbar mb-4 pb-1 hidden"></div>
+            <div id="category-buttons" class="grid mb-6"></div>
 
             <input type="file" id="custom-cat-upload" accept="image/*" class="hidden" onchange="handleCustomCatUpload(event)">
 
-            <div class="space-y-4 border-t border-gray-100 pt-4">
-                <input type="date" id="date" class="notion-input text-gray-600">
-                <div class="add-field-grid">
-                    <div class="add-field-tile">
-                        <label class="add-summary-tile">
-                            <span class="add-summary-label" data-i18n="merchantNameLabel">商家</span>
-                            <input type="text" id="name" placeholder="商家名稱" data-i18n-placeholder="merchantNamePlaceholder" class="add-summary-input" oninput="this.dataset.autoFilled='false'">
+            <div class="space-y-4">
+                <div class="add-compose-grid">
+                    <label class="photo-tile">
+                        📷
+                        <input type="file" id="photo" accept="image/*" class="hidden">
+                    </label>
+                    <div class="space-y-3 min-w-0">
+                        <div class="add-long-field">
+                            <select id="currency" class="add-chip border-0 outline-0">
+                                <option value="¥">JPY</option>
+                                <option value="NT$">TWD</option>
+                                <option value="₩">KRW</option>
+                                <option value="$">USD</option>
+                                <option value="€">EUR</option>
+                            </select>
+                            <input type="text" id="price" placeholder="金額" data-i18n-placeholder="pricePlaceholder" inputmode="none" readonly onclick="showCalculator()" onfocus="showCalculator()" class="cursor-pointer">
+                            <button type="button" onclick="showCalculator()" class="w-9 h-9 rounded-full bg-gray-100 text-xl leading-none">+</button>
+                        </div>
+                        <label class="add-long-field grid-cols-[1fr_auto]">
+                            <input type="text" id="name" placeholder="名稱" data-i18n-placeholder="merchantNamePlaceholder" class="text-right" oninput="this.dataset.autoFilled='false'">
+                            <span class="w-9 h-9 rounded-full bg-gray-100 grid place-items-center text-gray-500">☆</span>
                         </label>
                     </div>
+                </div>
 
-                    <div class="add-field-tile">
-                        <button type="button" onclick="openProjectPicker()" class="add-summary-tile">
-                            <span class="add-summary-label" data-i18n="budgetProjectLabel">預算專案</span>
-                            <span id="selected-project-summary" class="add-summary-value">省錢大作戰</span>
-                        </button>
-                        <div id="project-buttons" class="hidden"></div>
-                    </div>
-                    
+                <div class="add-field-grid">
                     <div class="add-field-tile">
                         <button type="button" onclick="openAccountPicker('from')" class="add-summary-tile">
-                            <span id="label-account-from" class="add-summary-label" data-i18n="paymentMethod">付款方式</span>
                             <span id="selected-account-summary" class="add-summary-value">Paypay</span>
                         </button>
                         <div class="hidden">
@@ -387,9 +438,21 @@
                         </div>
                     </div>
 
+                    <div class="add-field-tile">
+                        <button type="button" onclick="openProjectPicker()" class="add-summary-tile">
+                            <span id="selected-project-summary" class="add-summary-value">省錢大作戰</span>
+                        </button>
+                        <div id="project-buttons" class="hidden"></div>
+                    </div>
+
+                    <div class="add-field-tile">
+                        <label class="add-summary-tile">
+                            <span class="add-summary-value text-gray-400" data-i18n="merchantNameLabel">商家</span>
+                        </label>
+                    </div>
+
                     <div id="installment-card" class="add-field-tile">
                         <label class="add-summary-tile cursor-pointer">
-                            <span class="add-summary-label" data-i18n="installmentLabel">費用分期</span>
                             <span id="installment-summary" class="add-summary-value" data-i18n="installmentSingle">單次</span>
                             <input type="checkbox" id="installment-enabled" onchange="toggleInstallmentFields()" class="sr-only">
                         </label>
@@ -398,6 +461,13 @@
                             <input type="number" id="installment-count" min="2" max="60" value="3" inputmode="numeric" onchange="renderInstallmentSummary()" oninput="renderInstallmentSummary()" class="notion-input w-24 py-2 text-sm text-right">
                             <p class="col-span-2 text-[11px] text-gray-400 leading-relaxed" data-i18n="installmentHint">輸入總金額，系統會從所選日期開始每月建立一筆紀錄。</p>
                         </div>
+                    </div>
+
+                    <div class="add-field-tile">
+                        <input type="date" id="date" class="add-summary-tile text-center text-lg font-semibold text-gray-800">
+                    </div>
+                    <div class="add-field-tile">
+                        <input type="time" id="record-time" class="add-summary-tile text-center text-lg font-semibold text-gray-800">
                     </div>
                 </div>
 
@@ -413,19 +483,10 @@
                         <div id="project-picker-content" class="space-y-2"></div>
                     </div>
                 </div>
-                
-                <div class="surface p-3 shadow-none space-y-3">
-                    <div class="flex gap-2">
-                        <input type="text" id="price" placeholder="金額 *" data-i18n-placeholder="pricePlaceholder" inputmode="none" readonly onclick="showCalculator()" onfocus="showCalculator()" class="w-2/3 notion-input text-xl font-semibold text-right cursor-pointer">
-                        <select id="currency" class="w-1/3 notion-input">
-                            <option value="¥">JPY</option>
-                            <option value="NT$">TWD</option>
-                            <option value="₩">KRW</option>
-                            <option value="$">USD</option>
-                            <option value="€">EUR</option>
-                        </select>
-                    </div>
-                    <div id="calculator-panel" class="hidden space-y-3">
+                <div class="add-tags">#標籤 / 紅利回饋</div>
+                <textarea id="note" class="add-note" data-i18n-placeholder="notePlaceholder" placeholder="備註"></textarea>
+
+                <div id="calculator-panel" class="calculator-panel-fixed hidden space-y-3">
                         <div class="quick-amounts no-scrollbar">
                             <button type="button" onclick="calculatorQuick(538)">538</button>
                             <button type="button" onclick="calculatorQuick(1299)">1,299</button>
@@ -457,13 +518,8 @@
                             <button type="button" onclick="calculatorPress('00')">00</button>
                             <button type="button" onclick="calculatorPress('✓')">✓</button>
                         </div>
-                    </div>
                 </div>
-                
-                <div class="text-xs text-gray-400 mb-1" data-i18n="photoLabel">附加照片 (選填)</div>
-                <input type="file" id="photo" accept="image/*" class="w-full text-sm text-gray-500 bg-gray-50 rounded-lg p-2 border border-gray-100">
-                
-                <button id="record-save-button" onclick="addExpense()" class="w-full primary-btn py-3.5 font-semibold mt-2" data-i18n="saveButton">確認儲存</button>
+                <button id="record-save-button" onclick="addExpense()" class="hidden" data-i18n="saveButton">確認儲存</button>
             </div>
 
             <div id="account-picker" class="account-picker hidden">
@@ -535,6 +591,10 @@
                     <span class="text-gray-300">⌄</span>
                 </summary>
                 <div class="pt-4 mt-4 border-t border-gray-100 space-y-2">
+                    <button onclick="toggleLanguage()" class="w-full text-left p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition flex items-center justify-between">
+                        <span class="text-sm font-semibold" data-i18n="languageSetting">語言</span>
+                        <span id="lang-toggle" class="text-xs text-gray-500">日本語</span>
+                    </button>
                     <button onclick="toggleEyeCareMode()" class="w-full text-left p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition flex items-center justify-between">
                         <span class="text-sm font-semibold" data-i18n="eyeCareMode">護眼模式</span>
                         <span id="eye-care-status" class="text-xs text-gray-500">Off</span>
@@ -637,16 +697,14 @@
         </div>
     </div>
 
-    <div id="add-record-modal" class="hidden fixed inset-0 z-[75] bg-black/40 backdrop-blur-sm">
-        <div class="absolute inset-x-0 bottom-0 top-6 max-w-md mx-auto bg-white rounded-t-3xl shadow-2xl overflow-hidden flex flex-col">
-            <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between gap-3">
-                <div>
-                    <p class="section-label mb-1" data-i18n="entryDateLabel">記帳日期</p>
-                    <h2 id="add-modal-date-label" class="text-xl font-bold tracking-tight">2026/06/10</h2>
-                </div>
-                <button onclick="closeAddModal()" class="w-10 h-10 rounded-full bg-gray-100 text-gray-500 font-bold">×</button>
+    <div id="add-record-modal" class="hidden fixed inset-0 z-[75] bg-white">
+        <div class="absolute inset-0 max-w-md mx-auto add-modal-shell overflow-hidden flex flex-col">
+            <div class="px-5 pt-12 pb-5 flex items-center justify-between gap-3">
+                <button onclick="closeAddModal()" class="add-modal-action" aria-label="Close">×</button>
+                <h2 id="add-modal-title" class="text-2xl font-bold tracking-tight" data-i18n="addTitle">新增紀錄</h2>
+                <button onclick="addExpense()" class="add-modal-action add-modal-check" aria-label="Save">✓</button>
             </div>
-            <div id="add-modal-body" class="px-5 py-4 overflow-y-auto"></div>
+            <div id="add-modal-body" class="px-5 pb-4 overflow-y-auto"></div>
         </div>
     </div>
 
@@ -936,9 +994,11 @@
                 statsModalTitle: '支出分析',
                 addKicker: 'Add Record',
                 addTitle: '新增紀錄',
+                editTitle: '編輯紀錄',
                 namePlaceholder: '商家名稱 / 項目名稱 (選填)',
                 merchantNameLabel: '商家',
                 merchantNamePlaceholder: '商家名稱',
+                notePlaceholder: '備註',
                 paymentMethod: '付款方式',
                 subAccountLabel: '子帳戶',
                 transferFrom: '📤 轉出帳戶',
@@ -1008,6 +1068,7 @@
                 confirmDownloadCloud: '確定要用雲端資料覆蓋目前本機資料嗎？',
                 displaySettingsTitle: '顯示設定',
                 displaySettingsHint: '切換護眼模式與畫面偏好',
+                languageSetting: '語言',
                 eyeCareMode: '護眼模式',
                 eyeCareOn: '開啟',
                 eyeCareOff: '關閉',
@@ -1197,9 +1258,11 @@
                 statsModalTitle: '支出分析',
                 addKicker: '記録追加',
                 addTitle: '記録を追加',
+                editTitle: '記録を編集',
                 namePlaceholder: '店舗名 / 項目名 (任意)',
                 merchantNameLabel: '店舗',
                 merchantNamePlaceholder: '店舗名',
+                notePlaceholder: 'メモ',
                 paymentMethod: '支払い方法',
                 subAccountLabel: '子口座',
                 transferFrom: '📤 振替元口座',
@@ -1269,6 +1332,7 @@
                 confirmDownloadCloud: 'クラウドデータで現在のローカルデータを上書きしますか？',
                 displaySettingsTitle: '表示設定',
                 displaySettingsHint: '目にやさしい表示と画面設定を切り替えます',
+                languageSetting: '言語',
                 eyeCareMode: '目にやさしいモード',
                 eyeCareOn: 'オン',
                 eyeCareOff: 'オフ',
@@ -1489,7 +1553,8 @@
             document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
                 el.placeholder = t(el.dataset.i18nPlaceholder);
             });
-            document.getElementById('lang-toggle').textContent = t('langToggle');
+            const langToggle = document.getElementById('lang-toggle');
+            if (langToggle) langToggle.textContent = t('langToggle');
             renderAmountVisibilityButton();
             renderEyeCareStatus();
             renderNightModeStatus();
@@ -1609,6 +1674,7 @@
             editingRecordIndex = null;
             openAddModal();
             document.getElementById('date').value = selectedEntryDate;
+            document.getElementById('record-time').value = new Date().toTimeString().slice(0, 5);
         }
 
         function recordSign(item) {
@@ -1682,7 +1748,10 @@
             const body = document.getElementById('add-modal-body');
             const addPage = document.getElementById('page-add');
             if (!modal || !body || !addPage) return;
-            document.getElementById('add-modal-date-label').textContent = formatEntryDateLabel(selectedEntryDate);
+            const dateLabel = document.getElementById('add-modal-date-label');
+            if (dateLabel) dateLabel.textContent = formatEntryDateLabel(selectedEntryDate);
+            const modalTitle = document.getElementById('add-modal-title');
+            if (modalTitle) modalTitle.textContent = editingRecordIndex === null ? t('addTitle') : t('editTitle');
             const saveButton = document.getElementById('record-save-button');
             if (saveButton) saveButton.textContent = editingRecordIndex === null ? t('saveButton') : t('updateButton');
             body.appendChild(addPage);
@@ -1704,6 +1773,8 @@
             modal.classList.add('hidden');
             addPage.classList.remove('active');
             editingRecordIndex = null;
+            const modalTitle = document.getElementById('add-modal-title');
+            if (modalTitle) modalTitle.textContent = t('addTitle');
             const saveButton = document.getElementById('record-save-button');
             if (saveButton) saveButton.textContent = t('saveButton');
             document.body.style.overflow = '';
@@ -1720,6 +1791,10 @@
             const iconHtml = safeIcon.startsWith('data:image')
                 ? `<img src="${safeIcon}" class="w-20 h-20 rounded-full object-cover">`
                 : `<span class="text-5xl">${escapeHTML(safeIcon)}</span>`;
+            const detailTime = item.time || '--:--';
+            const detailNote = item.note ? `
+                <div class="record-detail-note mt-4 text-sm">${escapeHTML(item.note)}</div>
+            ` : '';
             content.innerHTML = `
                 <div class="record-detail-hero p-5 min-h-[180px] relative">
                     <button onclick="closeRecordDetail()" class="record-detail-action absolute top-4 left-4 w-10 h-10 rounded-full text-3xl leading-none" aria-label="Close">×</button>
@@ -1745,8 +1820,11 @@
                         <div class="record-detail-muted">💳 ${escapeHTML(displayLabel(item.account || t('uncategorized')))}</div>
                         <div class="record-detail-muted">🏷 ${project ? escapeHTML(project.name) : '-'}</div>
                         <div class="record-detail-muted">📅 ${escapeHTML(formatEntryDateLabel(item.date))}</div>
+                        <div class="record-detail-muted">🕒 ${escapeHTML(detailTime)}</div>
                         <div class="record-detail-muted">🗂 ${escapeHTML(displayLabel(item.subCatName || item.mainCat || t('uncategorized')))}</div>
+                        <div class="record-detail-muted">🏪 ${escapeHTML(displayLabel(item.merchant || '---'))}</div>
                     </div>
+                    ${detailNote}
                 </div>
             `;
             modal.classList.remove('hidden');
@@ -2134,6 +2212,8 @@
             document.getElementById('selected-to-account').value = item.toAccount || '';
             document.getElementById('selected-project-id').value = item.projectId || '';
             document.getElementById('date').value = item.date || todayString();
+            document.getElementById('record-time').value = item.time || '';
+            document.getElementById('note').value = item.note || '';
             document.getElementById('currency').value = item.currency || getAccountCurrency(item.account) || '¥';
             document.getElementById('price').value = item.price || '';
             const nameInput = document.getElementById('name');
@@ -2754,6 +2834,7 @@
             });
             sortAssetAnalysisData();
 
+            listContainer.className = 'account-overview-list mb-8';
             listContainer.innerHTML = Object.keys(groupedAccounts)
                 .map(group => {
                     const groupTotal = toJPY(currentBalances[group] || 0, getAccountCurrency(group)) + groupedAccounts[group].reduce((sum, acc) => sum + toJPY(currentBalances[acc] || 0, getAccountCurrency(acc)), 0);
@@ -2763,7 +2844,7 @@
                         const isNegative = currentBalances[acc] < 0;
                         const accCurrency = getAccountCurrency(acc);
                         return `
-                            <div onclick="setInitialBalance(decodeURIComponent('${encodeURIComponent(acc)}'))" class="p-3 flex justify-between items-center cursor-pointer hover:bg-gray-50 transition group">
+                            <div onclick="setInitialBalance(decodeURIComponent('${encodeURIComponent(acc)}'))" class="account-overview-child cursor-pointer hover:bg-gray-50 transition group">
                                 <div class="min-w-0 pr-3">
                                     <span class="font-semibold text-sm block truncate">${escapeHTML(displayLabel(acc))}</span>
                                     <span class="text-[10px] text-gray-400">${t('initialPrefix')} ${formatPrivateMoney(accountInitials[acc], accCurrency)} · ${formatPrivateJPY(accountInitials[acc], accCurrency)}</span>
@@ -2771,29 +2852,22 @@
                                 <div class="flex items-center gap-2 shrink-0">
                                     <button onclick="event.stopPropagation(); setAccountGroup(decodeURIComponent('${encodeURIComponent(acc)}'))" class="text-[10px] text-blue-600 bg-blue-50 px-2 py-1 rounded-lg opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition">${t('classify')}</button>
                                     <button onclick="event.stopPropagation(); deleteSubAccount(decodeURIComponent('${encodeURIComponent(acc)}'))" class="text-[10px] text-red-500 bg-red-50 px-2 py-1 rounded-lg opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition">${t('deleteSubAccount')}</button>
-                                    <span class="font-bold text-base tracking-tight ${isNegative ? 'text-red-500' : 'text-gray-800'}">${formatPrivateMoney(currentBalances[acc], accCurrency)}</span>
-                                    <span class="text-[10px] text-gray-400">${formatPrivateJPY(currentBalances[acc], accCurrency)}</span>
+                                    <span class="font-bold tracking-tight ${isNegative ? 'text-red-500' : 'text-gray-500'}">${formatPrivateMoney(currentBalances[acc], accCurrency)}</span>
                                 </div>
                             </div>
                         `;
-                    }).join('') : `<div class="p-4 text-xs text-gray-400">${t('emptySubAccounts')}</div>`;
+                    }).join('') : `<div class="account-overview-child text-xs text-gray-400">${t('emptySubAccounts')}</div>`;
 
                     return `
-                        <div class="surface overflow-hidden">
-                            <div class="px-4 py-3 bg-gray-50/70 border-b border-gray-100 flex justify-between items-center gap-3">
-                                <button onclick="toggleAccountGroup(decodeURIComponent('${encodeURIComponent(group)}'))" class="min-w-0 text-left flex items-center gap-2">
-                                    <span class="text-xs text-gray-400">${isCollapsed ? '▶' : '▼'}</span>
-                                    <span class="min-w-0">
-                                        <span class="font-semibold text-sm block truncate">${escapeHTML(displayLabel(group))}</span>
-                                        <span class="text-[10px] text-gray-400">${groupedAccounts[group].length} ${t('accountCount')}</span>
-                                    </span>
+                        <div class="account-overview-group">
+                            <div class="flex items-center gap-2">
+                                <button onclick="toggleAccountGroup(decodeURIComponent('${encodeURIComponent(group)}'))" class="account-overview-header">
+                                    <span class="min-w-0 text-lg font-semibold truncate">${isCollapsed ? '+ ' : '− '}${escapeHTML(displayLabel(group))} <span class="text-base text-gray-500">(${groupedAccounts[group].length})</span></span>
+                                    <span class="account-overview-amount ${groupNegative ? 'text-red-500' : ''}">${amountsHidden ? `¥${t('hiddenAmount')}` : `${groupTotal < 0 ? '-' : '+'}¥${Math.round(Math.abs(groupTotal)).toLocaleString()}`}</span>
                                 </button>
-                                <div class="flex items-center gap-2 shrink-0">
-                                    <button onclick="addSubAccount(decodeURIComponent('${encodeURIComponent(group)}'))" class="text-[10px] font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded-lg">${t('addSubAccount')}</button>
-                                    <span class="font-bold text-sm ${groupNegative ? 'text-red-500' : 'text-gray-700'}">${amountsHidden ? `¥${t('hiddenAmount')}` : `¥${Math.round(groupTotal).toLocaleString()}`}</span>
-                                </div>
+                                <button onclick="addSubAccount(decodeURIComponent('${encodeURIComponent(group)}'))" class="text-[10px] font-semibold text-gray-500 bg-gray-50 px-2 py-1 rounded-lg shrink-0">${t('addSubAccount')}</button>
                             </div>
-                            <div class="divide-y divide-gray-100 ${isCollapsed ? 'hidden' : ''}">${accountCards}</div>
+                            <div class="${isCollapsed ? 'hidden' : ''}">${accountCards}</div>
                         </div>
                     `;
                 }).join('');
@@ -2804,6 +2878,7 @@
             document.getElementById('total-assets').innerText = amountsHidden ? `¥${t('hiddenAmount')}` : `¥${Math.round(totalAssets).toLocaleString()}`;
             document.getElementById('total-liabilities').innerText = amountsHidden ? `¥${t('hiddenAmount')}` : `¥${Math.round(totalLiabilities).toLocaleString()}`;
 
+            renderAssetTrendPanel();
             renderCharts();
             renderAccountGroupSettings();
             renderBudgetProjectsDashboard();
@@ -2856,6 +2931,65 @@
             const existing = target.find(item => item.label === key);
             if (existing) existing.amount += amount;
             else target.push({ label: key, amount });
+        }
+
+        function renderAssetTrendPanel() {
+            const panel = document.getElementById('asset-trend-panel');
+            if (!panel) return;
+            const now = new Date();
+            const months = Array.from({ length: 6 }, (_, index) => {
+                const d = new Date(now.getFullYear(), now.getMonth() - 5 + index, 1);
+                return monthKey(d);
+            });
+            const monthly = months.map(key => {
+                const records = data.filter(item => (item.date || '').substring(0, 7) === key);
+                const income = records.filter(item => ['收入', '應收帳款'].includes(item.type)).reduce((sum, item) => sum + toJPY(item.price, item.currency || '¥'), 0);
+                const expense = records.filter(item => ['支出', '應付帳款', '系統'].includes(item.type)).reduce((sum, item) => sum + toJPY(item.price, item.currency || '¥'), 0);
+                const endDate = `${key}-${String(monthLastDay(key)).padStart(2, '0')}`;
+                let net = Object.keys(accountInitials).reduce((sum, acc) => sum + toJPY(accountInitials[acc] || 0, getAccountCurrency(acc)), 0);
+                data.forEach(item => {
+                    if ((item.date || '') > endDate) return;
+                    const value = toJPY(item.price, item.currency || '¥');
+                    if (['支出', '應付帳款', '系統'].includes(item.type)) net -= value;
+                    if (['收入', '應收帳款'].includes(item.type)) net += value;
+                });
+                return { key, income, expense, net };
+            });
+            const maxBar = Math.max(...monthly.flatMap(item => [item.income, item.expense]), 1);
+            const netValues = monthly.map(item => item.net);
+            const minNet = Math.min(...netValues, 0);
+            const maxNet = Math.max(...netValues, 1);
+            const width = 330;
+            const height = 150;
+            const baseY = 112;
+            const chartTop = 14;
+            const chartH = 88;
+            const step = width / monthly.length;
+            const points = monthly.map((item, index) => {
+                const x = step * index + step / 2;
+                const y = chartTop + chartH - ((item.net - minNet) / Math.max(maxNet - minNet, 1)) * chartH;
+                return `${x.toFixed(1)},${y.toFixed(1)}`;
+            }).join(' ');
+            panel.innerHTML = `
+                <svg viewBox="0 0 ${width} ${height}" aria-label="asset trend">
+                    ${monthly.map((item, index) => {
+                        const x = step * index + step / 2 - 14;
+                        const expenseH = Math.max(4, (item.expense / maxBar) * 64);
+                        const incomeH = Math.max(4, (item.income / maxBar) * 64);
+                        const label = index === 0 ? String(new Date(item.key + '-01').getFullYear()) : new Date(item.key + '-01').toLocaleString('en', { month: 'short' });
+                        return `
+                            <rect x="${x}" y="${baseY - expenseH}" width="11" height="${expenseH}" rx="2" fill="#e45858"/>
+                            <rect x="${x + 16}" y="${baseY - incomeH}" width="11" height="${incomeH}" rx="2" fill="#63b916"/>
+                            <text x="${x + 13}" y="140" font-size="10" text-anchor="middle" fill="#8c949e">${label}</text>
+                        `;
+                    }).join('')}
+                    <polyline points="${points}" fill="none" stroke="#9b59c8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div class="asset-trend-legend">
+                    <span><span class="asset-trend-dot" style="background:#e45858"></span>${monthlyAmountText(-monthly[monthly.length - 1].expense)}</span>
+                    <span><span class="asset-trend-dot" style="background:#63b916"></span>${monthlyAmountText(monthly[monthly.length - 1].income)}</span>
+                </div>
+            `;
         }
 
         function sortAssetAnalysisData() {
@@ -3888,6 +4022,8 @@
             const toAccount = (type === '轉帳') ? document.getElementById('selected-to-account').value : null; 
             
             const date = document.getElementById('date').value;
+            const recordTime = document.getElementById('record-time')?.value || '';
+            const note = document.getElementById('note')?.value || '';
             const nameInput = document.getElementById('name');
             const name = nameInput.dataset.autoFilled === 'true' ? (nameInput.dataset.rawValue || subCatName) : (nameInput.value || subCatName);
             const price = document.getElementById('price').value;
@@ -3929,7 +4065,7 @@
                 });
             }
 
-            const baseRecord = { type, mainCat, subCatName, subCatIcon, account, toAccount, date, name, price, currency, projectId, photoData };
+            const baseRecord = { type, mainCat, subCatName, subCatIcon, account, toAccount, date, time: recordTime, note, name, price, currency, projectId, photoData };
             if (editingRecordIndex !== null) {
                 const original = data[editingRecordIndex];
                 if (!original) {
@@ -3955,6 +4091,8 @@
                 nameInput.dataset.autoFilled = 'true';
                 calculatorExpression = '';
                 document.getElementById('price').value = '';
+                document.getElementById('note').value = '';
+                document.getElementById('record-time').value = '';
                 renderCalculator();
                 hideCalculator();
                 document.getElementById('photo').value = '';
@@ -3998,6 +4136,8 @@
             nameInput.dataset.autoFilled = 'true'; 
             calculatorExpression = '';
             document.getElementById('price').value = '';
+            document.getElementById('note').value = '';
+            document.getElementById('record-time').value = '';
             renderCalculator();
             hideCalculator();
             document.getElementById('photo').value = '';
@@ -4166,7 +4306,7 @@
             showToast(t('toastExported'));
         }
 
-        const APP_VERSION = '20260613-03';
+        const APP_VERSION = '20260613-05';
 
         function registerServiceWorker() {
             if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
