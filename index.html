@@ -1564,8 +1564,9 @@
             if (document.getElementById('page-report')?.classList.contains('active')) renderList();
             if (!document.getElementById('monthly-report-modal')?.classList.contains('hidden')) renderMonthlyReport();
             if (!document.getElementById('asset-analysis-modal')?.classList.contains('hidden')) openAssetAnalysisModal(activeAssetAnalysisKind);
-            const selectedType = document.getElementById('selected-type').value;
-            document.getElementById('label-account-from').textContent = selectedType === '轉帳' ? t('transferFrom') : t('paymentMethod');
+            const selectedType = document.getElementById('selected-type')?.value || '支出';
+            const accountFromLabel = document.getElementById('label-account-from');
+            if (accountFromLabel) accountFromLabel.textContent = selectedType === '轉帳' ? t('transferFrom') : t('paymentMethod');
             renderAccountSummaries();
             renderProjectSummary();
             renderInstallmentSummary();
@@ -3832,10 +3833,10 @@
             const installmentEnabled = document.getElementById('installment-enabled');
             if(typeName === '轉帳') {
                 toContainer.classList.remove('hidden');
-                labelFrom.textContent = t('transferFrom');
+                if (labelFrom) labelFrom.textContent = t('transferFrom');
             } else {
                 toContainer.classList.add('hidden');
-                labelFrom.textContent = t('paymentMethod');
+                if (labelFrom) labelFrom.textContent = t('paymentMethod');
             }
             if (installmentCard) installmentCard.classList.toggle('hidden', typeName !== '支出');
             if (typeName !== '支出' && installmentEnabled) {
@@ -4306,7 +4307,7 @@
             showToast(t('toastExported'));
         }
 
-        const APP_VERSION = '20260613-05';
+        const APP_VERSION = '20260613-06';
 
         function registerServiceWorker() {
             if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
