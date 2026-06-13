@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>家計簿</title>
     <meta name="application-name" content="家計簿">
     <meta name="apple-mobile-web-app-title" content="家計簿">
@@ -20,6 +20,7 @@
     <style>
         :root {
             color-scheme: light;
+            --app-font-size: clamp(13px, 3.55vw, 15px);
             --ink: #1f2933;
             --muted: #7b8794;
             --line: #e8edf2;
@@ -27,7 +28,7 @@
             --soft: #f6f8fb;
             --accent: #111827;
         }
-        html, body { overscroll-behavior-y: none; }
+        html, body { overscroll-behavior-y: none; touch-action: manipulation; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
         body.eye-care {
             --ink: #1f2933;
             --muted: #6b7280;
@@ -47,17 +48,17 @@
             --accent: #f8fafc;
             background: linear-gradient(180deg, #050505 0%, #111111 42%);
         }
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; touch-action: manipulation; }
         body {
             font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
             background: linear-gradient(180deg, #f7f9fc 0%, #ffffff 36%);
             color: var(--ink);
-            font-size: 14px;
+            font-size: var(--app-font-size);
             min-height: 100vh;
             padding-bottom: calc(6rem + env(safe-area-inset-bottom));
         }
-        h1 { font-size: 1.5rem !important; line-height: 1.25 !important; letter-spacing: 0 !important; }
-        h2 { font-size: 1.125rem !important; line-height: 1.35 !important; letter-spacing: 0 !important; }
+        h1 { font-size: clamp(1.35rem, 6vw, 1.6rem) !important; line-height: 1.25 !important; letter-spacing: 0 !important; }
+        h2 { font-size: clamp(1.05rem, 4.4vw, 1.22rem) !important; line-height: 1.35 !important; letter-spacing: 0 !important; }
         h3 { letter-spacing: 0 !important; }
         .app-shell { min-height: 100vh; }
         .page { display: none; animation: fadeIn 120ms ease-out; }
@@ -146,22 +147,33 @@
         .asset-analysis-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .asset-analysis-switch button { border: 1px solid var(--line); border-radius: 12px; background: var(--soft); color: var(--muted); padding: 10px 12px; font-size: .82rem; font-weight: 800; }
         .asset-analysis-switch button.active { background: var(--ink); color: var(--panel); border-color: var(--ink); }
-        .asset-pie { width: min(220px, 68vw); height: min(220px, 68vw); border-radius: 50%; margin: 4px auto 18px; background: conic-gradient(#111827 0 100%); position: relative; }
+        .asset-pie { width: min(220px, 68vw); height: min(220px, 68vw); border-radius: 50%; margin: 4px auto 18px; background: conic-gradient(#111827 0 100%); position: relative; cursor: pointer; box-shadow: inset 0 0 0 1px rgba(255,255,255,.55), 0 12px 26px rgba(31,41,51,.08); }
         .asset-pie::after { content: ""; position: absolute; inset: 24%; border-radius: 50%; background: var(--panel); border: 1px solid var(--line); }
         .asset-analysis-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); font-size: .82rem; }
         .asset-analysis-dot { width: 10px; height: 10px; border-radius: 9999px; background: #111827; flex: 0 0 auto; }
         .asset-analysis-name { min-width: 0; overflow-wrap: anywhere; line-height: 1.35; }
         .asset-analysis-amount { text-align: right; color: var(--muted); white-space: nowrap; line-height: 1.35; }
+        .asset-pie-detail { border: 1px solid var(--line); border-radius: 14px; background: var(--soft); padding: 12px; margin-bottom: 6px; }
         .dark-section-title { color: var(--ink); font-size: .78rem; font-weight: 700; margin: 18px 0 10px; letter-spacing: .08em; text-transform: uppercase; }
         .report-modal > div { background: #ffffff !important; color: var(--ink); border-radius: 0 !important; top: 0 !important; }
         .report-modal button { color: var(--ink) !important; background: var(--soft) !important; border-color: var(--line) !important; }
         .monthly-tabs { display: flex; gap: 18px; overflow-x: auto; border-bottom: 1px solid var(--line); margin: 0 -20px; padding: 0 20px; }
-        .monthly-tabs span { color: var(--muted); padding: 11px 0 9px; white-space: nowrap; font-weight: 600; font-size: .82rem; }
-        .monthly-tabs span.active { color: var(--ink); border-bottom: 2px solid var(--ink); }
+        .monthly-tabs span,
+        .monthly-tabs button { color: var(--muted); padding: 11px 0 9px; white-space: nowrap; font-weight: 600; font-size: .82rem; background: transparent !important; border: 0 !important; border-radius: 0 !important; }
+        .monthly-tabs span.active,
+        .monthly-tabs button.active { color: var(--ink); border-bottom: 2px solid var(--ink) !important; }
         .monthly-row { display: grid; grid-template-columns: 78px 36px 1fr 92px; align-items: center; gap: 9px; color: var(--ink); padding: 7px 0; font-size: .86rem; }
         .monthly-count { width: 32px; height: 32px; border-radius: 9999px; display: grid; place-items: center; font-size: 12px; color: #fff; font-weight: 800; }
         .monthly-bar { height: 7px; border-radius: 9999px; opacity: .95; }
         .monthly-amount { text-align: right; font-weight: 800; }
+        .monthly-line-chart { border: 1px solid var(--line); border-radius: 16px; background: var(--panel); padding: 12px; overflow: hidden; }
+        .monthly-line-chart svg { width: 100%; height: auto; display: block; }
+        .monthly-list-row { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); }
+        .monthly-list-icon { width: 42px; height: 42px; border-radius: 12px; background: var(--soft); border: 1px solid var(--line); display: grid; place-items: center; font-size: 1.15rem; overflow: hidden; }
+        .monthly-pie { width: min(230px, 68vw); height: min(230px, 68vw); border-radius: 50%; margin: 8px auto 16px; position: relative; box-shadow: inset 0 0 0 1px rgba(255,255,255,.6), 0 12px 26px rgba(31,41,51,.08); }
+        .monthly-pie::after { content: ""; position: absolute; inset: 25%; border-radius: 50%; background: var(--panel); border: 1px solid var(--line); }
+        .monthly-category-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line); }
+        .monthly-category-dot { width: 10px; height: 10px; border-radius: 9999px; flex: 0 0 auto; }
         .donut-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
         .donut-card { text-align: center; }
         .donut-ring { width: 86px; height: 86px; border-radius: 50%; display: grid; place-items: center; margin: 0 auto 10px; }
@@ -451,7 +463,7 @@
                 <div class="text-xs text-gray-400 mb-1" data-i18n="photoLabel">附加照片 (選填)</div>
                 <input type="file" id="photo" accept="image/*" class="w-full text-sm text-gray-500 bg-gray-50 rounded-lg p-2 border border-gray-100">
                 
-                <button onclick="addExpense()" class="w-full primary-btn py-3.5 font-semibold mt-2" data-i18n="saveButton">確認儲存</button>
+                <button id="record-save-button" onclick="addExpense()" class="w-full primary-btn py-3.5 font-semibold mt-2" data-i18n="saveButton">確認儲存</button>
             </div>
 
             <div id="account-picker" class="account-picker hidden">
@@ -834,13 +846,17 @@
         let currencyChartObj = null;
         
         const chartColors = ['#111827', '#6b7280', '#a16207', '#0f766e', '#7c3aed', '#be123c', '#2563eb', '#15803d', '#c2410c'];
+        const assetPieColors = ['#2f3437', '#8f7a66', '#c08467', '#7c9a92', '#8b8fa3', '#b9879b', '#9d8f72', '#6f8fb0', '#a8705d', '#6f7f70'];
         let currentLang = localStorage.getItem('myBudgetLang') || 'zh';
         let statsRange = localStorage.getItem('myStatsRange') || '6m';
         let selectedEntryDate = localStorage.getItem('mySelectedEntryDate') || todayString();
         let dailyRecordsExpanded = false;
+        let activeMonthlyReportTab = 'overview';
+        let editingRecordIndex = null;
         let assetAnalysisData = { group: { assets: [], liabilities: [] }, currency: { assets: [], liabilities: [] } };
         let activeAssetAnalysisKind = 'group';
         let activeAssetAnalysisSide = 'assets';
+        const customEmojiOptions = ['🍽️', '☕', '🧋', '🍱', '🛒', '🧴', '👕', '🚆', '🚕', '🏠', '💡', '📱', '💊', '🎬', '🎁', '✈️', '🐾', '⭐'];
         const SUPABASE_URL = 'https://ymxjnjrkndzemepflymc.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlteGpuanJrbmR6ZW1lcGZseW1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5Mzg2MDUsImV4cCI6MjA5NjUxNDYwNX0.eDKpQocEdSk0VoNqfGmegMuIRbfhwQLQuBaGajLyD5o';
         const SITE_URL = 'https://riven520job-commits.github.io/minekakeibo/';
@@ -879,6 +895,9 @@
                 assetCurrencyAnalysisTitle: '幣種統計',
                 assetPositivePie: '資產',
                 assetNegativePie: '負債',
+                assetPieTapHint: '點選圓餅圖查看項目明細',
+                assetPieDetailTitle: '項目明細',
+                assetPieRank: '排序',
                 accountBalances: '各帳戶餘額',
                 budgetProjectsTitle: '預算專案',
                 budgetProjectsHint: '設定與修改專案預算，追蹤期間內支出',
@@ -942,6 +961,7 @@
                 installmentBadge: (index, count) => `分期 ${index}/${count}`,
                 photoLabel: '附加照片 (選填)',
                 saveButton: '確認儲存',
+                updateButton: '確認更新',
                 historyKicker: 'History',
                 historyTitle: '紀錄列表',
                 savingsKicker: 'Japan Savings',
@@ -1020,6 +1040,11 @@
                 monthlyTabTag: '標籤',
                 monthlyTabTarget: '對象',
                 monthlyNoData: '這個月份還沒有支出紀錄',
+                monthlyDailyExpense: '每日支出曲線',
+                monthlyRecordsBelow: '當月紀錄',
+                monthlyCategoryShare: '支出類別佔比',
+                monthlyRankingTitle: '消費排行',
+                monthlyUnsupportedTab: '這個頁籤會在下一階段整理成專屬分析。',
                 initialPrefix: '初始',
                 accountCount: '個帳戶',
                 classify: '分類',
@@ -1038,6 +1063,10 @@
                 change: '變更',
                 customAccount: '➕ 自訂帳戶',
                 customCat: '自訂',
+                customCatModePrompt: '請選擇自訂圖示方式：輸入 1 使用 emoji，輸入 2 上傳圖片',
+                customCatEmojiPrompt: '請輸入一個 emoji 作為分類圖示：',
+                customCatImageHint: '接著請選擇圖片作為分類圖示',
+                toastCustomCatAdded: '自訂分類已新增',
                 emptyTitle: '還沒有紀錄',
                 emptyBody: '新增第一筆收支後，這裡會顯示你的歷史明細。',
                 delete: '刪除',
@@ -1127,6 +1156,9 @@
                 assetCurrencyAnalysisTitle: '通貨統計',
                 assetPositivePie: '資産',
                 assetNegativePie: '負債',
+                assetPieTapHint: '円グラフをタップして項目詳細を表示',
+                assetPieDetailTitle: '項目詳細',
+                assetPieRank: '順位',
                 accountBalances: '口座残高',
                 budgetProjectsTitle: '予算プロジェクト',
                 budgetProjectsHint: 'プロジェクト予算を設定・編集し、期間内の支出を追跡します',
@@ -1190,6 +1222,7 @@
                 installmentBadge: (index, count) => `分割 ${index}/${count}`,
                 photoLabel: '写真を添付 (任意)',
                 saveButton: '保存する',
+                updateButton: '更新する',
                 historyKicker: '履歴',
                 historyTitle: '記録一覧',
                 savingsKicker: 'Japan Savings',
@@ -1268,6 +1301,11 @@
                 monthlyTabTag: 'タグ',
                 monthlyTabTarget: '対象',
                 monthlyNoData: 'この月の支出記録はまだありません',
+                monthlyDailyExpense: '日別支出グラフ',
+                monthlyRecordsBelow: '月内記録',
+                monthlyCategoryShare: '支出カテゴリ比率',
+                monthlyRankingTitle: '支出ランキング',
+                monthlyUnsupportedTab: 'このタブは次の段階で専用分析として整理します。',
                 initialPrefix: '初期',
                 accountCount: '口座',
                 classify: '分類',
@@ -1286,6 +1324,10 @@
                 change: '変更',
                 customAccount: '➕ 口座を追加',
                 customCat: 'カスタム',
+                customCatModePrompt: 'アイコンの作成方法を選んでください：1 は emoji、2 は画像アップロード',
+                customCatEmojiPrompt: 'カテゴリのアイコンにする emoji を入力してください：',
+                customCatImageHint: '続いて画像を選択してください',
+                toastCustomCatAdded: 'カスタムカテゴリを追加しました',
                 emptyTitle: 'まだ記録がありません',
                 emptyBody: '最初の収支を追加すると、ここに履歴が表示されます。',
                 delete: '削除',
@@ -1564,6 +1606,7 @@
         }
 
         function openAddWithSelectedDate() {
+            editingRecordIndex = null;
             openAddModal();
             document.getElementById('date').value = selectedEntryDate;
         }
@@ -1640,6 +1683,8 @@
             const addPage = document.getElementById('page-add');
             if (!modal || !body || !addPage) return;
             document.getElementById('add-modal-date-label').textContent = formatEntryDateLabel(selectedEntryDate);
+            const saveButton = document.getElementById('record-save-button');
+            if (saveButton) saveButton.textContent = editingRecordIndex === null ? t('saveButton') : t('updateButton');
             body.appendChild(addPage);
             addPage.classList.add('active');
             modal.classList.remove('hidden');
@@ -1648,6 +1693,7 @@
             renderAccounts();
             renderProjectButtons();
             toggleInstallmentFields();
+            hideCalculator();
             document.getElementById('date').value = selectedEntryDate;
         }
 
@@ -1657,6 +1703,9 @@
             if (!modal || !addPage) return;
             modal.classList.add('hidden');
             addPage.classList.remove('active');
+            editingRecordIndex = null;
+            const saveButton = document.getElementById('record-save-button');
+            if (saveButton) saveButton.textContent = t('saveButton');
             document.body.style.overflow = '';
         }
 
@@ -1740,13 +1789,250 @@
             renderMonthlyReport();
         }
 
+        function monthlyReportTabs() {
+            return [
+                { id: 'overview', label: t('navDashboard') },
+                { id: 'detail', label: t('monthlyTabDetail') },
+                { id: 'category', label: t('monthlyTabCategory') },
+                { id: 'ranking', label: t('monthlyTabRanking') },
+                { id: 'account', label: t('monthlyTabAccount') },
+                { id: 'project', label: t('monthlyTabProject') },
+                { id: 'accountGroup', label: t('monthlyTabAccountGroup') },
+                { id: 'name', label: t('monthlyTabName') },
+                { id: 'merchant', label: t('monthlyTabMerchant') },
+                { id: 'tag', label: t('monthlyTabTag') },
+                { id: 'target', label: t('monthlyTabTarget') }
+            ];
+        }
+
+        function setMonthlyReportTab(tabId) {
+            activeMonthlyReportTab = tabId || 'overview';
+            renderMonthlyReport();
+        }
+
+        function monthLastDay(monthKeyValue) {
+            return new Date(Number(monthKeyValue.slice(0, 4)), Number(monthKeyValue.slice(5, 7)), 0).getDate();
+        }
+
+        function monthRangeLabel(monthKeyValue) {
+            const label = monthKeyValue.replace('-', '/');
+            return `${label}/01 - ${label}/${String(monthLastDay(monthKeyValue)).padStart(2, '0')}`;
+        }
+
+        function monthlyAmountText(amount) {
+            if (amountsHidden) return `¥${t('hiddenAmount')}`;
+            return `${amount < 0 ? '-' : '+'}¥${Math.round(Math.abs(amount)).toLocaleString()}`;
+        }
+
+        function monthlyExpensePairs(monthRecords) {
+            return monthRecords.filter(({ item }) => ['支出', '應付帳款', '系統'].includes(item.type));
+        }
+
+        function monthlyRecordRow(pair, showDate = true) {
+            const { item, index } = pair;
+            const safeIcon = item.subCatIcon || '📝';
+            const iconHtml = safeIcon.startsWith('data:image')
+                ? `<img src="${safeIcon}" class="w-full h-full object-cover">`
+                : escapeHTML(safeIcon);
+            const jpy = toJPY(item.price, item.currency || '¥');
+            return `
+                <button onclick="closeMonthlyReportModal(); openRecordDetail(${index})" class="monthly-list-row w-full text-left">
+                    <span class="monthly-list-icon">${iconHtml}</span>
+                    <span class="min-w-0">
+                        <span class="block font-semibold truncate">${escapeHTML(displayLabel(item.name || item.subCatName || item.mainCat || t('uncategorized')))}</span>
+                        <span class="block text-xs text-gray-400 truncate">${showDate ? `${escapeHTML(formatEntryDateLabel(item.date))} · ` : ''}${escapeHTML(displayLabel(item.mainCat || item.type))} · ${escapeHTML(displayLabel(item.account || t('uncategorized')))}</span>
+                    </span>
+                    <span class="font-bold text-right shrink-0">${formatPrivateJPY(jpy, '¥')}</span>
+                </button>
+            `;
+        }
+
+        function pieGradientFromEntries(entries) {
+            const total = entries.reduce((sum, entry) => sum + entry.amount, 0);
+            if (!total) return 'conic-gradient(#e5e7eb 0 100%)';
+            let start = 0;
+            const segments = entries.map((entry, index) => {
+                const end = start + (entry.amount / total) * 100;
+                const color = chartColors[index % chartColors.length];
+                const segment = `${color} ${start}% ${end}%`;
+                start = end;
+                return segment;
+            });
+            return `conic-gradient(${segments.join(', ')})`;
+        }
+
+        function renderMonthlyTabs() {
+            return `
+                <div class="monthly-tabs">
+                    ${monthlyReportTabs().map(tab => `
+                        <button type="button" onclick="setMonthlyReportTab('${tab.id}')" class="${activeMonthlyReportTab === tab.id ? 'active' : ''}">${escapeHTML(tab.label)}</button>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function renderMonthlyPeriodNav(monthKeyValue) {
+            return `
+                <div class="flex items-center justify-center gap-3 text-base font-semibold">
+                    <button onclick="shiftEntryMonth(-1)" class="text-gray-500">‹</button>
+                    <span>${monthRangeLabel(monthKeyValue)}</span>
+                    <button onclick="shiftEntryMonth(1)" class="text-gray-500">›</button>
+                </div>
+            `;
+        }
+
+        function renderMonthlyOverview(context) {
+            const { summaryRows, maxSummary, categoryEntries, expense, topExpensePairs } = context;
+            return `
+                <div>
+                    ${summaryRows.map(row => {
+                        const width = Math.max(6, Math.round((Math.abs(row.amount) / maxSummary) * 100));
+                        return `
+                            <div class="monthly-row">
+                                <div>${escapeHTML(row.label)}</div>
+                                <div class="monthly-count" style="background:${row.color}">${row.count}</div>
+                                <div class="monthly-bar" style="width:${width}%; background:${row.color}"></div>
+                                <div class="monthly-amount" style="color:${row.color}">${monthlyAmountText(row.amount)}</div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+                <div>
+                    <h3 class="dark-section-title">${t('categoryChartTitle')}</h3>
+                    <div class="donut-grid">
+                        ${categoryEntries.length ? categoryEntries.slice(0, 3).map((entry, index) => {
+                            const ratio = expense ? Math.round((entry.amount / expense) * 100) : 0;
+                            const color = chartColors[index % chartColors.length];
+                            return `
+                                <div class="donut-card">
+                                    <div class="donut-ring" style="background: conic-gradient(${color} ${ratio}%, #edf1f5 0)">
+                                        <span>${ratio}%</span>
+                                    </div>
+                                    <div class="font-semibold text-sm truncate">${escapeHTML(displayLabel(entry.label))}</div>
+                                    <div class="font-bold">${formatPrivateJPY(entry.amount, '¥')}</div>
+                                </div>
+                            `;
+                        }).join('') : `<div class="empty-state col-span-3">${t('monthlyNoData')}</div>`}
+                    </div>
+                </div>
+                <div>
+                    <h3 class="dark-section-title">TOP 3</h3>
+                    <div>${topExpensePairs.length ? topExpensePairs.slice(0, 3).map(pair => monthlyRecordRow(pair)).join('') : `<div class="empty-state">${t('monthlyNoData')}</div>`}</div>
+                </div>
+            `;
+        }
+
+        function renderMonthlyLineChart(monthKeyValue, expensePairs) {
+            const days = monthLastDay(monthKeyValue);
+            const totals = Array.from({ length: days }, () => 0);
+            expensePairs.forEach(({ item }) => {
+                const day = Number((item.date || '').slice(8, 10));
+                if (day >= 1 && day <= days) totals[day - 1] += toJPY(item.price, item.currency || '¥');
+            });
+            const max = Math.max(...totals, 1);
+            const width = 320;
+            const height = 170;
+            const padLeft = 46;
+            const padRight = 12;
+            const padTop = 16;
+            const padBottom = 30;
+            const plotW = width - padLeft - padRight;
+            const plotH = height - padTop - padBottom;
+            const points = totals.map((amount, index) => {
+                const x = padLeft + (days === 1 ? 0 : (index / (days - 1)) * plotW);
+                const y = padTop + plotH - (amount / max) * plotH;
+                return `${x.toFixed(1)},${y.toFixed(1)}`;
+            }).join(' ');
+            const midDay = Math.max(1, Math.round(days / 2));
+            return `
+                <div class="monthly-line-chart">
+                    <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHTML(t('monthlyDailyExpense'))}">
+                        <line x1="${padLeft}" y1="${padTop}" x2="${padLeft}" y2="${padTop + plotH}" stroke="#e5e7eb" stroke-width="1"/>
+                        <line x1="${padLeft}" y1="${padTop + plotH}" x2="${width - padRight}" y2="${padTop + plotH}" stroke="#e5e7eb" stroke-width="1"/>
+                        <line x1="${padLeft}" y1="${padTop + plotH / 2}" x2="${width - padRight}" y2="${padTop + plotH / 2}" stroke="#f1f5f9" stroke-width="1"/>
+                        <text x="4" y="${padTop + 5}" font-size="10" fill="#7b8794">${escapeHTML(formatPrivateJPY(max, '¥'))}</text>
+                        <text x="18" y="${padTop + plotH + 4}" font-size="10" fill="#7b8794">¥0</text>
+                        <polyline fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="${points}"/>
+                        ${totals.map((amount, index) => {
+                            if (!amount) return '';
+                            const x = padLeft + (days === 1 ? 0 : (index / (days - 1)) * plotW);
+                            const y = padTop + plotH - (amount / max) * plotH;
+                            return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.2" fill="#111827"/>`;
+                        }).join('')}
+                        <text x="${padLeft}" y="${height - 8}" font-size="10" fill="#7b8794">1</text>
+                        <text x="${padLeft + plotW / 2 - 6}" y="${height - 8}" font-size="10" fill="#7b8794">${midDay}</text>
+                        <text x="${width - padRight - 14}" y="${height - 8}" font-size="10" fill="#7b8794">${days}</text>
+                    </svg>
+                </div>
+            `;
+        }
+
+        function renderMonthlyDetail(context) {
+            const { monthKeyValue, expensePairs } = context;
+            return `
+                <div>
+                    <h3 class="dark-section-title">${t('monthlyDailyExpense')}</h3>
+                    ${renderMonthlyLineChart(monthKeyValue, expensePairs)}
+                </div>
+                <div>
+                    <h3 class="dark-section-title">${t('monthlyRecordsBelow')}</h3>
+                    ${expensePairs.length ? expensePairs.map(pair => monthlyRecordRow(pair)).join('') : `<div class="empty-state">${t('monthlyNoData')}</div>`}
+                </div>
+            `;
+        }
+
+        function renderMonthlyCategory(context) {
+            const { categoryEntries, expense } = context;
+            return `
+                <div class="surface p-4">
+                    <h3 class="dark-section-title mt-0">${t('monthlyCategoryShare')}</h3>
+                    <div class="monthly-pie" style="background:${pieGradientFromEntries(categoryEntries)}"></div>
+                    ${categoryEntries.length ? categoryEntries.map((entry, index) => {
+                        const ratio = expense ? Math.round((entry.amount / expense) * 1000) / 10 : 0;
+                        const color = chartColors[index % chartColors.length];
+                        return `
+                            <div class="monthly-category-row">
+                                <span class="flex items-center gap-2 min-w-0">
+                                    <span class="monthly-category-dot" style="background:${color}"></span>
+                                    <span class="font-semibold truncate">${escapeHTML(displayLabel(entry.label))}</span>
+                                </span>
+                                <span class="text-right font-bold shrink-0">${formatPrivateJPY(entry.amount, '¥')}<br><span class="text-xs text-gray-400">${ratio}%</span></span>
+                            </div>
+                        `;
+                    }).join('') : `<div class="empty-state">${t('monthlyNoData')}</div>`}
+                </div>
+            `;
+        }
+
+        function renderMonthlyRanking(context) {
+            const { topExpensePairs } = context;
+            return `
+                <div>
+                    <h3 class="dark-section-title">${t('monthlyRankingTitle')}</h3>
+                    ${topExpensePairs.length ? topExpensePairs.map((pair, index) => `
+                        <div class="grid grid-cols-[28px_minmax(0,1fr)] gap-2 items-center">
+                            <div class="text-sm font-bold text-gray-400">#${index + 1}</div>
+                            <div>${monthlyRecordRow(pair)}</div>
+                        </div>
+                    `).join('') : `<div class="empty-state">${t('monthlyNoData')}</div>`}
+                </div>
+            `;
+        }
+
+        function renderMonthlyPlaceholder() {
+            return `<div class="empty-state">${t('monthlyUnsupportedTab')}</div>`;
+        }
+
         function renderMonthlyReport() {
             const monthKeyValue = selectedMonthKey();
             const title = document.getElementById('monthly-report-month');
             const container = document.getElementById('monthly-report-content');
             if (!title || !container) return;
             title.textContent = monthKeyValue.replace('-', '/');
-            const monthRecords = data.filter(item => (item.date || '').substring(0, 7) === monthKeyValue);
+            const monthRecords = data
+                .map((item, index) => ({ item, index }))
+                .filter(({ item }) => (item.date || '').substring(0, 7) === monthKeyValue)
+                .sort((a, b) => String(a.item.date || '').localeCompare(String(b.item.date || '')));
             let income = 0;
             let expense = 0;
             let transferOut = 0;
@@ -1754,21 +2040,25 @@
             let adjustment = 0;
             const counts = { expense: 0, income: 0, transferOut: 0, transferIn: 0, adjustment: 0 };
             const categories = {};
-            const topRecords = [];
-            monthRecords.forEach(item => {
+            monthRecords.forEach(({ item }) => {
                 const value = toJPY(item.price, item.currency || '¥');
                 if (['收入', '應收帳款'].includes(item.type)) { income += value; counts.income++; }
                 if (item.type === '轉帳') { transferOut += value; transferIn += value; counts.transferOut++; counts.transferIn++; }
-                if (item.type === '系統') { adjustment -= value; counts.adjustment++; }
+                if (item.type === '系統') adjustment -= value;
                 if (['支出', '應付帳款', '系統'].includes(item.type)) {
                     expense += value;
                     counts.expense++;
-                    categories[item.mainCat || item.subCatName || t('uncategorized')] = (categories[item.mainCat || item.subCatName || t('uncategorized')] || 0) + value;
-                    topRecords.push(item);
+                    if (item.type === '系統') counts.adjustment++;
+                    const key = item.mainCat || item.subCatName || t('uncategorized');
+                    categories[key] = (categories[key] || 0) + value;
                 }
             });
             const net = income - expense;
-            const categoryEntries = Object.entries(categories).sort((a, b) => b[1] - a[1]);
+            const categoryEntries = Object.entries(categories)
+                .map(([label, amount]) => ({ label, amount }))
+                .sort((a, b) => b.amount - a.amount);
+            const expensePairs = monthlyExpensePairs(monthRecords);
+            const topExpensePairs = [...expensePairs].sort((a, b) => toJPY(b.item.price, b.item.currency || '¥') - toJPY(a.item.price, a.item.currency || '¥'));
             const maxSummary = Math.max(expense, income, transferOut, transferIn, Math.abs(adjustment), Math.abs(net), 1);
             const summaryRows = [
                 { label: displayLabel('支出'), count: counts.expense, amount: -expense, color: '#111827' },
@@ -1778,81 +2068,24 @@
                 { label: displayLabel('餘額調整'), count: counts.adjustment, amount: adjustment, color: '#9ca3af' },
                 { label: t('monthlyNet'), count: monthRecords.length, amount: net, color: '#52525b' }
             ];
-            const topExpenseRecords = topRecords
-                .sort((a, b) => toJPY(b.price, b.currency || '¥') - toJPY(a.price, a.currency || '¥'))
-                .slice(0, 3);
+            const context = { monthKeyValue, monthRecords, expensePairs, topExpensePairs, income, expense, net, categoryEntries, summaryRows, maxSummary };
+            const body = activeMonthlyReportTab === 'detail'
+                ? renderMonthlyDetail(context)
+                : activeMonthlyReportTab === 'category'
+                    ? renderMonthlyCategory(context)
+                    : activeMonthlyReportTab === 'ranking'
+                        ? renderMonthlyRanking(context)
+                        : activeMonthlyReportTab === 'overview'
+                            ? renderMonthlyOverview(context)
+                            : renderMonthlyPlaceholder(context);
             container.innerHTML = `
-                <div class="flex items-center justify-center gap-3 text-base font-semibold">
-                    <button onclick="shiftEntryMonth(-1)" class="text-gray-500">‹</button>
-                    <span>${monthKeyValue.replace('-', '/')} / 01 - ${monthKeyValue.replace('-', '/')} / ${String(new Date(Number(monthKeyValue.slice(0,4)), Number(monthKeyValue.slice(5,7)), 0).getDate()).padStart(2, '0')}</span>
-                    <button onclick="shiftEntryMonth(1)" class="text-gray-500">›</button>
-                </div>
-                <div class="monthly-tabs">
-                    <span class="active">${t('navDashboard')}</span>
-                    <span>${t('monthlyTabDetail')}</span>
-                    <span>${t('monthlyTabCategory')}</span>
-                    <span>${t('monthlyTabRanking')}</span>
-                    <span>${t('monthlyTabAccount')}</span>
-                    <span>${t('monthlyTabProject')}</span>
-                    <span>${t('monthlyTabAccountGroup')}</span>
-                    <span>${t('monthlyTabName')}</span>
-                    <span>${t('monthlyTabMerchant')}</span>
-                    <span>${t('monthlyTabTag')}</span>
-                    <span>${t('monthlyTabTarget')}</span>
-                </div>
-                <div>
-                    ${summaryRows.map(row => {
-                        const width = Math.max(6, Math.round((Math.abs(row.amount) / maxSummary) * 100));
-                        const amountText = amountsHidden ? `¥${t('hiddenAmount')}` : `${row.amount < 0 ? '-' : '+'}¥${Math.round(Math.abs(row.amount)).toLocaleString()}`;
-                        return `
-                            <div class="monthly-row">
-                                <div>${escapeHTML(row.label)}</div>
-                                <div class="monthly-count" style="background:${row.color}">${row.count}</div>
-                                <div class="monthly-bar" style="width:${width}%; background:${row.color}"></div>
-                                <div class="monthly-amount" style="color:${row.color}">${amountText}</div>
-                            </div>
-                        `;
-                    }).join('')}
-                </div>
-                <div>
-                    <h3 class="dark-section-title">${t('categoryChartTitle')}</h3>
-                    <div class="donut-grid">
-                        ${categoryEntries.length ? categoryEntries.slice(0, 3).map(([name, amount], index) => {
-                            const ratio = expense ? Math.round((amount / expense) * 100) : 0;
-                            const color = chartColors[index % chartColors.length];
-                            return `
-                                <div class="donut-card">
-                                    <div class="donut-ring" style="background: conic-gradient(${color} ${ratio}%, rgba(255,255,255,.14) 0)">
-                                        <span>${ratio}%</span>
-                                    </div>
-                                    <div class="font-semibold text-sm">${escapeHTML(displayLabel(name))}</div>
-                                    <div class="text-red-400 font-bold">${formatPrivateJPY(amount, '¥')}</div>
-                                </div>
-                            `;
-                        }).join('') : `<div class="empty-state col-span-3">${t('monthlyNoData')}</div>`}
-                    </div>
-                </div>
-                <div>
-                    <h3 class="dark-section-title">TOP 3</h3>
-                    <div>
-                        ${topExpenseRecords.length ? topExpenseRecords.map(item => {
-                            const safeIcon = item.subCatIcon || '📝';
-                            const iconHtml = safeIcon.startsWith('data:image') ? `<img src="${safeIcon}" class="w-full h-full rounded-full object-cover">` : escapeHTML(safeIcon);
-                            return `
-                                <button onclick="closeMonthlyReportModal(); openRecordDetail(${data.indexOf(item)})" class="top-record-row w-full text-left">
-                                    <span class="top-record-icon">${iconHtml}</span>
-                                    <span class="min-w-0">
-                                        <span class="block text-base font-semibold truncate">${escapeHTML(displayLabel(item.name))}</span>
-                                        <span class="block text-xs text-gray-400 truncate">${escapeHTML(projectById(item.projectId)?.name || displayLabel(item.account || ''))}</span>
-                                    </span>
-                                    <span class="text-red-500 text-base font-bold">¥${Math.round(toJPY(item.price, item.currency || '¥')).toLocaleString()}</span>
-                                </button>
-                            `;
-                        }).join('') : `<div class="empty-state">${t('monthlyNoData')}</div>`}
-                    </div>
-                </div>
+                ${renderMonthlyPeriodNav(monthKeyValue)}
+                ${renderMonthlyTabs()}
+                ${body}
             `;
         }
+
+        window.setMonthlyReportTab = setMonthlyReportTab;
 
         function refreshAfterRecordChange() {
             localStorage.setItem('myBudget', JSON.stringify(data));
@@ -1883,23 +2116,41 @@
         function editRecord(index) {
             const item = data[index];
             if (!item) return;
-            const nextName = prompt(t('promptEditRecordName'), item.name);
-            if (!nextName || !nextName.trim()) return;
-            const nextAmount = prompt(t('promptEditRecordAmount'), item.price);
-            const parsedAmount = parseFloat(nextAmount);
-            if (!parsedAmount || parsedAmount <= 0) return;
-            const nextDate = prompt(t('promptEditRecordDate'), item.date);
-            if (!nextDate || !/^\d{4}-\d{2}-\d{2}$/.test(nextDate.trim())) return;
-            item.name = nextName.trim();
-            item.price = String(parsedAmount);
-            item.date = nextDate.trim();
-            selectedEntryDate = item.date;
-            localStorage.setItem('mySelectedEntryDate', selectedEntryDate);
-            data.sort((a, b) => new Date(b.date) - new Date(a.date));
+            editingRecordIndex = index;
+            selectedEntryDate = item.date || selectedEntryDate;
             closeRecordDetail();
-            renderDashboardDatePicker();
-            refreshAfterRecordChange();
-            showToast(t('toastRecordUpdated'));
+            openAddModal();
+            populateAddFormForEdit(item);
+        }
+
+        function populateAddFormForEdit(item) {
+            document.getElementById('selected-type').value = item.type || '支出';
+            document.getElementById('selected-main-cat').value = item.mainCat || Object.keys(defaultCategories[item.type || '支出'] || defaultCategories['支出'])[0];
+            document.getElementById('selected-sub-cat-name').value = item.subCatName || item.name || '';
+            document.getElementById('selected-sub-cat-icon').value = item.subCatIcon || '📝';
+            document.getElementById('selected-account-group').value = accountGroupMap[item.account] || document.getElementById('selected-account-group').value;
+            document.getElementById('selected-account').value = item.account || '';
+            document.getElementById('selected-to-account-group').value = accountGroupMap[item.toAccount] || document.getElementById('selected-to-account-group').value;
+            document.getElementById('selected-to-account').value = item.toAccount || '';
+            document.getElementById('selected-project-id').value = item.projectId || '';
+            document.getElementById('date').value = item.date || todayString();
+            document.getElementById('currency').value = item.currency || getAccountCurrency(item.account) || '¥';
+            document.getElementById('price').value = item.price || '';
+            const nameInput = document.getElementById('name');
+            nameInput.value = displayLabel(item.name || item.subCatName || '');
+            nameInput.dataset.rawValue = item.name || item.subCatName || '';
+            nameInput.dataset.autoFilled = 'false';
+            const installmentEnabled = document.getElementById('installment-enabled');
+            const installmentCount = document.getElementById('installment-count');
+            if (installmentEnabled) installmentEnabled.checked = !!item.installmentCount;
+            if (installmentCount && item.installmentCount) installmentCount.value = item.installmentCount;
+            renderTypes();
+            renderAccounts();
+            renderProjectButtons();
+            renderAccountSummaries();
+            renderInstallmentSummary();
+            toggleInstallmentFields();
+            hideCalculator();
         }
 
         window.openRecordDetail = openRecordDetail;
@@ -2622,7 +2873,7 @@
             const segments = entries.map((entry, index) => {
                 const ratio = entry.amount / total;
                 const end = start + ratio * 100;
-                const color = chartColors[index % chartColors.length];
+                const color = assetPieColors[index % assetPieColors.length];
                 const segment = `${color} ${start}% ${end}%`;
                 start = end;
                 return segment;
@@ -2630,25 +2881,78 @@
             return `conic-gradient(${segments.join(', ')})`;
         }
 
+        function activeAssetEntries() {
+            const dataSet = assetAnalysisData[activeAssetAnalysisKind] || assetAnalysisData.group;
+            return dataSet[activeAssetAnalysisSide] || [];
+        }
+
+        function showAssetPieDetail(index = 0) {
+            const detail = document.getElementById('asset-pie-detail');
+            const entries = activeAssetEntries();
+            const entry = entries[index];
+            if (!detail || !entry) return;
+            const total = entries.reduce((sum, item) => sum + item.amount, 0);
+            const ratio = total ? Math.round((entry.amount / total) * 1000) / 10 : 0;
+            const color = assetPieColors[index % assetPieColors.length];
+            detail.innerHTML = `
+                <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                        <div class="text-[11px] text-gray-400 font-bold uppercase tracking-[.08em]">${t('assetPieDetailTitle')}</div>
+                        <div class="mt-1 flex items-start gap-2">
+                            <span class="asset-analysis-dot mt-1" style="background:${color}"></span>
+                            <span class="font-bold text-base leading-snug break-words">${escapeHTML(displayLabel(entry.label))}</span>
+                        </div>
+                    </div>
+                    <div class="text-right shrink-0">
+                        <div class="font-bold">${formatPrivateJPY(entry.amount, '¥')}</div>
+                        <div class="text-xs text-gray-500 mt-1">${ratio}% · ${t('assetPieRank')} ${index + 1}</div>
+                    </div>
+                </div>
+            `;
+            detail.classList.remove('hidden');
+        }
+
+        function handleAssetPieClick(event) {
+            const entries = activeAssetEntries();
+            const total = entries.reduce((sum, item) => sum + item.amount, 0);
+            if (!entries.length || !total) return;
+            const rect = event.currentTarget.getBoundingClientRect();
+            const x = event.clientX - rect.left - rect.width / 2;
+            const y = event.clientY - rect.top - rect.height / 2;
+            let degrees = Math.atan2(y, x) * 180 / Math.PI + 90;
+            if (degrees < 0) degrees += 360;
+            const targetPercent = degrees / 360 * 100;
+            let start = 0;
+            const index = entries.findIndex(entry => {
+                const end = start + (entry.amount / total) * 100;
+                const matched = targetPercent >= start && targetPercent <= end;
+                start = end;
+                return matched;
+            });
+            showAssetPieDetail(index >= 0 ? index : 0);
+        }
+
         function renderAssetPieSection(title, entries) {
             const total = entries.reduce((sum, item) => sum + item.amount, 0);
             const rows = entries.length ? entries.map((entry, index) => {
                 const ratio = total ? Math.round((entry.amount / total) * 100) : 0;
-                const color = chartColors[index % chartColors.length];
+                const color = assetPieColors[index % assetPieColors.length];
                 return `
-                    <div class="asset-analysis-row">
+                    <button type="button" onclick="showAssetPieDetail(${index})" class="asset-analysis-row w-full text-left">
                         <span class="flex items-start gap-2 min-w-0">
                             <span class="asset-analysis-dot" style="background:${color}"></span>
                             <span class="asset-analysis-name font-semibold">${escapeHTML(displayLabel(entry.label))}</span>
                         </span>
                         <span class="asset-analysis-amount">${formatPrivateJPY(entry.amount, '¥')}<br>${ratio}%</span>
-                    </div>
+                    </button>
                 `;
             }).join('') : `<div class="empty-state">${t('noChartData')}</div>`;
             return `
                 <div class="surface p-4">
                     <h3 class="dark-section-title mt-0">${title}</h3>
-                    <div class="asset-pie" style="background:${pieGradient(entries)}"></div>
+                    <div class="asset-pie" onclick="handleAssetPieClick(event)" style="background:${pieGradient(entries)}" title="${t('assetPieTapHint')}"></div>
+                    <div id="asset-pie-detail" class="asset-pie-detail hidden"></div>
+                    <p class="text-[11px] text-gray-400 text-center mb-3">${t('assetPieTapHint')}</p>
                     <div>${rows}</div>
                 </div>
             `;
@@ -2691,6 +2995,8 @@
         window.openAssetAnalysisModal = openAssetAnalysisModal;
         window.closeAssetAnalysisModal = closeAssetAnalysisModal;
         window.setAssetAnalysisSide = setAssetAnalysisSide;
+        window.showAssetPieDetail = showAssetPieDetail;
+        window.handleAssetPieClick = handleAssetPieClick;
 
         function addSubAccount(group) {
             const newAcc = prompt(t('promptAddSubAccount', displayLabel(group)));
@@ -3318,12 +3624,23 @@
         window.calculatorPress = calculatorPress;
         window.calculatorQuick = calculatorQuick;
 
-        document.addEventListener('click', event => {
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', event => {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) event.preventDefault();
+            lastTouchEnd = now;
+        }, { passive: false });
+
+        function hideCalculatorWhenLeavingAmount(event) {
             if (!document.getElementById('page-add')?.classList.contains('active')) return;
             const target = event.target;
             if (target?.closest?.('#price, #calculator-panel')) return;
             hideCalculator();
-        });
+        }
+
+        document.addEventListener('pointerdown', hideCalculatorWhenLeavingAmount, true);
+        document.addEventListener('mousedown', hideCalculatorWhenLeavingAmount, true);
+        document.addEventListener('focusin', hideCalculatorWhenLeavingAmount, true);
 
         function selectAccountGroup(group, type) {
             const children = childAccountsForGroup(group);
@@ -3442,7 +3759,7 @@
                 return `<button onclick="selectSubCat(decodeURIComponent('${encodeURIComponent(cat.name)}'), decodeURIComponent('${encodeURIComponent(safeIcon)}'))" class="flex flex-col items-center justify-center min-h-[82px] p-3 rounded-2xl border-2 transition ${activeClass}">${iconHtml}<span class="text-[11px] font-semibold ${isActive ? 'text-blue-700' : 'text-gray-600'}">${escapeHTML(displayLabel(cat.name))}</span></button>`;
             }).join('');
 
-            html += `<button onclick="triggerCustomCatUpload()" class="flex flex-col items-center justify-center min-h-[82px] p-3 rounded-2xl border border-dashed border-gray-300 text-gray-400 hover:bg-gray-50 transition"><div class="text-2xl mb-1">➕</div><span class="text-[11px] font-medium">${t('customCat')}</span></button>`;
+            html += `<button onclick="createCustomCategory()" class="flex flex-col items-center justify-center min-h-[82px] p-3 rounded-2xl border border-dashed border-gray-300 text-gray-400 hover:bg-gray-50 transition"><div class="text-2xl mb-1">➕</div><span class="text-[11px] font-medium">${t('customCat')}</span></button>`;
             container.innerHTML = html;
 
             if (combinedCats.length > 0 && !combinedCats.some(c => c.name === currentSubCatName)) {
@@ -3462,7 +3779,49 @@
             renderSubCats(); 
         }
 
-        function triggerCustomCatUpload() { document.getElementById('custom-cat-upload').click(); }
+        function saveCustomCategory(name, icon) {
+            const cleanName = (name || '').trim();
+            const cleanIcon = (icon || '').trim();
+            if (!cleanName || !cleanIcon) return false;
+            const currentType = document.getElementById('selected-type').value;
+            const currentMainCat = document.getElementById('selected-main-cat').value;
+            if (!customCategories[currentType]) customCategories[currentType] = {};
+            if (!customCategories[currentType][currentMainCat]) customCategories[currentType][currentMainCat] = [];
+            customCategories[currentType][currentMainCat].push({ name: cleanName, icon: cleanIcon });
+            localStorage.setItem('myCustomCatsV3', JSON.stringify(customCategories));
+            selectSubCat(cleanName, cleanIcon);
+            showToast(t('toastCustomCatAdded'));
+            return true;
+        }
+
+        function triggerCustomCatUpload() {
+            showToast(t('customCatImageHint'));
+            document.getElementById('custom-cat-upload').click();
+        }
+
+        function chooseCustomEmoji() {
+            const optionsText = customEmojiOptions.map((emoji, index) => `${index + 1}. ${emoji}`).join('  ');
+            const input = prompt(`${t('customCatEmojiPrompt')}\n${optionsText}`, '1');
+            const trimmed = (input || '').trim();
+            if (!trimmed) return '';
+            const index = parseInt(trimmed, 10);
+            if (!Number.isNaN(index) && customEmojiOptions[index - 1]) return customEmojiOptions[index - 1];
+            return trimmed;
+        }
+
+        function createCustomCategory() {
+            const mode = (prompt(t('customCatModePrompt'), '1') || '').trim();
+            if (!mode) return;
+            if (mode === '2' || /image|圖片|画像|写真/i.test(mode)) {
+                triggerCustomCatUpload();
+                return;
+            }
+            const icon = chooseCustomEmoji();
+            if (!icon) return;
+            const name = prompt(t('promptCustomCat'));
+            if (!name || !name.trim()) return;
+            saveCustomCategory(name, icon);
+        }
 
         async function handleCustomCatUpload(event) {
             const file = event.target.files[0];
@@ -3470,13 +3829,13 @@
             const name = prompt(t('promptCustomCat'));
             if (!name) { event.target.value = ''; return; }
             const iconBase64 = await new Promise((resolve) => { const reader = new FileReader(); reader.onload = (e) => resolve(e.target.result); reader.readAsDataURL(file); });
-            const currentType = document.getElementById('selected-type').value;
-            const currentMainCat = document.getElementById('selected-main-cat').value;
-            customCategories[currentType][currentMainCat].push({ name: name, icon: iconBase64 });
-            localStorage.setItem('myCustomCatsV3', JSON.stringify(customCategories));
-            selectSubCat(name, iconBase64);
+            saveCustomCategory(name, iconBase64);
             event.target.value = '';
         }
+
+        window.saveCustomCategory = saveCustomCategory;
+        window.createCustomCategory = createCustomCategory;
+        window.triggerCustomCatUpload = triggerCustomCatUpload;
 
         function setTodayDate() { document.getElementById('date').value = new Date().toISOString().split('T')[0]; }
 
@@ -3571,6 +3930,46 @@
             }
 
             const baseRecord = { type, mainCat, subCatName, subCatIcon, account, toAccount, date, name, price, currency, projectId, photoData };
+            if (editingRecordIndex !== null) {
+                const original = data[editingRecordIndex];
+                if (!original) {
+                    editingRecordIndex = null;
+                    showToast(t('monthlyNoData'));
+                    return;
+                }
+                data[editingRecordIndex] = {
+                    ...original,
+                    ...baseRecord,
+                    photoData: file ? photoData : (original.photoData || null),
+                    installmentId: installmentEnabled ? (original.installmentId || `installment-${Date.now()}`) : undefined,
+                    installmentIndex: installmentEnabled ? (original.installmentIndex || 1) : undefined,
+                    installmentCount: installmentEnabled ? installmentCount : undefined
+                };
+                data.sort((a, b) => new Date(b.date) - new Date(a.date));
+                localStorage.setItem('myBudget', JSON.stringify(data));
+                selectedEntryDate = date;
+                dailyRecordsExpanded = true;
+                localStorage.setItem('mySelectedEntryDate', selectedEntryDate);
+                nameInput.value = '';
+                nameInput.dataset.rawValue = '';
+                nameInput.dataset.autoFilled = 'true';
+                calculatorExpression = '';
+                document.getElementById('price').value = '';
+                renderCalculator();
+                hideCalculator();
+                document.getElementById('photo').value = '';
+                if (document.getElementById('installment-enabled')) document.getElementById('installment-enabled').checked = false;
+                toggleInstallmentFields();
+                closeAddModal();
+                switchPage('record');
+                renderDashboardDatePicker();
+                renderDailyRecords();
+                updateBalances();
+                if (!document.getElementById('monthly-report-modal')?.classList.contains('hidden')) renderMonthlyReport();
+                showToast(t('toastRecordUpdated'));
+                return;
+            }
+
             if (installmentEnabled) {
                 const installmentId = `installment-${Date.now()}`;
                 const amounts = splitInstallmentAmounts(price, installmentCount);
@@ -3767,7 +4166,7 @@
             showToast(t('toastExported'));
         }
 
-        const APP_VERSION = '20260611-03';
+        const APP_VERSION = '20260613-03';
 
         function registerServiceWorker() {
             if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
