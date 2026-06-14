@@ -153,6 +153,26 @@
         .account-overview-header { width: 100%; display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 12px; padding: 15px 0; text-align: left; background: transparent; }
         .account-overview-amount { color: #8c949e; font-weight: 700; white-space: nowrap; }
         .account-overview-child { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 12px; padding: 11px 0 11px 22px; border-top: 1px solid var(--line); }
+        .account-detail-shell { background: #fff; color: var(--ink); }
+        .account-detail-action { width: 3.2rem; height: 3.2rem; border-radius: 9999px; border: 1px solid var(--line); background: #fff; box-shadow: 0 10px 22px rgba(31,41,51,.07); display: grid; place-items: center; color: var(--ink); font-size: 1.45rem; line-height: 1; }
+        .account-detail-tabs { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--line); }
+        .account-detail-tabs button { padding: 13px 8px 12px; color: var(--muted); font-weight: 700; border-bottom: 2px solid transparent; }
+        .account-detail-tabs button.active { color: var(--ink); border-color: #59b7d7; }
+        .account-detail-total { font-size: clamp(2.6rem, 14vw, 4rem); line-height: .95; color: #63b916; font-weight: 800; letter-spacing: 0; }
+        .account-detail-summary-row { display: grid; grid-template-columns: 78px 32px 1fr 92px; align-items: center; gap: 9px; padding: 6px 0; color: var(--ink); }
+        .account-detail-count { width: 28px; height: 28px; border-radius: 9999px; display: grid; place-items: center; font-size: 12px; color: #fff; font-weight: 800; }
+        .account-detail-bar { height: 6px; border-radius: 9999px; }
+        .account-detail-line svg { width: 100%; height: auto; display: block; overflow: visible; }
+        .account-transaction-row { display: grid; grid-template-columns: 52px minmax(0,1fr) auto; gap: 12px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line); }
+        .account-transaction-icon { width: 48px; height: 48px; border-radius: 9999px; background: var(--soft); display: grid; place-items: center; font-size: 1.2rem; overflow: hidden; }
+        .account-info-row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 14px; align-items: center; padding: 13px 0; border-top: 1px solid transparent; font-size: 1.02rem; }
+        .account-info-row span:last-child { color: var(--muted); text-align: right; min-width: 0; overflow-wrap: anywhere; }
+        .account-switch { width: 48px; height: 30px; border-radius: 9999px; background: #d7d7d7; padding: 3px; display: inline-flex; justify-content: flex-start; }
+        .account-switch.on { background: #59b7d7; justify-content: flex-end; }
+        .account-switch::before { content: ""; width: 24px; height: 24px; border-radius: 9999px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,.12); }
+        .account-more-card { background: #fff; border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 22px 60px rgba(31,41,51,.22); }
+        .account-more-option { width: 100%; border-radius: 14px; background: #e5e5e5; padding: 14px 16px; font-weight: 800; text-align: center; color: var(--ink); }
+        .adjust-row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 14px; align-items: center; padding: 11px 0; font-size: 1rem; }
         .asset-analysis-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .asset-analysis-switch button { border: 1px solid var(--line); border-radius: 12px; background: var(--soft); color: var(--muted); padding: 10px 12px; font-size: .82rem; font-weight: 800; }
         .asset-analysis-switch button.active { background: var(--ink); color: var(--panel); border-color: var(--ink); }
@@ -714,6 +734,49 @@
         </div>
     </div>
 
+    <div id="account-detail-modal" class="hidden fixed inset-0 z-[73] bg-white">
+        <div class="absolute inset-0 max-w-md mx-auto account-detail-shell overflow-hidden flex flex-col">
+            <div class="px-5 pt-12 pb-5 flex items-center justify-between gap-3">
+                <button onclick="closeAccountDetail()" class="account-detail-action" aria-label="Back">‹</button>
+                <h2 id="account-detail-title" class="text-2xl font-bold tracking-tight">帳戶</h2>
+                <div class="flex items-center gap-3">
+                    <button onclick="setAccountDetailTab('info')" class="account-detail-action text-xl" aria-label="Info">▤</button>
+                    <button onclick="openAccountMoreMenu()" class="account-detail-action text-xl" aria-label="More">☰</button>
+                </div>
+            </div>
+            <div class="account-detail-tabs">
+                <button id="account-detail-tab-transactions" onclick="setAccountDetailTab('transactions')" data-i18n="accountTransactions">交易明細</button>
+                <button id="account-detail-tab-info" onclick="setAccountDetailTab('info')" data-i18n="accountInfo">帳戶資訊</button>
+            </div>
+            <div id="account-detail-content" class="px-5 py-4 overflow-y-auto flex-1"></div>
+        </div>
+    </div>
+
+    <div id="account-more-modal" class="hidden fixed inset-0 z-[86] bg-black/45 backdrop-blur-sm">
+        <div class="absolute inset-x-7 top-[28vh] max-w-sm mx-auto account-more-card p-5">
+            <div class="mx-auto -mt-14 mb-5 w-24 h-24 rounded-full bg-gray-100 border-4 border-white grid place-items-center text-4xl">☰</div>
+            <h2 class="text-center text-2xl font-bold mb-5" data-i18n="accountMoreTitle">更多功能</h2>
+            <div class="space-y-3">
+                <button onclick="closeAccountMoreMenu(); openBalanceAdjustModal();" class="account-more-option" data-i18n="adjustBalance">調整餘額</button>
+                <button onclick="closeAccountMoreMenu(); showToast(t('comingSoon'));" class="account-more-option" data-i18n="reconciliationMode">對帳模式</button>
+                <button onclick="exportAccountCsv()" class="account-more-option" data-i18n="exportCsvShort">匯出 CSV</button>
+                <button onclick="closeAccountMoreMenu(); renderAccountDetail();" class="account-more-option" data-i18n="recalculateBalance">重新計算餘額</button>
+                <button onclick="closeAccountMoreMenu(); showToast(t('toastAccountInUse'));" class="account-more-option text-red-500" data-i18n="deleteAccount">刪除帳戶</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="balance-adjust-modal" class="hidden fixed inset-0 z-[88] bg-white">
+        <div class="absolute inset-0 max-w-md mx-auto account-detail-shell overflow-hidden flex flex-col">
+            <div class="px-5 pt-12 pb-5 flex items-center justify-between gap-3">
+                <button onclick="closeBalanceAdjustModal()" class="account-detail-action text-3xl" aria-label="Close">×</button>
+                <h2 class="text-2xl font-bold tracking-tight" data-i18n="adjustBalance">調整餘額</h2>
+                <button onclick="saveBalanceAdjustment()" class="account-detail-action text-2xl" aria-label="Save">✓</button>
+            </div>
+            <div id="balance-adjust-content" class="px-5 py-4 overflow-y-auto flex-1"></div>
+        </div>
+    </div>
+
     <div id="monthly-report-modal" class="report-modal hidden fixed inset-0 z-[72] bg-black/40">
         <div class="absolute inset-x-0 bottom-0 top-0 max-w-md mx-auto overflow-hidden flex flex-col">
             <div class="px-5 py-5 flex items-center justify-between gap-3">
@@ -914,6 +977,7 @@
         let assetAnalysisData = { group: { assets: [], liabilities: [] }, currency: { assets: [], liabilities: [] } };
         let activeAssetAnalysisKind = 'group';
         let activeAssetAnalysisSide = 'assets';
+        let activeAccountDetail = { account: '', tab: 'transactions', month: monthKey(new Date()) };
         const customEmojiOptions = ['🍽️', '☕', '🧋', '🍱', '🛒', '🧴', '👕', '🚆', '🚕', '🏠', '💡', '📱', '💊', '🎬', '🎁', '✈️', '🐾', '⭐'];
         const SUPABASE_URL = 'https://ymxjnjrkndzemepflymc.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlteGpuanJrbmR6ZW1lcGZseW1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5Mzg2MDUsImV4cCI6MjA5NjUxNDYwNX0.eDKpQocEdSk0VoNqfGmegMuIRbfhwQLQuBaGajLyD5o';
@@ -957,6 +1021,37 @@
                 assetPieDetailTitle: '項目明細',
                 assetPieRank: '排序',
                 accountBalances: '各帳戶餘額',
+                accountTransactions: '交易明細',
+                accountInfo: '帳戶資訊',
+                accountMoreTitle: '更多功能',
+                adjustBalance: '調整餘額',
+                currentBalance: '目前餘額',
+                adjustedBalance: '調整後餘額',
+                date: '日期',
+                time: '時間',
+                accountName: '名稱',
+                accountCurrencyMain: '主幣種',
+                accountGroupLabel: '帳戶分組',
+                accountStatementPeriod: '帳單週期',
+                creditAccount: '信用帳戶',
+                primaryAccount: '主帳戶',
+                rebateLabel: '紅利回饋',
+                autoStoredValue: '自動儲值',
+                foreignFee: '國外交易手續費',
+                includeInTotal: '納入總餘額',
+                archivedAccount: '封存帳戶',
+                showWidgetWatch: '顯示在 Widget / Watch 上',
+                generalRecords: count => `一般記錄 (${count})`,
+                accountExpense: '支出',
+                accountTransferIn: '轉入',
+                accountAdjustment: '餘額調整',
+                accountTotal: '總計',
+                reconciliationMode: '對帳模式',
+                exportCsvShort: '匯出 CSV',
+                recalculateBalance: '重新計算餘額',
+                deleteAccount: '刪除帳戶',
+                comingSoon: '此功能會在下一階段開放',
+                balanceAdjusted: '餘額已調整',
                 budgetProjectsTitle: '預算專案',
                 budgetProjectsHint: '設定與修改專案預算，追蹤期間內支出',
                 addProjectShort: '＋新增專案',
@@ -1221,6 +1316,37 @@
                 assetPieDetailTitle: '項目詳細',
                 assetPieRank: '順位',
                 accountBalances: '口座残高',
+                accountTransactions: '取引明細',
+                accountInfo: '口座情報',
+                accountMoreTitle: 'その他の機能',
+                adjustBalance: '残高調整',
+                currentBalance: '現在残高',
+                adjustedBalance: '調整後残高',
+                date: '日付',
+                time: '時間',
+                accountName: '名前',
+                accountCurrencyMain: '主通貨',
+                accountGroupLabel: '口座グループ',
+                accountStatementPeriod: '明細期間',
+                creditAccount: 'クレジット口座',
+                primaryAccount: 'メイン口座',
+                rebateLabel: 'ポイント還元',
+                autoStoredValue: 'オートチャージ',
+                foreignFee: '海外取引手数料',
+                includeInTotal: '総残高に含める',
+                archivedAccount: 'アーカイブ口座',
+                showWidgetWatch: 'Widget / Watch に表示',
+                generalRecords: count => `一般記録 (${count})`,
+                accountExpense: '支出',
+                accountTransferIn: '入金',
+                accountAdjustment: '残高調整',
+                accountTotal: '合計',
+                reconciliationMode: '照合モード',
+                exportCsvShort: 'CSV 書き出し',
+                recalculateBalance: '残高を再計算',
+                deleteAccount: '口座を削除',
+                comingSoon: 'この機能は次の段階で追加します',
+                balanceAdjusted: '残高を調整しました',
                 budgetProjectsTitle: '予算プロジェクト',
                 budgetProjectsHint: 'プロジェクト予算を設定・編集し、期間内の支出を追跡します',
                 addProjectShort: '＋プロジェクト追加',
@@ -1836,7 +1962,7 @@
             const modal = document.getElementById('record-detail-modal');
             if (!modal) return;
             modal.classList.add('hidden');
-            document.body.style.overflow = '';
+            document.body.style.overflow = document.getElementById('account-detail-modal')?.classList.contains('hidden') === false ? 'hidden' : '';
         }
 
         function selectedMonthKey() {
@@ -2779,34 +2905,42 @@
         }
 
         // --- 帳戶餘額與 UI 更新 ---
-        function updateBalances() {
-            let currentBalances = {};
+        function accountRecordEffect(item, acc) {
+            if (!item || !acc) return 0;
+            const itemAccount = item.account || '💵 現金';
+            const toAcc = item.toAccount;
+            const val = parseFloat(item.price) || 0;
+            const itemCurrency = item.currency || getAccountCurrency(itemAccount);
+            if (item.type === '轉帳') {
+                if (acc === itemAccount) return -convertCurrency(val, itemCurrency, getAccountCurrency(acc));
+                if (acc === toAcc) return convertCurrency(val, itemCurrency, getAccountCurrency(acc));
+                return 0;
+            }
+            if (acc !== itemAccount) return 0;
+            if (item.type === '系統' && item.adjustmentDelta !== undefined) {
+                return convertCurrency(parseFloat(item.adjustmentDelta) || 0, itemCurrency, getAccountCurrency(acc));
+            }
+            const accountValue = convertCurrency(val, itemCurrency, getAccountCurrency(acc));
+            if (['支出', '應付帳款', '系統'].includes(item.type)) return -accountValue;
+            if (['收入', '應收帳款'].includes(item.type)) return accountValue;
+            return 0;
+        }
+
+        function computeAccountBalances(cutoff = todayString()) {
+            const currentBalances = {};
             userAccounts.forEach(acc => currentBalances[acc] = parseFloat(accountInitials[acc] || 0));
-            const today = todayString();
-
             data.forEach(item => {
-                if ((item.date || '') > today) return;
-                const val = parseFloat(item.price) || 0;
-                const acc = item.account || '💵 現金';
-                const toAcc = item.toAccount; 
-                const itemCurrency = item.currency || getAccountCurrency(acc);
-                const accountCurrency = getAccountCurrency(acc);
-
-                if(currentBalances[acc] === undefined) currentBalances[acc] = 0;
-                const accountValue = convertCurrency(val, itemCurrency, accountCurrency);
-
-                if (['支出', '應付帳款', '系統'].includes(item.type)) {
-                    currentBalances[acc] -= accountValue;
-                } else if (['收入', '應收帳款'].includes(item.type)) {
-                    currentBalances[acc] += accountValue;
-                } else if (item.type === '轉帳') {
-                    currentBalances[acc] -= accountValue; 
-                    if(toAcc) {
-                        if(currentBalances[toAcc] === undefined) currentBalances[toAcc] = 0;
-                        currentBalances[toAcc] += convertCurrency(val, itemCurrency, getAccountCurrency(toAcc)); 
-                    }
-                }
+                if ((item.date || '') > cutoff) return;
+                [item.account || '💵 現金', item.toAccount].filter(Boolean).forEach(acc => {
+                    if (currentBalances[acc] === undefined) currentBalances[acc] = 0;
+                    currentBalances[acc] += accountRecordEffect(item, acc);
+                });
             });
+            return currentBalances;
+        }
+
+        function updateBalances() {
+            let currentBalances = computeAccountBalances(todayString());
 
             let totalNet = 0;
             let totalAssets = 0;
@@ -2845,7 +2979,7 @@
                         const isNegative = currentBalances[acc] < 0;
                         const accCurrency = getAccountCurrency(acc);
                         return `
-                            <div onclick="setInitialBalance(decodeURIComponent('${encodeURIComponent(acc)}'))" class="account-overview-child cursor-pointer hover:bg-gray-50 transition group">
+                            <div onclick="openAccountDetail(decodeURIComponent('${encodeURIComponent(acc)}'))" class="account-overview-child cursor-pointer hover:bg-gray-50 transition group">
                                 <div class="min-w-0 pr-3">
                                     <span class="font-semibold text-sm block truncate">${escapeHTML(displayLabel(acc))}</span>
                                     <span class="text-[10px] text-gray-400">${t('initialPrefix')} ${formatPrivateMoney(accountInitials[acc], accCurrency)} · ${formatPrivateJPY(accountInitials[acc], accCurrency)}</span>
@@ -2898,6 +3032,314 @@
             }
         }
 
+        function monthDateRange(monthKeyValue) {
+            return {
+                start: `${monthKeyValue}-01`,
+                end: `${monthKeyValue}-${String(monthLastDay(monthKeyValue)).padStart(2, '0')}`
+            };
+        }
+
+        function accountRecordsForMonth(acc, monthKeyValue) {
+            return data
+                .map((item, index) => ({ item, index, effect: accountRecordEffect(item, acc) }))
+                .filter(row => row.effect !== 0 && (row.item.date || '').substring(0, 7) === monthKeyValue)
+                .sort((a, b) => `${a.item.date || ''} ${a.item.time || ''}` < `${b.item.date || ''} ${b.item.time || ''}` ? 1 : -1);
+        }
+
+        function openAccountDetail(acc) {
+            if (!acc) return;
+            activeAccountDetail.account = acc;
+            activeAccountDetail.tab = activeAccountDetail.tab || 'transactions';
+            activeAccountDetail.month = activeAccountDetail.month || monthKey(new Date());
+            document.getElementById('account-detail-modal')?.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            renderAccountDetail();
+        }
+
+        function closeAccountDetail() {
+            document.getElementById('account-detail-modal')?.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function setAccountDetailTab(tab) {
+            activeAccountDetail.tab = tab === 'info' ? 'info' : 'transactions';
+            renderAccountDetail();
+        }
+
+        function shiftAccountDetailMonth(delta) {
+            const current = new Date(`${activeAccountDetail.month || monthKey(new Date())}-01`);
+            current.setMonth(current.getMonth() + delta);
+            activeAccountDetail.month = monthKey(current);
+            renderAccountDetail();
+        }
+
+        function accountDetailLineChart(acc, monthKeyValue) {
+            const { start, end } = monthDateRange(monthKeyValue);
+            const days = monthLastDay(monthKeyValue);
+            const beforeStart = parseLocalDate(start);
+            beforeStart.setDate(beforeStart.getDate() - 1);
+            let running = computeAccountBalances(formatLocalDate(beforeStart))[acc] || 0;
+            const points = [];
+            for (let day = 1; day <= days; day++) {
+                const date = `${monthKeyValue}-${String(day).padStart(2, '0')}`;
+                data.forEach(item => {
+                    if ((item.date || '') === date) running += accountRecordEffect(item, acc);
+                });
+                points.push({ day, value: running });
+            }
+            const values = points.map(item => item.value);
+            const min = Math.min(...values, 0);
+            const max = Math.max(...values, 1);
+            const width = 340;
+            const height = 142;
+            const chartTop = 14;
+            const chartHeight = 92;
+            const coords = points.map(item => {
+                const x = ((item.day - 1) / Math.max(days - 1, 1)) * (width - 28) + 14;
+                const y = chartTop + chartHeight - ((item.value - min) / Math.max(max - min, 1)) * chartHeight;
+                return `${x.toFixed(1)},${y.toFixed(1)}`;
+            }).join(' ');
+            const fillPoints = `14,${chartTop + chartHeight} ${coords} ${width - 14},${chartTop + chartHeight}`;
+            return `
+                <div class="account-detail-line my-4">
+                    <svg viewBox="0 0 ${width} ${height}" aria-label="account balance chart">
+                        <text x="8" y="20" font-size="10" fill="#8c949e">${Math.round(max).toLocaleString()}</text>
+                        <text x="8" y="${chartTop + chartHeight}" font-size="10" fill="#8c949e">${Math.round(min).toLocaleString()}</text>
+                        <polygon points="${fillPoints}" fill="rgba(155,89,200,.12)"></polygon>
+                        <polyline points="${coords}" fill="none" stroke="#9b59c8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></polyline>
+                        <text x="14" y="132" font-size="10" fill="#8c949e">${Number(monthKeyValue.slice(5))}/1</text>
+                        <text x="${width / 2}" y="132" font-size="10" text-anchor="middle" fill="#8c949e">${Number(monthKeyValue.slice(5))}/${Math.min(11, days)}</text>
+                        <text x="${width - 18}" y="132" font-size="10" text-anchor="end" fill="#8c949e">${Number(monthKeyValue.slice(5))}/${days}</text>
+                    </svg>
+                </div>
+            `;
+        }
+
+        function renderAccountTransactionTab(acc) {
+            const monthKeyValue = activeAccountDetail.month || monthKey(new Date());
+            const records = accountRecordsForMonth(acc, monthKeyValue);
+            const expenseTotal = records.filter(row => row.effect < 0 && row.item.type !== '系統').reduce((sum, row) => sum + Math.abs(row.effect), 0);
+            const transferInTotal = records.filter(row => row.effect > 0 && row.item.type === '轉帳').reduce((sum, row) => sum + row.effect, 0);
+            const adjustmentTotal = records.filter(row => row.item.type === '系統').reduce((sum, row) => sum + row.effect, 0);
+            const total = records.reduce((sum, row) => sum + row.effect, 0);
+            const max = Math.max(expenseTotal, transferInTotal, Math.abs(adjustmentTotal), Math.abs(total), 1);
+            const summaryRows = [
+                { label: t('accountExpense'), count: records.filter(row => row.effect < 0 && row.item.type !== '系統').length, amount: -expenseTotal, color: '#e45858' },
+                { label: t('accountTransferIn'), count: records.filter(row => row.effect > 0 && row.item.type === '轉帳').length, amount: transferInTotal, color: '#e8c77b' },
+                { label: t('accountAdjustment'), count: records.filter(row => row.item.type === '系統').length, amount: adjustmentTotal, color: '#5862b8' },
+                { label: t('accountTotal'), count: records.length, amount: total, color: '#9b59c8' }
+            ];
+            const rows = records.length ? records.map(({ item, index, effect }) => {
+                const sign = effect > 0 ? '+' : effect < 0 ? '-' : '';
+                const amountClass = effect < 0 ? 'text-red-500' : 'text-green-600';
+                const safeIcon = item.subCatIcon || (item.type === '轉帳' ? '↔' : '▣');
+                const iconHtml = safeIcon.startsWith('data:image') ? `<img src="${safeIcon}" class="w-full h-full object-cover">` : escapeHTML(safeIcon);
+                const project = projectById(item.projectId);
+                return `
+                    <button onclick="openRecordDetail(${index})" class="account-transaction-row w-full text-left">
+                        <span class="account-transaction-icon">${iconHtml}</span>
+                        <span class="min-w-0">
+                            <span class="block text-xs text-gray-500 mb-1">${escapeHTML(formatEntryDateLabel(item.date))} ${escapeHTML(item.time || '')}</span>
+                            <span class="block font-bold text-base truncate">${escapeHTML(displayLabel(item.name || item.subCatName || item.type))}</span>
+                            <span class="block text-xs text-gray-400 truncate">${item.type === '轉帳' ? `${escapeHTML(displayLabel(item.account))} → ${escapeHTML(displayLabel(item.toAccount || ''))}` : escapeHTML(displayLabel(item.subCatName || item.mainCat || item.type))}</span>
+                        </span>
+                        <span class="text-right shrink-0">
+                            <span class="block text-[11px] text-gray-400">${sign}${formatPrivateMoney(Math.abs(effect), getAccountCurrency(acc))}</span>
+                            <span class="block text-lg font-bold ${amountClass}">${sign}${formatPrivateMoney(Math.abs(effect), getAccountCurrency(acc))}</span>
+                            ${project ? `<span class="inline-block mt-1 px-2 py-1 rounded-full border border-gray-200 text-[10px] text-gray-500">${escapeHTML(project.name)}</span>` : ''}
+                        </span>
+                    </button>
+                `;
+            }).join('') : `<div class="empty-state">${t('monthlyNoData')}</div>`;
+            return `
+                <div class="flex items-center justify-center gap-7 mb-3">
+                    <button onclick="shiftAccountDetailMonth(-1)" class="text-3xl text-gray-500">‹</button>
+                    <div class="text-xl font-bold">${monthRangeLabel(monthKeyValue)}</div>
+                    <button onclick="shiftAccountDetailMonth(1)" class="text-3xl text-gray-500">›</button>
+                </div>
+                <div class="space-y-1">
+                    ${summaryRows.map(row => `
+                        <div class="account-detail-summary-row">
+                            <span class="font-semibold">${escapeHTML(row.label)}</span>
+                            <span class="account-detail-count" style="background:${row.color}">${row.count}</span>
+                            <span class="account-detail-bar" style="width:${Math.max(8, Math.round(Math.abs(row.amount) / max * 100))}%; background:${row.color}"></span>
+                            <span class="text-right font-bold" style="color:${row.color}">${monthlyAmountText(row.amount)}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                ${accountDetailLineChart(acc, monthKeyValue)}
+                <div class="flex items-center justify-between gap-3 mt-4 mb-2">
+                    <h3 class="text-xl font-bold">${t('generalRecords', records.length)}</h3>
+                    <button onclick="openAddWithSelectedDate()" class="text-3xl leading-none">+</button>
+                </div>
+                <div>${rows}</div>
+            `;
+        }
+
+        function renderAccountInfoTab(acc) {
+            const balances = computeAccountBalances(todayString());
+            const currency = getAccountCurrency(acc);
+            const group = accountGroupMap[acc] || t('uncategorized');
+            const monthLabel = monthRangeLabel(activeAccountDetail.month || monthKey(new Date()));
+            const rows = [
+                [t('accountName'), displayLabel(acc)],
+                [t('accountCurrencyMain'), currencyCodeFromSymbol(currency)],
+                [t('accountGroupLabel'), displayLabel(group)],
+                [t('initialPrefix'), formatPrivateMoney(accountInitials[acc] || 0, currency)],
+                [t('accountStatementPeriod'), monthLabel],
+                [t('creditAccount'), '<span class="account-switch"></span>'],
+                [t('primaryAccount'), t('uncategorized')],
+                [t('rebateLabel'), t('uncategorized')],
+                [t('autoStoredValue'), '<span class="account-switch"></span>'],
+                [t('foreignFee'), '<span class="account-switch"></span>'],
+                [t('includeInTotal'), '<span class="account-switch on"></span>'],
+                [t('archivedAccount'), '<span class="account-switch"></span>'],
+                [t('showWidgetWatch'), '<span class="account-switch on"></span>']
+            ];
+            return `
+                <div class="text-center py-7">
+                    <div class="text-sm font-bold text-gray-500">${t('currentBalance')} <span class="block text-xl text-gray-800">${currencyCodeFromSymbol(currency)}</span></div>
+                    <div class="account-detail-total">${formatPrivateMoney(balances[acc] || 0, currency).replace(currency, '')}</div>
+                    <div class="mt-4 text-lg font-semibold">${escapeHTML(displayLabel(acc))}</div>
+                </div>
+                <div class="space-y-1">
+                    ${rows.map(([label, value]) => `
+                        <div class="account-info-row">
+                            <span class="font-semibold">${escapeHTML(label)}</span>
+                            <span>${String(value).startsWith('<') ? value : escapeHTML(value)}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function renderAccountDetail() {
+            const acc = activeAccountDetail.account;
+            if (!acc) return;
+            const title = document.getElementById('account-detail-title');
+            const content = document.getElementById('account-detail-content');
+            if (title) title.textContent = displayLabel(acc);
+            document.getElementById('account-detail-tab-transactions')?.classList.toggle('active', activeAccountDetail.tab === 'transactions');
+            document.getElementById('account-detail-tab-info')?.classList.toggle('active', activeAccountDetail.tab === 'info');
+            if (content) content.innerHTML = activeAccountDetail.tab === 'info' ? renderAccountInfoTab(acc) : renderAccountTransactionTab(acc);
+        }
+
+        function openAccountMoreMenu() {
+            document.getElementById('account-more-modal')?.classList.remove('hidden');
+        }
+
+        function closeAccountMoreMenu() {
+            document.getElementById('account-more-modal')?.classList.add('hidden');
+        }
+
+        function openBalanceAdjustModal() {
+            const acc = activeAccountDetail.account;
+            if (!acc) return;
+            const currency = getAccountCurrency(acc);
+            const current = computeAccountBalances(todayString())[acc] || 0;
+            const now = new Date();
+            const content = document.getElementById('balance-adjust-content');
+            if (content) {
+                content.innerHTML = `
+                    <div class="text-center py-4">
+                        <div class="mx-auto mb-5 w-28 h-28 rounded-full bg-gray-100 grid place-items-center text-5xl">▭</div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="adjust-row"><span class="font-semibold">${t('recordAccount')}</span><span class="text-gray-500">${escapeHTML(displayLabel(acc))}</span></div>
+                        <div class="adjust-row"><span class="font-semibold">${t('currentBalance')}</span><span class="${current < 0 ? 'text-red-500' : 'text-green-600'} font-bold">${formatPrivateMoney(current, currency)}</span></div>
+                        <label class="adjust-row">
+                            <span class="font-semibold">${t('adjustedBalance')}</span>
+                            <input id="adjust-balance-target" type="number" step="0.01" inputmode="decimal" value="${Math.round(current * 100) / 100}" class="notion-input max-w-[170px] text-right text-lg font-bold">
+                        </label>
+                        <label class="adjust-row">
+                            <span class="font-semibold">${t('recordCategory')}</span>
+                            <span class="text-gray-500">${currencyCodeFromSymbol(currency)}</span>
+                        </label>
+                        <label class="adjust-row">
+                            <span class="font-semibold">${t('date')}</span>
+                            <input id="adjust-balance-date" type="date" value="${todayString()}" class="notion-input max-w-[170px] text-right">
+                        </label>
+                        <label class="adjust-row">
+                            <span class="font-semibold">${t('time')}</span>
+                            <input id="adjust-balance-time" type="time" value="${now.toTimeString().slice(0, 5)}" class="notion-input max-w-[170px] text-right">
+                        </label>
+                        <textarea id="adjust-balance-note" class="add-note min-h-[150px]" placeholder="${t('notePlaceholder')}"></textarea>
+                    </div>
+                `;
+            }
+            document.getElementById('balance-adjust-modal')?.classList.remove('hidden');
+        }
+
+        function closeBalanceAdjustModal() {
+            document.getElementById('balance-adjust-modal')?.classList.add('hidden');
+        }
+
+        function saveBalanceAdjustment() {
+            const acc = activeAccountDetail.account;
+            if (!acc) return;
+            const currency = getAccountCurrency(acc);
+            const current = computeAccountBalances(todayString())[acc] || 0;
+            const target = parseFloat(document.getElementById('adjust-balance-target')?.value || '');
+            if (!Number.isFinite(target)) {
+                showToast(t('toastEnterAmount'));
+                return;
+            }
+            const delta = target - current;
+            if (Math.abs(delta) < 0.0001) {
+                closeBalanceAdjustModal();
+                return;
+            }
+            data.push({
+                type: '系統',
+                mainCat: '系統',
+                subCatName: '餘額調整',
+                subCatIcon: '▭',
+                account: acc,
+                toAccount: null,
+                date: document.getElementById('adjust-balance-date')?.value || todayString(),
+                time: document.getElementById('adjust-balance-time')?.value || '',
+                note: document.getElementById('adjust-balance-note')?.value || '',
+                name: '餘額調整',
+                price: Math.abs(delta),
+                currency,
+                adjustmentDelta: delta,
+                adjustmentAfter: target
+            });
+            data.sort((a, b) => `${b.date || ''} ${b.time || ''}`.localeCompare(`${a.date || ''} ${a.time || ''}`));
+            localStorage.setItem('myBudget', JSON.stringify(data));
+            closeBalanceAdjustModal();
+            renderAccountDetail();
+            updateBalances();
+            showToast(t('balanceAdjusted'));
+        }
+
+        function exportAccountCsv() {
+            const acc = activeAccountDetail.account;
+            if (!acc) return;
+            const records = accountRecordsForMonth(acc, activeAccountDetail.month || monthKey(new Date()));
+            const rows = [['date','time','type','name','account_effect','currency','account','to_account','note']];
+            records.forEach(({ item, effect }) => rows.push([item.date || '', item.time || '', displayLabel(item.type), displayLabel(item.name || item.subCatName || ''), effect, getAccountCurrency(acc), displayLabel(item.account || ''), displayLabel(item.toAccount || ''), item.note || '']));
+            const csv = rows.map(row => row.map(escapeCsv).join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `${displayLabel(acc)}-${activeAccountDetail.month || monthKey(new Date())}.csv`;
+            link.click();
+            URL.revokeObjectURL(link.href);
+            closeAccountMoreMenu();
+        }
+
+        window.openAccountDetail = openAccountDetail;
+        window.closeAccountDetail = closeAccountDetail;
+        window.setAccountDetailTab = setAccountDetailTab;
+        window.shiftAccountDetailMonth = shiftAccountDetailMonth;
+        window.openAccountMoreMenu = openAccountMoreMenu;
+        window.closeAccountMoreMenu = closeAccountMoreMenu;
+        window.openBalanceAdjustModal = openBalanceAdjustModal;
+        window.closeBalanceAdjustModal = closeBalanceAdjustModal;
+        window.saveBalanceAdjustment = saveBalanceAdjustment;
+        window.exportAccountCsv = exportAccountCsv;
+
         function addAccountGroup() {
             const newGroup = prompt(t('promptAddGroup'));
             const trimmed = newGroup ? newGroup.trim() : '';
@@ -2947,13 +3389,8 @@
                 const income = records.filter(item => ['收入', '應收帳款'].includes(item.type)).reduce((sum, item) => sum + toJPY(item.price, item.currency || '¥'), 0);
                 const expense = records.filter(item => ['支出', '應付帳款', '系統'].includes(item.type)).reduce((sum, item) => sum + toJPY(item.price, item.currency || '¥'), 0);
                 const endDate = `${key}-${String(monthLastDay(key)).padStart(2, '0')}`;
-                let net = Object.keys(accountInitials).reduce((sum, acc) => sum + toJPY(accountInitials[acc] || 0, getAccountCurrency(acc)), 0);
-                data.forEach(item => {
-                    if ((item.date || '') > endDate) return;
-                    const value = toJPY(item.price, item.currency || '¥');
-                    if (['支出', '應付帳款', '系統'].includes(item.type)) net -= value;
-                    if (['收入', '應收帳款'].includes(item.type)) net += value;
-                });
+                const balances = computeAccountBalances(endDate);
+                let net = Object.keys(balances).reduce((sum, acc) => sum + toJPY(balances[acc] || 0, getAccountCurrency(acc)), 0);
                 return { key, income, expense, net };
             });
             const maxBar = Math.max(...monthly.flatMap(item => [item.income, item.expense]), 1);
@@ -4307,7 +4744,7 @@
             showToast(t('toastExported'));
         }
 
-        const APP_VERSION = '20260613-06';
+        const APP_VERSION = '20260614-01';
 
         function registerServiceWorker() {
             if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
