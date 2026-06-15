@@ -28,7 +28,7 @@
             --soft: #f6f8fb;
             --accent: #111827;
         }
-        html, body { overscroll-behavior-y: none; touch-action: manipulation; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+        html, body { overscroll-behavior-y: none; touch-action: manipulation; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; width: 100%; overflow-x: hidden; }
         body.eye-care {
             --ink: #1f2933;
             --muted: #6b7280;
@@ -55,12 +55,14 @@
             color: var(--ink);
             font-size: var(--app-font-size);
             min-height: 100vh;
+            min-height: 100dvh;
+            overflow-x: hidden;
             padding-bottom: calc(6rem + env(safe-area-inset-bottom));
         }
         h1 { font-size: clamp(1.35rem, 6vw, 1.6rem) !important; line-height: 1.25 !important; letter-spacing: 0 !important; }
         h2 { font-size: clamp(1.05rem, 4.4vw, 1.22rem) !important; line-height: 1.35 !important; letter-spacing: 0 !important; }
         h3 { letter-spacing: 0 !important; }
-        .app-shell { min-height: 100vh; }
+        .app-shell { min-height: 100vh; min-height: 100dvh; overflow-x: clip; }
         .page { display: none; animation: fadeIn 120ms ease-out; }
         .page.active { display: block; }
         .section-label { color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
@@ -235,13 +237,42 @@
         .add-modal-shell { background: #fff; color: var(--ink); }
         .add-modal-action { width: 3.2rem; height: 3.2rem; border-radius: 9999px; background: #fff; border: 1px solid var(--line); box-shadow: 0 10px 24px rgba(31,41,51,.08); display: grid; place-items: center; font-size: 2rem; line-height: 1; color: var(--ink); }
         .add-modal-check { font-size: 1.7rem; }
-        #add-modal-body { overscroll-behavior: contain; }
+        #add-record-modal, #account-detail-modal { height: 100vh; height: 100dvh; overflow: hidden; overscroll-behavior: none; }
+        #add-modal-body { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; flex: 1 1 auto; min-height: 0; }
         #category-buttons { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px 12px; }
         #category-buttons button { min-height: 76px !important; border: 0 !important; background: transparent !important; padding: 0 !important; }
         #category-buttons button > div,
         #category-buttons button > img { width: 58px; height: 58px; border-radius: 9999px; display: grid; place-items: center; margin: 0 auto 7px !important; background: #f1f3f5; border: 3px solid transparent; box-shadow: none; object-fit: cover; }
         #category-buttons button.border-blue-500 > div,
         #category-buttons button.border-blue-500 > img { border-color: #d4d8dd !important; background: #e9ecef; }
+        .main-category-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 15px 12px; }
+        .main-category-btn { min-height: 82px; display: flex; flex-direction: column; align-items: center; justify-content: start; gap: 7px; color: var(--muted); font-size: .74rem; font-weight: 700; }
+        .main-category-icon { width: 58px; height: 58px; border-radius: 9999px; display: grid; place-items: center; color: #fff; border: 3px solid transparent; font-size: 1.55rem; }
+        .main-category-btn.active { color: var(--ink); }
+        .main-category-btn.active .main-category-icon { border-color: #cfd5dc; box-shadow: inset 0 0 0 2px rgba(255,255,255,.55); }
+        .category-back-icon { opacity: .58; }
+        .icon-modal { position: fixed; inset: 0; z-index: 110; background: rgba(15, 23, 42, .45); backdrop-filter: blur(4px); display: grid; place-items: center; padding: 20px; }
+        .icon-modal.hidden { display: none; }
+        .icon-panel { width: min(100%, 360px); max-height: min(88vh, 720px); overflow: hidden; display: flex; flex-direction: column; background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 22px; box-shadow: 0 24px 70px rgba(31,41,51,.22); }
+        .icon-panel-large { width: min(100%, 430px); height: min(92vh, 760px); }
+        .icon-panel-header { display: grid; grid-template-columns: 48px 1fr 48px; align-items: center; gap: 10px; padding: 18px; border-bottom: 1px solid var(--line); }
+        .icon-panel-title { text-align: center; font-size: 1.18rem; font-weight: 800; }
+        .icon-round-action { width: 44px; height: 44px; border-radius: 9999px; background: #fff; border: 1px solid var(--line); box-shadow: 0 8px 18px rgba(31,41,51,.06); display: grid; place-items: center; font-size: 1.85rem; line-height: 1; color: var(--ink); }
+        .icon-tabs { display: flex; gap: 22px; overflow-x: auto; padding: 0 18px; border-bottom: 1px solid var(--line); }
+        .icon-tabs button { white-space: nowrap; padding: 12px 0 10px; color: var(--muted); font-weight: 700; border-bottom: 2px solid transparent; }
+        .icon-tabs button.active { color: var(--ink); border-color: #59b7d7; }
+        .icon-grid-scroll { overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 18px; }
+        .icon-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 18px 16px; }
+        .icon-choice { display: grid; place-items: center; width: 54px; height: 54px; border-radius: 9999px; background: #f0f1f2; color: #30313f; font-size: 1.65rem; margin: 0 auto; border: 2px solid transparent; }
+        .icon-choice.active { border-color: #111827; }
+        .custom-category-form { padding: 22px 18px 18px; display: grid; gap: 18px; }
+        .custom-category-preview { width: 92px; height: 92px; border-radius: 9999px; background: #cf2b25; color: #fff; display: grid; place-items: center; margin: 0 auto 4px; font-size: 2.6rem; }
+        .custom-category-row { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 16px; font-size: 1.02rem; }
+        .custom-category-row input { min-width: 0; border: 0; outline: 0; background: transparent; text-align: right; color: var(--ink); font-size: 1rem; font-weight: 700; }
+        .custom-color-dot { width: 38px; height: 38px; border-radius: 9999px; border: 4px solid #fff; outline: 3px solid currentColor; color: #cf2b25; background: currentColor; }
+        .icon-source-options { padding: 22px; display: grid; gap: 12px; }
+        .icon-source-options button { border-radius: 14px; background: #e5e5e5; color: var(--ink); font-weight: 800; padding: 13px 16px; }
+        body.modal-open { overflow: hidden; }
         .add-compose-grid { display: grid; grid-template-columns: 1fr 2.9fr; gap: 12px; align-items: stretch; }
         .photo-tile { min-height: 102px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); color: #c4cad1; display: grid; place-items: center; font-size: 2rem; cursor: pointer; }
         .add-long-field { min-height: 50px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: 8px; padding: 10px 12px; }
@@ -404,6 +435,7 @@
             <div id="category-buttons" class="grid mb-6"></div>
 
             <input type="file" id="custom-cat-upload" accept="image/*" class="hidden" onchange="handleCustomCatUpload(event)">
+            <input type="file" id="custom-main-cat-upload" accept="image/*" class="hidden" onchange="handleMainCategoryImageUpload(event)">
 
             <div class="space-y-4">
                 <div class="add-compose-grid">
@@ -728,6 +760,53 @@
         </div>
     </div>
 
+    <div id="icon-source-modal" class="icon-modal hidden">
+        <div class="icon-panel">
+            <div class="icon-panel-header">
+                <button type="button" onclick="closeIconSourceModal()" class="icon-round-action" aria-label="Close">×</button>
+                <div class="icon-panel-title">類別圖片</div>
+                <span></span>
+            </div>
+            <div class="icon-source-options">
+                <button type="button" onclick="openBuiltInIconPicker('line')">內建圖示</button>
+                <button type="button" onclick="openBuiltInIconPicker('color')">彩色圖示</button>
+                <button type="button" onclick="triggerMainCategoryUpload()">相簿圖片</button>
+                <button type="button" onclick="triggerMainCategoryUpload()">檔案圖片</button>
+                <button type="button" onclick="triggerMainCategoryUpload()">拍照</button>
+                <button type="button" onclick="closeIconSourceModal()">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="icon-picker-modal" class="icon-modal hidden">
+        <div class="icon-panel icon-panel-large">
+            <div class="icon-panel-header">
+                <button type="button" onclick="closeIconPicker()" class="icon-round-action" aria-label="Close">×</button>
+                <div id="icon-picker-title" class="icon-panel-title">內建圖示</div>
+                <button type="button" onclick="closeIconPicker()" class="icon-round-action add-modal-check" aria-label="Done">✓</button>
+            </div>
+            <div id="icon-picker-tabs" class="icon-tabs no-scrollbar"></div>
+            <div class="icon-grid-scroll">
+                <div id="icon-picker-grid" class="icon-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="custom-main-category-modal" class="icon-modal hidden">
+        <div class="icon-panel">
+            <div class="icon-panel-header">
+                <button type="button" onclick="closeCustomMainCategoryModal()" class="icon-round-action" aria-label="Close">×</button>
+                <div class="icon-panel-title">新增主類別</div>
+                <button type="button" onclick="saveCustomMainCategory()" class="icon-round-action add-modal-check" aria-label="Save">✓</button>
+            </div>
+            <div class="custom-category-form">
+                <button type="button" onclick="openIconSourceModal()" id="custom-main-preview" class="custom-category-preview">?</button>
+                <label class="custom-category-row"><span>名稱</span><input id="custom-main-name" type="text" placeholder="名稱"></label>
+                <button type="button" onclick="cycleCustomMainColor()" class="custom-category-row text-left"><span>類別顏色</span><span id="custom-main-color-dot" class="custom-color-dot"></span></button>
+            </div>
+        </div>
+    </div>
+
     <div id="record-detail-modal" class="hidden fixed inset-0 z-[80] bg-black/50 backdrop-blur-sm">
         <div class="absolute inset-x-5 top-[10vh] max-w-md mx-auto surface overflow-hidden shadow-2xl">
             <div id="record-detail-content"></div>
@@ -934,13 +1013,17 @@
 
         const defaultCategories = {
             '支出': {
-                '飲食': [ { name: '早餐', icon: '🥐' }, { name: '午餐', icon: '🍱' }, { name: '晚餐', icon: '🍽️' }, { name: '點心', icon: '🍰' }, { name: '飲料', icon: '🥤' }, { name: '酒類', icon: '🍺' }, { name: '水果', icon: '🍎' } ],
-                '交通': [ { name: '加油費', icon: '⛽' }, { name: '停車費', icon: '🅿️' }, { name: '火車', icon: '🚆' }, { name: '捷運', icon: '🚇' }, { name: '汽車', icon: '🚗' }, { name: '計程車', icon: '🚕' }, { name: '公車', icon: '🚌' }, { name: '摩托車', icon: '🛵' }, { name: '機票', icon: '✈️' }, { name: '船票', icon: '⛴️' } ],
-                '娛樂': [ { name: '電影', icon: '🍿' }, { name: '遊樂園', icon: '🎡' }, { name: '展覽', icon: '🖼️' }, { name: '遊戲', icon: '🎮' }, { name: '消遣', icon: '🧩' }, { name: '夜店', icon: '🪩' } ],
-                '購物': [ { name: '服飾', icon: '👕' }, { name: '鞋包', icon: '👜' }, { name: '3C', icon: '📱' }, { name: '保養', icon: '🧴' }, { name: '日常用品', icon: '🧻' } ],
-                '住宿': [ { name: '房租', icon: '🏠' }, { name: '飯店', icon: '🏨' }, { name: '民宿', icon: '🏡' } ],
-                '醫療': [ { name: '看診', icon: '🏥' }, { name: '買藥', icon: '💊' } ],
-                '生活': [ { name: '水電', icon: '💧' }, { name: '網路', icon: '🌐' }, { name: '電信', icon: '📞' } ]
+                '飲食': [ { name: '早餐', icon: '🍞' }, { name: '午餐', icon: '🍔' }, { name: '晚餐', icon: '🍕' }, { name: '點心', icon: '🍩' }, { name: '飲料', icon: '🥤' }, { name: '酒類', icon: '🍺' }, { name: '水果', icon: '🍌' }, { name: 'Mobile', icon: '📱' }, { name: '買菜', icon: '🛒' }, { name: '咖啡', icon: '☕' }, { name: '牛奶', icon: '🥛' }, { name: '外食', icon: '🍜' }, { name: '壽司', icon: '🍣' }, { name: '烤肉', icon: '🍖' }, { name: '甜點', icon: '🍰' } ],
+                '交通': [ { name: '加油費', icon: '⛽' }, { name: '停車費', icon: '🅿️' }, { name: '火車', icon: '🚆' }, { name: '捷運', icon: '🚇' }, { name: '汽車', icon: '🚗' }, { name: '計程車', icon: '🚕' }, { name: '公車', icon: '🚌' }, { name: '摩托車', icon: '🛵' }, { name: '腳踏車', icon: '🚲' }, { name: '機票', icon: '✈️' }, { name: '船票', icon: '⛴️' }, { name: '三重切符', icon: '🚊' } ],
+                '娛樂': [ { name: '電影', icon: '🍿' }, { name: '遊樂園', icon: '🎡' }, { name: '展覽', icon: '🖼️' }, { name: '遊戲', icon: '🎮' }, { name: '唱歌', icon: '🎤' }, { name: '音樂', icon: '🎧' }, { name: '消遣', icon: '🧩' }, { name: '夜店', icon: '🪩' } ],
+                '購物': [ { name: '服飾', icon: '👕' }, { name: '鞋包', icon: '👜' }, { name: '3C', icon: '📱' }, { name: '保養', icon: '💄' }, { name: '美妝保養', icon: '💄' }, { name: '市場', icon: '🛒' }, { name: '日常用品', icon: '🧻' }, { name: '禮物', icon: '🎁' } ],
+                '個人': [ { name: '美容', icon: '💇' }, { name: '健身', icon: '🏋️' }, { name: '訂閱', icon: '📱' }, { name: '保險', icon: '🛡️' }, { name: '紅利回饋', icon: '⭐' } ],
+                '醫療': [ { name: '看診', icon: '🏥' }, { name: '買藥', icon: '💊' }, { name: '牙醫', icon: '🦷' }, { name: '健康檢查', icon: '🩺' } ],
+                '家居': [ { name: '房租', icon: '🏠' }, { name: '家具', icon: '🛋️' }, { name: '家電', icon: '🧺' }, { name: '修繕', icon: '🛠️' }, { name: '飯店', icon: '🏨' }, { name: '民宿', icon: '🏡' } ],
+                '家庭': [ { name: '育兒', icon: '🧸' }, { name: '寵物', icon: '🐾' }, { name: '家人', icon: '👨‍👩‍👧' }, { name: '聚餐', icon: '🍽️' } ],
+                '生活': [ { name: '水電', icon: '💧' }, { name: '電費', icon: '⚡' }, { name: '瓦斯', icon: '🔥' }, { name: '網路', icon: '🌐' }, { name: '電信', icon: '📞' }, { name: '清潔', icon: '🧴' }, { name: '日用品', icon: '🧻' } ],
+                '學習': [ { name: '書籍', icon: '📚' }, { name: '課程', icon: '🎓' }, { name: '文具', icon: '✏️' }, { name: '考試', icon: '📝' } ],
+                '其他': [ { name: '彩券', icon: '🎟️' }, { name: '投資', icon: '📈' }, { name: '稅金', icon: '💸' }, { name: '其他', icon: '•••' } ]
             },
             '收入': {
                 '薪資': [{ name: '正職', icon: '💰' }, { name: '兼職', icon: '👨‍💻' }, { name: '獎金', icon: '🎁' }],
@@ -951,6 +1034,42 @@
             '應付帳款': { '應付': [{ name: '借入款', icon: '🤝' }, { name: '分期', icon: '🛒' }] },
             '系統': { '系統': [{ name: '餘額調整', icon: '⚙️' }, { name: '匯兌損益', icon: '🔄' }] }
         };
+
+        const mainCategoryMeta = {
+            '飲食': { icon: '🍽️', color: '#efd08f' }, '交通': { icon: '🚏', color: '#4c95d9' }, '娛樂': { icon: '🎤', color: '#9b68c8' }, '購物': { icon: '🛒', color: '#d76f73' },
+            '個人': { icon: '👤', color: '#9a9b83' }, '醫療': { icon: '🏥', color: '#d84444' }, '家居': { icon: '🏠', color: '#2d5575' }, '家庭': { icon: '👨‍👩‍👧', color: '#dca7d0' },
+            '生活': { icon: '🧴', color: '#5e7b56' }, '學習': { icon: '📚', color: '#e0a22a' }, '其他': { icon: '•••', color: '#9e2a1b' }, '薪資': { icon: '💰', color: '#6b8f5f' },
+            '儲值': { icon: '↔', color: '#d88935' }, '應收': { icon: '👥', color: '#7698bd' }, '應付': { icon: '🛒', color: '#b07777' }, '系統': { icon: '⚙', color: '#8a8f98' }
+        };
+        const iconCategoryTabs = ['飲食', '交通', '娛樂', '購物', '個人', '醫療', '家居', '家庭', '生活', '學習'];
+        const lineIconSets = {
+            '飲食': ['☷','◉','▣','△','○','☕','♨','⌁','□','◇','◎','◌','◍','◒','◐','◓','◯','●','◔','◕','◑','◭','◮','◫','◨'],
+            '交通': ['▤','↗','▭','◇','✈','⛴','▱','⌁','Ⓟ','⇄'], '娛樂': ['♪','♫','▶','▣','☆','◇','◎','●','✦','✧'],
+            '購物': ['▥','▢','▧','▤','◇','□','☆','▣','▭','♡'], '個人': ['○','♡','▣','☆','◉','▤','◇','▭','□','⚙'],
+            '醫療': ['✚','◇','♡','▣','＋','◌','○','☆','□','●'], '家居': ['⌂','▭','◇','▧','◌','◫','□','▱','▤','⚙'],
+            '家庭': ['○','◉','♡','☆','⌂','◌','●','◎','◇','☷'], '生活': ['◌','⌁','♨','▤','☎','▧','◇','◫','⌂','▥'],
+            '學習': ['▤','▥','✎','▧','▣','□','◇','▭','☆','◉']
+        };
+        const colorIconSets = {
+            '飲食': ['🍽️','🍔','🌭','🍚','🍜','🍞','🥩','🥗','🧁','🍩','🥤','☕','🥛','🍺','🍷','🫖','🍌','🍦','🍭','🍬','🍳','🍼','🍫','🍿','🥡','🍪','🍤','🍗','🍣','🍕','🍟','🍖','🥨','🦐','🥬','🍲','🍡','🍢','🍶','🍊','🎂'],
+            '交通': ['🚆','🚇','🚌','🚗','🚕','🛵','🚲','✈️','⛴️','⛽','🅿️','🚊','🚅','🚉','🛫'], '娛樂': ['🎤','🎧','🎮','🎬','🎟️','🎡','🎨','📷','🧩','🎁','⭐','🎵'],
+            '購物': ['🛒','🛍️','👕','👜','📱','💄','🧴','🎁','🏷️','📦','👟','⌚'], '個人': ['👤','💇','🏋️','🛡️','⭐','📱','💳','💰','❤️','🧘'],
+            '醫療': ['🏥','💊','🦷','🩺','❤️','🧼','🩹','👓','🧪','🚑'], '家居': ['🏠','🛋️','🧺','🛠️','💡','🛏️','📦','🧹','🚿','🏨'],
+            '家庭': ['👨‍👩‍👧','🧸','🐾','🎂','🎁','🍽️','❤️','🏠','👶','🍼'], '生活': ['⚡','💧','🔥','🌐','📞','🧻','🧴','🧹','🧺','🔧'],
+            '學習': ['📚','🎓','✏️','📝','💻','📖','📐','🖊️','⭐','🧠']
+        };
+        const customMainColors = ['#cf2b25', '#efd08f', '#4c95d9', '#9b68c8', '#5e7b56', '#d88935', '#2d5575', '#9a9b83'];
+        let categoryDepth = 'main';
+        let customMainDraft = { icon: '?', color: customMainColors[0], name: '', asSubCategory: false };
+        let iconPickerMode = 'line';
+        let iconPickerTab = '飲食';
+        let customMainCategories = JSON.parse(localStorage.getItem('myCustomMainCatsV1') || '[]');
+        customMainCategories.forEach(cat => {
+            if (!cat || !cat.type || !cat.name) return;
+            if (!defaultCategories[cat.type]) defaultCategories[cat.type] = {};
+            if (!defaultCategories[cat.type][cat.name]) defaultCategories[cat.type][cat.name] = [];
+            mainCategoryMeta[cat.name] = { icon: cat.icon || '•••', color: cat.color || '#9ca3af' };
+        });
 
         let customCategories = JSON.parse(localStorage.getItem('myCustomCatsV3')) || (() => {
             let temp = {};
@@ -4285,59 +4404,69 @@
             renderTypes();
         }
 
+        function categoryIconHtml(icon) {
+            if (!icon) return '<span>•••</span>';
+            if (icon.startsWith?.('data:image')) return `<img src="${icon}" class="w-8 h-8 rounded-full object-cover">`;
+            return `<span>${escapeHTML(icon)}</span>`;
+        }
+        function getMainCategoryMeta(name) { return mainCategoryMeta[name] || { icon: '•••', color: '#9ca3af' }; }
         function renderTypes() {
+            categoryDepth = 'main';
             const container = document.getElementById('type-buttons');
             const currentType = document.getElementById('selected-type').value;
             container.innerHTML = Object.keys(defaultCategories).map(typeName => {
                 const isActive = typeName === currentType;
-                const activeClass = isActive ? 'bg-gray-900 text-white shadow-md' : 'bg-white border border-gray-200 text-gray-500 hover:bg-gray-50';
-                return `<button onclick="selectType('${typeName}')" class="whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition ${activeClass}">${escapeHTML(displayLabel(typeName))}</button>`;
+                return `<button onclick="selectType('${typeName}')" class="whitespace-nowrap py-2 text-sm font-semibold transition ${isActive ? 'text-gray-900 border-b-2 border-sky-400' : 'text-gray-400'}">${escapeHTML(displayLabel(typeName))}</button>`;
             }).join('');
-            renderMainCats(); 
+            renderMainCats();
         }
-
         function renderMainCats() {
             const container = document.getElementById('main-cat-buttons');
-            const currentType = document.getElementById('selected-type').value;
-            const currentMainCat = document.getElementById('selected-main-cat').value;
-            container.innerHTML = Object.keys(defaultCategories[currentType]).map(m => {
-                const isActive = m === currentMainCat;
-                const activeClass = isActive ? 'bg-blue-600 text-white shadow-sm' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50';
-                return `<button onclick="selectMainCat('${m}')" class="whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-medium transition ${activeClass}">${escapeHTML(displayLabel(m))}</button>`;
-            }).join('');
-            renderSubCats(); 
+            if (container) container.innerHTML = '';
+            renderSubCats();
         }
-
-        function selectMainCat(m) { document.getElementById('selected-main-cat').value = m; renderMainCats(); }
-
+        function selectMainCat(m) {
+            document.getElementById('selected-main-cat').value = m;
+            document.getElementById('selected-sub-cat-name').value = '';
+            document.getElementById('selected-sub-cat-icon').value = '';
+            categoryDepth = 'sub';
+            renderSubCats();
+        }
         function renderSubCats() {
             const container = document.getElementById('category-buttons');
             const currentType = document.getElementById('selected-type').value;
             const currentMainCat = document.getElementById('selected-main-cat').value;
             const currentSubCatName = document.getElementById('selected-sub-cat-name').value;
-            
             if(!customCategories[currentType]) customCategories[currentType] = {};
-            if(!customCategories[currentType][currentMainCat]) customCategories[currentType][currentMainCat] = [];
-
-            const combinedCats = [ ...defaultCategories[currentType][currentMainCat], ...customCategories[currentType][currentMainCat] ];
-
-            let html = combinedCats.map(cat => {
+            Object.keys(defaultCategories[currentType] || {}).forEach(mainCat => {
+                if(!customCategories[currentType][mainCat]) customCategories[currentType][mainCat] = [];
+            });
+            if (categoryDepth === 'main') {
+                const mainCats = Object.keys(defaultCategories[currentType] || {});
+                container.className = 'main-category-grid mb-6';
+                container.innerHTML = mainCats.map(m => {
+                    const meta = getMainCategoryMeta(m);
+                    const isActive = m === currentMainCat;
+                    return `<button type="button" onclick="selectMainCat('${m}')" class="main-category-btn ${isActive ? 'active' : ''}"><span class="main-category-icon" style="background:${meta.color}">${categoryIconHtml(meta.icon)}</span><span>${escapeHTML(displayLabel(m))}</span></button>`;
+                }).join('') + `<button type="button" onclick="openCustomMainCategoryModal(false)" class="main-category-btn"><span class="main-category-icon" style="background:#e5e7eb;color:#555">+</span><span>${escapeHTML(t('customCat'))}</span></button>`;
+                return;
+            }
+            container.className = 'grid mb-6';
+            const combinedCats = [ ...((defaultCategories[currentType] || {})[currentMainCat] || []), ...((customCategories[currentType] || {})[currentMainCat] || []) ];
+            const backMeta = getMainCategoryMeta(currentMainCat);
+            let html = `<button type="button" onclick="showMainCategoryGrid()" class="flex flex-col items-center justify-center min-h-[82px] p-3 rounded-2xl transition"><div class="text-2xl mb-1 category-back-icon" style="color:${backMeta.color}">${categoryIconHtml(backMeta.icon)}</div><span class="text-[11px] font-semibold text-gray-500">返回</span></button>`;
+            html += combinedCats.map(cat => {
                 const isActive = cat.name === currentSubCatName;
                 const activeClass = isActive ? 'border-blue-500 bg-blue-50 shadow-sm' : 'border-transparent bg-white hover:bg-gray-50';
                 const safeIcon = cat.icon || '📝';
-                const iconHtml = safeIcon.startsWith('data:image') 
-                    ? `<img src="${safeIcon}" class="w-7 h-7 object-cover rounded-full mb-1 border border-gray-200 shadow-sm">` 
-                    : `<div class="text-2xl mb-1">${escapeHTML(safeIcon)}</div>`;
-                return `<button onclick="selectSubCat(decodeURIComponent('${encodeURIComponent(cat.name)}'), decodeURIComponent('${encodeURIComponent(safeIcon)}'))" class="flex flex-col items-center justify-center min-h-[82px] p-3 rounded-2xl border-2 transition ${activeClass}">${iconHtml}<span class="text-[11px] font-semibold ${isActive ? 'text-blue-700' : 'text-gray-600'}">${escapeHTML(displayLabel(cat.name))}</span></button>`;
+                const iconHtml = safeIcon.startsWith('data:image') ? `<img src="${safeIcon}" class="w-7 h-7 object-cover rounded-full mb-1 border border-gray-200 shadow-sm">` : `<div class="text-2xl mb-1">${escapeHTML(safeIcon)}</div>`;
+                return `<button type="button" onclick="selectSubCat(decodeURIComponent('${encodeURIComponent(cat.name)}'), decodeURIComponent('${encodeURIComponent(safeIcon)}'))" class="flex flex-col items-center justify-center min-h-[82px] p-3 rounded-2xl border-2 transition ${activeClass}">${iconHtml}<span class="text-[11px] font-semibold ${isActive ? 'text-blue-700' : 'text-gray-600'}">${escapeHTML(displayLabel(cat.name))}</span></button>`;
             }).join('');
-
-            html += `<button onclick="createCustomCategory()" class="flex flex-col items-center justify-center min-h-[82px] p-3 rounded-2xl border border-dashed border-gray-300 text-gray-400 hover:bg-gray-50 transition"><div class="text-2xl mb-1">➕</div><span class="text-[11px] font-medium">${t('customCat')}</span></button>`;
+            html += `<button type="button" onclick="openCustomMainCategoryModal(true)" class="flex flex-col items-center justify-center min-h-[82px] p-3 rounded-2xl border border-dashed border-gray-300 text-gray-400 hover:bg-gray-50 transition"><div class="text-2xl mb-1">+</div><span class="text-[11px] font-medium">${t('customCat')}</span></button>`;
             container.innerHTML = html;
-
-            if (combinedCats.length > 0 && !combinedCats.some(c => c.name === currentSubCatName)) {
-                selectSubCat(combinedCats[0].name, combinedCats[0].icon);
-            }
+            if (combinedCats.length > 0 && !combinedCats.some(c => c.name === currentSubCatName)) selectSubCat(combinedCats[0].name, combinedCats[0].icon);
         }
+        function showMainCategoryGrid() { categoryDepth = 'main'; renderSubCats(); }
 
         function selectSubCat(name, icon) {
             document.getElementById('selected-sub-cat-name').value = name;
@@ -4382,17 +4511,7 @@
         }
 
         function createCustomCategory() {
-            const mode = (prompt(t('customCatModePrompt'), '1') || '').trim();
-            if (!mode) return;
-            if (mode === '2' || /image|圖片|画像|写真/i.test(mode)) {
-                triggerCustomCatUpload();
-                return;
-            }
-            const icon = chooseCustomEmoji();
-            if (!icon) return;
-            const name = prompt(t('promptCustomCat'));
-            if (!name || !name.trim()) return;
-            saveCustomCategory(name, icon);
+            openCustomMainCategoryModal(true);
         }
 
         async function handleCustomCatUpload(event) {
@@ -4405,9 +4524,93 @@
             event.target.value = '';
         }
 
+        function openCustomMainCategoryModal(asSubCategory = false) {
+            customMainDraft = { icon: asSubCategory ? '📝' : '?', color: customMainColors[0], name: '', asSubCategory };
+            document.getElementById('custom-main-name').value = '';
+            updateCustomMainPreview();
+            document.getElementById('custom-main-category-modal').classList.remove('hidden');
+        }
+        function closeCustomMainCategoryModal() { document.getElementById('custom-main-category-modal').classList.add('hidden'); }
+        function updateCustomMainPreview() {
+            const preview = document.getElementById('custom-main-preview');
+            const dot = document.getElementById('custom-main-color-dot');
+            if (!preview || !dot) return;
+            preview.style.background = customMainDraft.color;
+            preview.innerHTML = categoryIconHtml(customMainDraft.icon);
+            dot.style.color = customMainDraft.color;
+        }
+        function cycleCustomMainColor() {
+            const index = customMainColors.indexOf(customMainDraft.color);
+            customMainDraft.color = customMainColors[(index + 1) % customMainColors.length];
+            updateCustomMainPreview();
+        }
+        function openIconSourceModal() { document.getElementById('icon-source-modal').classList.remove('hidden'); }
+        function closeIconSourceModal() { document.getElementById('icon-source-modal').classList.add('hidden'); }
+        function openBuiltInIconPicker(mode = 'line') {
+            iconPickerMode = mode;
+            iconPickerTab = iconCategoryTabs[0];
+            closeIconSourceModal();
+            document.getElementById('icon-picker-modal').classList.remove('hidden');
+            renderIconPicker();
+        }
+        function closeIconPicker() { document.getElementById('icon-picker-modal').classList.add('hidden'); }
+        function renderIconPicker() {
+            document.getElementById('icon-picker-title').textContent = iconPickerMode === 'line' ? '內建圖示' : '彩色圖示';
+            document.getElementById('icon-picker-tabs').innerHTML = iconCategoryTabs.map(tab => `<button type="button" onclick="setIconPickerTab('${tab}')" class="${tab === iconPickerTab ? 'active' : ''}">${escapeHTML(displayLabel(tab))}</button>`).join('');
+            const list = iconPickerMode === 'line' ? (lineIconSets[iconPickerTab] || []) : (colorIconSets[iconPickerTab] || []);
+            document.getElementById('icon-picker-grid').innerHTML = list.map(icon => {
+                const active = customMainDraft.icon === icon;
+                return `<button type="button" onclick="chooseCategoryIcon(decodeURIComponent('${encodeURIComponent(icon)}'))" class="icon-choice ${active ? 'active' : ''}">${categoryIconHtml(icon)}</button>`;
+            }).join('');
+        }
+        function setIconPickerTab(tab) { iconPickerTab = tab; renderIconPicker(); }
+        function chooseCategoryIcon(icon) { customMainDraft.icon = icon; updateCustomMainPreview(); renderIconPicker(); }
+        function triggerMainCategoryUpload() { closeIconSourceModal(); document.getElementById('custom-main-cat-upload').click(); }
+        async function handleMainCategoryImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            customMainDraft.icon = await new Promise((resolve) => { const reader = new FileReader(); reader.onload = e => resolve(e.target.result); reader.readAsDataURL(file); });
+            updateCustomMainPreview();
+            event.target.value = '';
+        }
+        function saveCustomMainCategory() {
+            const name = (document.getElementById('custom-main-name').value || '').trim();
+            if (!name) { showToast(t('promptCustomCat')); return; }
+            const currentType = document.getElementById('selected-type').value;
+            const currentMainCat = document.getElementById('selected-main-cat').value;
+            if (customMainDraft.asSubCategory || categoryDepth === 'sub') {
+                saveCustomCategory(name, customMainDraft.icon);
+                closeCustomMainCategoryModal();
+                return;
+            }
+            if (!defaultCategories[currentType][name]) defaultCategories[currentType][name] = [];
+            mainCategoryMeta[name] = { icon: customMainDraft.icon, color: customMainDraft.color };
+            customMainCategories = customMainCategories.filter(cat => !(cat.type === currentType && cat.name === name));
+            customMainCategories.push({ type: currentType, name, icon: customMainDraft.icon, color: customMainDraft.color });
+            localStorage.setItem('myCustomMainCatsV1', JSON.stringify(customMainCategories));
+            if (!customCategories[currentType]) customCategories[currentType] = {};
+            if (!customCategories[currentType][name]) customCategories[currentType][name] = [];
+            localStorage.setItem('myCustomCatsV3', JSON.stringify(customCategories));
+            closeCustomMainCategoryModal();
+            selectMainCat(name);
+        }
+
         window.saveCustomCategory = saveCustomCategory;
         window.createCustomCategory = createCustomCategory;
         window.triggerCustomCatUpload = triggerCustomCatUpload;
+        window.openCustomMainCategoryModal = openCustomMainCategoryModal;
+        window.closeCustomMainCategoryModal = closeCustomMainCategoryModal;
+        window.saveCustomMainCategory = saveCustomMainCategory;
+        window.cycleCustomMainColor = cycleCustomMainColor;
+        window.openIconSourceModal = openIconSourceModal;
+        window.closeIconSourceModal = closeIconSourceModal;
+        window.openBuiltInIconPicker = openBuiltInIconPicker;
+        window.closeIconPicker = closeIconPicker;
+        window.setIconPickerTab = setIconPickerTab;
+        window.chooseCategoryIcon = chooseCategoryIcon;
+        window.triggerMainCategoryUpload = triggerMainCategoryUpload;
+        window.handleMainCategoryImageUpload = handleMainCategoryImageUpload;
+        window.showMainCategoryGrid = showMainCategoryGrid;
 
         function setTodayDate() { document.getElementById('date').value = new Date().toISOString().split('T')[0]; }
 
@@ -4417,7 +4620,7 @@
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.page === id));
             if(id === 'record') { renderDashboardDatePicker(); renderDailyRecords(); }
             if(id === 'report') renderList();
-            if(id === 'add') { renderTypes(); renderAccounts(); renderProjectButtons(); ensurePreferredAddSelections(); toggleInstallmentFields(); hideCalculator(); }
+            if(id === 'add') { categoryDepth = 'main'; renderTypes(); renderAccounts(); renderProjectButtons(); ensurePreferredAddSelections(); toggleInstallmentFields(); hideCalculator(); }
             if(id === 'dashboard') { updateBalances(); }
             if(id === 'more') { renderAccountGroupSettings(); renderExchangeRateSettings(); renderBudgetProjectSettings(); }
         }
@@ -4744,7 +4947,7 @@
             showToast(t('toastExported'));
         }
 
-        const APP_VERSION = '20260614-01';
+        const APP_VERSION = '20260615-01';
 
         function registerServiceWorker() {
             if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
