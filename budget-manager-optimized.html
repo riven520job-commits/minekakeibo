@@ -49,6 +49,8 @@
             background: linear-gradient(180deg, #050505 0%, #111111 42%);
         }
         * { box-sizing: border-box; touch-action: manipulation; }
+        button, input, select, textarea { font: inherit; }
+        button { -webkit-tap-highlight-color: transparent; }
         body {
             font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
             background: linear-gradient(180deg, #f7f9fc 0%, #ffffff 36%);
@@ -63,15 +65,15 @@
         h2 { font-size: clamp(1.05rem, 4.4vw, 1.22rem) !important; line-height: 1.35 !important; letter-spacing: 0 !important; }
         h3 { letter-spacing: 0 !important; }
         .app-shell { min-height: 100vh; min-height: 100dvh; overflow-x: clip; }
-        .page { display: none; animation: fadeIn 120ms ease-out; }
+        .page { display: none; animation: fadeIn 120ms ease-out; max-width: 448px; margin: 0 auto; }
         .page.active { display: block; }
         .section-label { color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
-        .surface { background: color-mix(in srgb, var(--panel) 92%, transparent); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 6px 16px rgba(31, 41, 51, .04); }
-        .notion-input { background: var(--panel); border: 1px solid var(--line); padding: 13px 14px; border-radius: 12px; outline: none; width: 100%; transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease; }
+        .surface { background: color-mix(in srgb, var(--panel) 92%, transparent); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 4px 12px rgba(31, 41, 51, .035); }
+        .notion-input { background: var(--panel); border: 1px solid var(--line); min-height: 46px; padding: 12px 14px; border-radius: 12px; outline: none; width: 100%; transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease; }
         .notion-input:focus { border-color: #111827; box-shadow: 0 0 0 4px rgba(17, 24, 39, .08); }
         .primary-btn { background: var(--ink); color: white; border-radius: 14px; box-shadow: 0 14px 24px rgba(31, 41, 51, .18); transition: transform 160ms ease, opacity 160ms ease; }
         .primary-btn:active { transform: translateY(1px) scale(.99); }
-        .nav-btn { color: #8993a4; border-radius: 14px; min-width: 56px; transition: color 160ms ease, background 160ms ease; }
+        .nav-btn { color: #8993a4; border-radius: 14px; min-width: 56px; min-height: 50px; transition: color 160ms ease, background 160ms ease; }
         .nav-btn.active { color: var(--accent); background: #f3f4f6; }
         .nav-fab { width: 68px; height: 68px; margin-top: -32px; border: 1px solid var(--line); border-radius: 18px; background: #ffffff; color: var(--ink); box-shadow: 0 14px 28px rgba(31, 41, 51, .12); line-height: 1; }
         .nav-btn.nav-fab.active { background: #ffffff !important; }
@@ -224,21 +226,24 @@
         .account-choice.active { border-color: #111827; background: #f3f4f6; color: #111827; }
         .add-field-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
         .add-field-tile { min-width: 0; }
-        .add-summary-tile { min-height: 62px; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); padding: 10px 12px; text-align: center; }
+        .add-summary-tile { min-height: 58px; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); padding: 10px 12px; text-align: center; }
         .add-summary-label { color: var(--muted); font-size: 11px; font-weight: 700; line-height: 1; }
         .add-summary-value { color: var(--ink); font-size: 1rem; font-weight: 700; line-height: 1.2; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .add-summary-input { width: 100%; border: 0; outline: 0; background: transparent; text-align: center; color: var(--ink); font-size: 1rem; font-weight: 700; min-width: 0; }
         .add-summary-input::placeholder { color: var(--muted); font-weight: 600; }
-        .add-field-tile .notion-input { min-height: 78px; }
-        .add-field-tile .account-choice { min-height: 78px; padding: 10px 12px; }
+        .add-field-tile .notion-input { min-height: 58px; }
+        .add-field-tile .account-choice { min-height: 58px; padding: 10px 12px; }
         .add-field-tile .account-choice span { min-width: 0; }
         .add-field-tile .account-choice .block { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .add-field-tile.expanded { grid-column: 1 / -1; }
         .add-modal-shell { background: #fff; color: var(--ink); }
         .add-modal-action { width: 3.2rem; height: 3.2rem; border-radius: 9999px; background: #fff; border: 1px solid var(--line); box-shadow: 0 10px 24px rgba(31,41,51,.08); display: grid; place-items: center; font-size: 2rem; line-height: 1; color: var(--ink); }
         .add-modal-check { font-size: 1.7rem; }
-        #add-record-modal, #account-detail-modal { height: 100vh; height: 100dvh; overflow: hidden; overscroll-behavior: none; }
-        #add-modal-body { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; flex: 1 1 auto; min-height: 0; }
+        #add-record-modal, #account-detail-modal { height: 100vh; height: 100dvh; overflow: hidden; overscroll-behavior: none; touch-action: pan-y; }
+        #add-record-modal { position: fixed; inset: 0; width: 100%; max-width: 100vw; }
+        #add-record-modal .add-modal-shell { height: 100%; max-height: 100dvh; }
+        #add-modal-body { overscroll-behavior: contain; -webkit-overflow-scrolling: auto; flex: 1 1 auto; min-height: 0; overflow-x: hidden; scroll-behavior: auto; transform: translateZ(0); }
+        #add-modal-body.calculator-visible { padding-bottom: min(58vh, 420px); }
         #category-buttons { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px 12px; }
         #category-buttons button { min-height: 76px !important; border: 0 !important; background: transparent !important; padding: 0 !important; }
         #category-buttons button > div,
@@ -272,15 +277,20 @@
         .custom-color-dot { width: 38px; height: 38px; border-radius: 9999px; border: 1px solid var(--line); outline: 3px solid rgba(17,24,39,.06); color: #f3f4f6; background: currentColor; }
         .icon-source-options { padding: 22px; display: grid; gap: 12px; }
         .icon-source-options button { border-radius: 12px; background: var(--soft); border: 1px solid var(--line); color: var(--ink); font-weight: 700; padding: 13px 16px; }
-        body.modal-open { overflow: hidden; }
+        html:has(body.modal-open) { overflow: hidden; }
+        body.modal-open { overflow: hidden; position: fixed; width: 100%; left: 0; right: 0; touch-action: none; }
+        body.modal-open #add-modal-body,
+        body.modal-open .account-picker-panel,
+        body.modal-open .project-picker-panel,
+        body.modal-open .icon-grid-scroll { touch-action: pan-y; }
         .add-compose-grid { display: grid; grid-template-columns: 1fr 2.9fr; gap: 12px; align-items: stretch; }
-        .photo-tile { min-height: 102px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); color: #c4cad1; display: grid; place-items: center; font-size: 2rem; cursor: pointer; }
-        .add-long-field { min-height: 50px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: 8px; padding: 10px 12px; }
+        .photo-tile { min-height: 102px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); color: #c4cad1; display: grid; place-items: center; font-size: 2rem; cursor: pointer; }
+        .add-long-field { min-height: 50px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: 8px; padding: 10px 12px; }
         .add-long-field input { border: 0; outline: 0; background: transparent; min-width: 0; text-align: right; font-size: 1.2rem; font-weight: 700; color: var(--ink); }
         .add-chip { border-radius: 12px; background: #e5e7eb; color: var(--ink); padding: 7px 12px; font-weight: 700; font-size: .9rem; }
-        .add-note { width: 100%; min-height: 142px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); padding: 14px; outline: 0; resize: vertical; color: var(--ink); font-size: 1rem; }
+        .add-note { width: 100%; min-height: 132px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); padding: 14px; outline: 0; resize: vertical; color: var(--ink); font-size: 1rem; }
         .add-tags { color: var(--muted); font-size: 1.05rem; font-weight: 600; }
-        .calculator-panel-fixed { position: sticky; bottom: 0; background: rgba(243,244,246,.96); margin: 0 -20px -16px; padding: 12px 20px max(18px, env(safe-area-inset-bottom)); backdrop-filter: blur(10px); }
+        .calculator-panel-fixed { position: fixed; left: 50%; right: auto; bottom: 0; z-index: 100; width: min(100vw, 448px); transform: translateX(-50%); background: rgba(243,244,246,.98); margin: 0; padding: 12px 20px max(18px, env(safe-area-inset-bottom)); backdrop-filter: blur(10px); border-top: 1px solid var(--line); box-shadow: 0 -12px 34px rgba(31,41,51,.08); }
         @media (max-width: 480px) {
             .calculator-grid button { min-height: 44px; font-size: 1.25rem; }
             .quick-amounts button { padding: 7px 12px; }
@@ -1867,6 +1877,20 @@
             return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`;
         }
 
+
+        let lockedScrollY = 0;
+        function lockModalScroll() {
+            lockedScrollY = window.scrollY || document.documentElement.scrollTop || 0;
+            document.body.classList.add('modal-open');
+            document.body.style.top = `-${lockedScrollY}px`;
+        }
+
+        function unlockModalScroll() {
+            document.body.classList.remove('modal-open');
+            document.body.style.top = '';
+            window.scrollTo(0, lockedScrollY || 0);
+        }
+
         function renderDashboardDatePicker() {
             const label = document.getElementById('dashboard-selected-date-label');
             const input = document.getElementById('dashboard-date-input');
@@ -2003,7 +2027,9 @@
             body.appendChild(addPage);
             addPage.classList.add('active');
             modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
+            lockModalScroll();
+            body.scrollTop = 0;
+            ensurePreferredProjectSelection();
             renderTypes();
             renderAccounts();
             renderProjectButtons();
@@ -2023,7 +2049,7 @@
             if (modalTitle) modalTitle.textContent = t('addTitle');
             const saveButton = document.getElementById('record-save-button');
             if (saveButton) saveButton.textContent = t('saveButton');
-            document.body.style.overflow = '';
+            unlockModalScroll();
         }
 
         function openRecordDetail(index) {
@@ -2456,7 +2482,7 @@
             document.getElementById('selected-account').value = item.account || '';
             document.getElementById('selected-to-account-group').value = accountGroupMap[item.toAccount] || document.getElementById('selected-to-account-group').value;
             document.getElementById('selected-to-account').value = item.toAccount || '';
-            document.getElementById('selected-project-id').value = item.projectId || '';
+            document.getElementById('selected-project-id').value = (resolveRecordProject(item)?.id || item.projectId || '');
             document.getElementById('date').value = item.date || todayString();
             document.getElementById('record-time').value = item.time || '';
             document.getElementById('note').value = item.note || '';
@@ -3848,9 +3874,81 @@
             return budgetProjects.find(project => project.id === id);
         }
 
+        function normalizeProjectName(value) {
+            return String(value || '').trim().toLowerCase().replace(/[\s　]+/g, '');
+        }
+
+        function projectNamesMatch(a, b) {
+            const left = normalizeProjectName(a);
+            const right = normalizeProjectName(b);
+            return !!left && !!right && left === right;
+        }
+
+        function isExpenseType(type) {
+            return ['支出', 'expense', 'expenses', '支払い', '支払', '出費', '應付帳款'].includes(String(type || '').trim().toLowerCase()) || String(type || '').trim() === '支出';
+        }
+
+        function preferredBudgetProject() {
+            return budgetProjects.find(project => projectNamesMatch(project.name, '省錢大作戰') || projectNamesMatch(project.name, '節約大作戦')) || budgetProjects[0] || null;
+        }
+
+        function resolveRecordProject(item) {
+            if (!item) return null;
+            if (item.projectId) {
+                const byId = projectById(item.projectId);
+                if (byId) return byId;
+            }
+            if (item.projectName) {
+                const byName = budgetProjects.find(project => projectNamesMatch(project.name, item.projectName));
+                if (byName) return byName;
+            }
+            return null;
+        }
+
+        function normalizeProjectDate(value) {
+            const raw = String(value || '').trim();
+            if (!raw) return '';
+            const compact = raw.replace(/[^0-9]/g, '');
+            if (compact.length === 8) return `${compact.slice(0, 4)}-${compact.slice(4, 6)}-${compact.slice(6, 8)}`;
+            if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+            return raw.replace(/\//g, '-');
+        }
+
+        function dateInProjectRange(date, project) {
+            const recordDate = normalizeProjectDate(date);
+            if (!recordDate) return true;
+            const start = normalizeProjectDate(project?.start);
+            const end = normalizeProjectDate(project?.end);
+            return (!start || recordDate >= start) && (!end || recordDate <= end);
+        }
+
+        function recordBelongsToProject(item, project) {
+            if (!item || !project) return false;
+            if (item.projectId && item.projectId === project.id) return true;
+            if (item.projectName && projectNamesMatch(item.projectName, project.name)) return true;
+            const preferred = preferredBudgetProject();
+            if (!item.projectId && !item.projectName && preferred?.id === project.id) return true;
+            return false;
+        }
+
+        function normalizeBudgetProjectRecords() {
+            let changed = false;
+            data.forEach(item => {
+                const project = resolveRecordProject(item) || (isExpenseType(item.type) && !item.projectId && !item.projectName ? preferredBudgetProject() : null);
+                if (project && (item.projectId !== project.id || item.projectName !== project.name)) {
+                    item.projectId = project.id;
+                    item.projectName = project.name;
+                    changed = true;
+                }
+            });
+            if (changed) localStorage.setItem('myBudget', JSON.stringify(data));
+            return changed;
+        }
+
         function projectSpentJPY(project) {
-            return data.filter(item => item.type === '支出' && item.projectId === project.id)
-                .filter(item => (!project.start || item.date >= project.start) && (!project.end || item.date <= project.end))
+            if (!project) return 0;
+            return data.filter(item => isExpenseType(item.type) && recordBelongsToProject(item, project))
+                .filter(item => dateInProjectRange(item.date, project))
                 .reduce((sum, item) => sum + toJPY(item.price, item.currency || '¥'), 0);
         }
 
@@ -3859,6 +3957,7 @@
         }
 
         function renderBudgetProjectsDashboard() {
+            normalizeBudgetProjectRecords();
             const container = document.getElementById('budget-projects-dashboard');
             if (!container) return;
             if (!budgetProjects.length) {
@@ -3896,6 +3995,13 @@
             }).join('');
         }
 
+        function ensurePreferredProjectSelection() {
+            const selectedProject = document.getElementById('selected-project-id');
+            if (!selectedProject || selectedProject.value) return;
+            const preferredProject = preferredBudgetProject();
+            if (preferredProject) selectedProject.value = preferredProject.id;
+        }
+
         function renderProjectButtons() {
             const container = document.getElementById('project-buttons');
             if (!container) return;
@@ -3904,7 +4010,7 @@
             let html = `<button onclick="selectProject('')" class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium transition ${noneActive ? 'bg-gray-900 text-white shadow-md' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'}">${t('noProject')}</button>`;
             html += budgetProjects.map(project => {
                 const isActive = project.id === currentId;
-                const activeClass = isActive ? 'bg-blue-600 text-white shadow-md' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50';
+                const activeClass = isActive ? 'bg-gray-900 text-white shadow-sm' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50';
                 return `<button onclick="selectProject('${project.id}')" class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium transition ${activeClass}">${escapeHTML(project.name)}</button>`;
             }).join('');
             html += `<button onclick="addBudgetProject()" class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium bg-gray-50 text-gray-400 border border-dashed border-gray-300 hover:bg-gray-100 transition">${t('addProjectShort')}</button>`;
@@ -3960,7 +4066,7 @@
                     </button>
                 `;
             }));
-            rows.push(`<button type="button" onclick="addBudgetProject(); renderProjectPicker();" class="account-choice border-dashed text-blue-600 font-semibold">${t('addProjectShort')}</button>`);
+            rows.push(`<button type="button" onclick="addBudgetProject(); renderProjectPicker();" class="account-choice border-dashed text-gray-700 font-semibold">${t('addProjectShort')}</button>`);
             container.innerHTML = rows.join('');
         }
 
@@ -3975,11 +4081,7 @@
                     document.getElementById('currency').value = getAccountCurrency(preferredAccount);
                 }
             }
-            const selectedProject = document.getElementById('selected-project-id');
-            if (selectedProject && !selectedProject.value) {
-                const preferredProject = budgetProjects.find(project => project.name === '省錢大作戰' || project.name === '節約大作戦');
-                if (preferredProject) selectedProject.value = preferredProject.id;
-            }
+            ensurePreferredProjectSelection();
             renderProjectSummary();
             renderAccountSummaries();
         }
@@ -4020,8 +4122,8 @@
             const budget = parseFloat(prompt(t('promptProjectBudget'), '0'));
             if (!budget || budget <= 0) return;
             const currency = currencySymbolFromCode(prompt(t('promptProjectCurrency'), 'JPY'));
-            const start = (prompt(t('promptProjectStart'), '') || '').trim();
-            const end = (prompt(t('promptProjectEnd'), '') || '').trim();
+            const start = normalizeProjectDate(prompt(t('promptProjectStart'), '') || '');
+            const end = normalizeProjectDate(prompt(t('promptProjectEnd'), '') || '');
             budgetProjects.push({ id: `project-${Date.now()}`, name: name.trim(), budget, currency, start, end });
             localStorage.setItem('myBudgetProjects', JSON.stringify(budgetProjects));
             renderBudgetProjectsDashboard();
@@ -4040,13 +4142,21 @@
             if (!budget || budget <= 0) return;
             const currentCode = (supportedCurrencies.find(curr => curr.symbol === project.currency) || supportedCurrencies[0]).code;
             const currency = currencySymbolFromCode(prompt(t('promptEditProjectCurrency'), currentCode));
-            const start = (prompt(t('promptEditProjectStart'), project.start || '') || '').trim();
-            const end = (prompt(t('promptEditProjectEnd'), project.end || '') || '').trim();
+            const start = normalizeProjectDate(prompt(t('promptEditProjectStart'), project.start || '') || '');
+            const end = normalizeProjectDate(prompt(t('promptEditProjectEnd'), project.end || '') || '');
+            const oldName = project.name;
             project.name = name.trim();
             project.budget = budget;
             project.currency = currency;
             project.start = start;
             project.end = end;
+            data.forEach(item => {
+                if (item.projectId === project.id || projectNamesMatch(item.projectName, oldName)) {
+                    item.projectId = project.id;
+                    item.projectName = project.name;
+                }
+            });
+            localStorage.setItem('myBudget', JSON.stringify(data));
             localStorage.setItem('myBudgetProjects', JSON.stringify(budgetProjects));
             renderBudgetProjectsDashboard();
             renderBudgetProjectSettings();
@@ -4057,7 +4167,7 @@
         function deleteBudgetProject(projectId) {
             const project = projectById(projectId);
             if (!project) return;
-            if (data.some(item => item.projectId === projectId)) {
+            if (data.some(item => item.projectId === projectId || projectNamesMatch(item.projectName, project.name))) {
                 showToast(t('toastProjectInUse'));
                 return;
             }
@@ -4132,21 +4242,21 @@
 
             containerFromSub.innerHTML = fromChildren.length ? fromChildren.map(acc => {
                 const isActive = acc === currentAcc;
-                const activeClass = isActive ? 'bg-blue-600 text-white shadow-md' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50';
+                const activeClass = isActive ? 'bg-gray-900 text-white shadow-sm' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50';
                 return `<button onclick="selectAccount(decodeURIComponent('${encodeURIComponent(acc)}'), 'from')" class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium transition ${activeClass}">${escapeHTML(displayLabel(acc))}</button>`;
             }).join('') : `<span class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium bg-gray-50 text-gray-400 border border-dashed border-gray-200">${t('noSubAccount')}</span>`;
             containerFromSub.innerHTML += `<button onclick="addSubAccount(decodeURIComponent('${encodeURIComponent(currentGroup)}'))" class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium bg-gray-50 text-gray-400 border border-dashed border-gray-300 hover:bg-gray-100 transition">${t('addSubAccount')}</button>`;
 
             let htmlTo = accountGroups.map(group => {
                 const isActive = group === currentToGroup;
-                const activeClass = isActive ? 'bg-blue-600 text-white shadow-md' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50';
+                const activeClass = isActive ? 'bg-gray-900 text-white shadow-sm' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50';
                 return `<button onclick="selectAccountGroup(decodeURIComponent('${encodeURIComponent(group)}'), 'to')" class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium transition ${activeClass}">${escapeHTML(displayLabel(group))}</button>`;
             }).join('');
             containerTo.innerHTML = htmlTo;
 
             containerToSub.innerHTML = toChildren.length ? toChildren.map(acc => {
                 const isActive = acc === currentToAcc;
-                const activeClass = isActive ? 'bg-blue-600 text-white shadow-md' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50';
+                const activeClass = isActive ? 'bg-gray-900 text-white shadow-sm' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50';
                 return `<button onclick="selectAccount(decodeURIComponent('${encodeURIComponent(acc)}'), 'to')" class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium transition ${activeClass}">${escapeHTML(displayLabel(acc))}</button>`;
             }).join('') : `<span class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium bg-gray-50 text-gray-400 border border-dashed border-gray-200">${t('noSubAccount')}</span>`;
             containerToSub.innerHTML += `<button onclick="addSubAccount(decodeURIComponent('${encodeURIComponent(currentToGroup)}'))" class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium bg-gray-50 text-gray-400 border border-dashed border-gray-300 hover:bg-gray-100 transition">${t('addSubAccount')}</button>`;
@@ -4236,10 +4346,12 @@
 
         function showCalculator() {
             document.getElementById('calculator-panel')?.classList.remove('hidden');
+            document.getElementById('add-modal-body')?.classList.add('calculator-visible');
         }
 
         function hideCalculator() {
             document.getElementById('calculator-panel')?.classList.add('hidden');
+            document.getElementById('add-modal-body')?.classList.remove('calculator-visible');
         }
 
         function evaluateCalculatorExpression() {
@@ -4318,9 +4430,12 @@
         let lastTouchEnd = 0;
         document.addEventListener('touchend', event => {
             const now = Date.now();
-            if (now - lastTouchEnd <= 300) event.preventDefault();
+            if (now - lastTouchEnd <= 420) event.preventDefault();
             lastTouchEnd = now;
         }, { passive: false });
+        document.addEventListener('dblclick', event => event.preventDefault(), { passive: false });
+        document.addEventListener('gesturestart', event => event.preventDefault(), { passive: false });
+        document.addEventListener('gesturechange', event => event.preventDefault(), { passive: false });
 
         function hideCalculatorWhenLeavingAmount(event) {
             if (!document.getElementById('page-add')?.classList.contains('active')) return;
@@ -4669,7 +4784,14 @@
             const name = nameInput.dataset.autoFilled === 'true' ? (nameInput.dataset.rawValue || subCatName) : (nameInput.value || subCatName);
             const price = document.getElementById('price').value;
             const currency = document.getElementById('currency').value;
-            const projectId = document.getElementById('selected-project-id').value;
+            let projectId = document.getElementById('selected-project-id').value;
+            let selectedProject = projectById(projectId);
+            if (!selectedProject && type === '支出') {
+                selectedProject = preferredBudgetProject();
+                projectId = selectedProject?.id || '';
+                if (projectId) document.getElementById('selected-project-id').value = projectId;
+            }
+            const projectName = selectedProject ? selectedProject.name : '';
             const file = document.getElementById('photo').files[0];
             const installmentEnabled = document.getElementById('installment-enabled')?.checked;
             const installmentCount = parseInt(document.getElementById('installment-count')?.value || '0', 10);
@@ -4706,7 +4828,7 @@
                 });
             }
 
-            const baseRecord = { type, mainCat, subCatName, subCatIcon, account, toAccount, date, time: recordTime, note, name, price, currency, projectId, photoData };
+            const baseRecord = { type, mainCat, subCatName, subCatIcon, account, toAccount, date, time: recordTime, note, name, price, currency, projectId, projectName, photoData };
             if (editingRecordIndex !== null) {
                 const original = data[editingRecordIndex];
                 if (!original) {
@@ -4744,6 +4866,8 @@
                 renderDashboardDatePicker();
                 renderDailyRecords();
                 updateBalances();
+                renderBudgetProjectsDashboard();
+                renderBudgetProjectSettings();
                 if (!document.getElementById('monthly-report-modal')?.classList.contains('hidden')) renderMonthlyReport();
                 showToast(t('toastRecordUpdated'));
                 return;
@@ -4790,6 +4914,10 @@
             switchPage('record');
             renderDashboardDatePicker();
             renderDailyRecords();
+            updateBalances();
+            renderBudgetProjectsDashboard();
+            renderBudgetProjectSettings();
+            if (!document.getElementById('monthly-report-modal')?.classList.contains('hidden')) renderMonthlyReport();
             showToast(t('toastSaved'));
         }
 
@@ -4887,6 +5015,8 @@
                 renderList();
                 renderDailyRecords();
                 updateBalances();
+                renderBudgetProjectsDashboard();
+                renderBudgetProjectSettings();
                 showToast(t('toastDeleted'));
             }
         }
@@ -4937,7 +5067,7 @@
 
         function exportData() {
             const csv = [t('csvHeaders').map(escapeCsv).join(',')].concat(
-                data.map(i => [displayLabel(i.type), i.date, displayLabel(i.mainCat), displayLabel(i.subCatName), displayLabel(i.name), projectById(i.projectId)?.name || '', displayLabel(i.account), displayLabel(i.toAccount || ''), i.currency, i.price, i.installmentCount ? `${i.installmentIndex}/${i.installmentCount}` : ''].map(escapeCsv).join(','))
+                data.map(i => [displayLabel(i.type), i.date, displayLabel(i.mainCat), displayLabel(i.subCatName), displayLabel(i.name), resolveRecordProject(i)?.name || i.projectName || '', displayLabel(i.account), displayLabel(i.toAccount || ''), i.currency, i.price, i.installmentCount ? `${i.installmentIndex}/${i.installmentCount}` : ''].map(escapeCsv).join(','))
             ).join('\n');
             const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
             const a = document.createElement('a');
@@ -4947,7 +5077,7 @@
             showToast(t('toastExported'));
         }
 
-        const APP_VERSION = '20260615-04';
+        const APP_VERSION = '20260615-07';
 
         function registerServiceWorker() {
             if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
