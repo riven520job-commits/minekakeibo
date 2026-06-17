@@ -51,6 +51,9 @@
         * { box-sizing: border-box; touch-action: manipulation; }
         button, input, select, textarea { font: inherit; }
         button { -webkit-tap-highlight-color: transparent; }
+        button, .tap-target { transition: transform 120ms ease, box-shadow 160ms ease, border-color 160ms ease, background 160ms ease, opacity 160ms ease; }
+        button:active, .tap-target:active { transform: scale(.975); }
+        button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid rgba(17,24,39,.16); outline-offset: 2px; }
         body {
             font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
             background: linear-gradient(180deg, #f7f9fc 0%, #ffffff 36%);
@@ -134,6 +137,15 @@
         .asset-dashboard .section-label,
         .report-modal .section-label { color: var(--muted); }
         .asset-top-action { width: 3.25rem; height: 3.25rem; border-radius: 9999px; border: 1px solid var(--line); background: var(--panel); display: grid; place-items: center; color: var(--ink); box-shadow: 0 8px 18px rgba(31, 41, 51, .05); }
+        .asset-top-action:active { box-shadow: 0 3px 8px rgba(31,41,51,.08) inset; }
+        .asset-dashboard.fullscreen-active { max-width: none; min-height: 100dvh; padding: max(18px, env(safe-area-inset-top)) 20px calc(90px + env(safe-area-inset-bottom)); background: #fff; }
+        .asset-dashboard.fullscreen-active .asset-hero { max-width: 980px; margin-left: auto; margin-right: auto; }
+        .asset-dashboard.fullscreen-active #account-balances-list { max-width: 980px; margin-left: auto; margin-right: auto; }
+        @media (orientation: landscape) {
+            .asset-dashboard.fullscreen-active .asset-hero { display: grid; grid-template-columns: minmax(280px, .9fr) minmax(360px, 1.1fr); align-items: center; gap: 22px; text-align: left; }
+            .asset-dashboard.fullscreen-active .asset-analysis-actions { max-width: 420px; }
+            .asset-dashboard.fullscreen-active .asset-trend-panel { margin-top: 0; }
+        }
         .asset-hero { text-align: center; padding: 20px 14px 16px; border: 0; border-radius: 0; background: transparent; box-shadow: none; margin-bottom: 18px; }
         .asset-total { font-size: clamp(2.5rem, 15vw, 4rem); line-height: .95; color: var(--ink); font-weight: 800; letter-spacing: 0; margin-top: 4px; }
         .asset-subtotals { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; color: var(--muted); font-size: .78rem; margin-top: 14px; }
@@ -214,19 +226,22 @@
         .top-record-row { display: grid; grid-template-columns: 56px 1fr auto; gap: 12px; align-items: center; padding: 12px 0; }
         .top-record-icon { width: 50px; height: 50px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.12); font-size: 1.35rem; }
         .calculator-grid { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: var(--panel); }
-        .calculator-grid button { min-height: 58px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); font-size: 1.45rem; font-weight: 600; background: var(--panel); color: var(--ink); }
+        .calculator-grid button { min-height: 50px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); font-size: 1.32rem; font-weight: 700; background: var(--panel); color: var(--ink); }
         .calculator-grid button:nth-child(4n) { border-right: 0; }
         .calculator-grid button:nth-last-child(-n+4) { border-bottom: 0; }
-        .calculator-grid button:active { background: var(--soft); }
+        .calculator-grid button:active { background: #e9edf3; box-shadow: inset 0 2px 8px rgba(31,41,51,.08); }
+        .calculator-readout { min-height: 42px; border: 1px solid var(--line); border-radius: 14px; background: #fff; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 12px; }
+        .calculator-readout-value { min-width: 0; text-align: right; font-size: 1.35rem; line-height: 1; font-weight: 800; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .quick-amounts { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; }
-        .quick-amounts button { white-space: nowrap; border: 1px solid var(--line); background: var(--soft); border-radius: 12px; padding: 8px 14px; font-weight: 700; color: var(--ink); }
+        .quick-amounts button { white-space: nowrap; border: 1px solid var(--line); background: #fff; border-radius: 12px; padding: 8px 14px; font-weight: 800; color: var(--ink); box-shadow: 0 2px 8px rgba(31,41,51,.04); }
         .account-picker { position: fixed; inset: 0; z-index: 95; background: rgba(15, 23, 42, .22); backdrop-filter: blur(4px); }
         .account-picker-panel { position: absolute; inset: auto 0 0 0; max-width: 448px; margin: 0 auto; max-height: 86vh; overflow-y: auto; border-radius: 24px 24px 0 0; background: var(--panel); border: 1px solid var(--line); padding: 18px; }
         .account-choice { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--panel); text-align: left; }
         .account-choice.active { border-color: #111827; background: #f3f4f6; color: #111827; }
-        .add-field-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-        .add-field-tile { min-width: 0; }
-        .add-summary-tile { min-height: 58px; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); padding: 10px 12px; text-align: center; }
+        .add-field-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: stretch; }
+        .add-field-tile { min-width: 0; display: flex; flex-direction: column; }
+        .add-summary-tile { min-height: 62px; height: 100%; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); padding: 10px 12px; text-align: center; box-shadow: 0 3px 10px rgba(31,41,51,.035); }
+        .add-summary-tile:active, .add-long-field:active, .photo-tile:active { border-color: #111827; background: #f7f8fa; box-shadow: inset 0 2px 8px rgba(31,41,51,.06); }
         .add-summary-label { color: var(--muted); font-size: 11px; font-weight: 700; line-height: 1; }
         .add-summary-value { color: var(--ink); font-size: 1rem; font-weight: 700; line-height: 1.2; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .add-summary-input { width: 100%; border: 0; outline: 0; background: transparent; text-align: center; color: var(--ink); font-size: 1rem; font-weight: 700; min-width: 0; }
@@ -243,7 +258,7 @@
         #add-record-modal { position: fixed; inset: 0; width: 100%; max-width: 100vw; }
         #add-record-modal .add-modal-shell { height: 100%; max-height: 100dvh; }
         #add-modal-body { overscroll-behavior: contain; -webkit-overflow-scrolling: auto; flex: 1 1 auto; min-height: 0; overflow-x: hidden; scroll-behavior: auto; transform: translateZ(0); }
-        #add-modal-body.calculator-visible { padding-bottom: min(58vh, 420px); }
+        #add-modal-body.calculator-visible { padding-bottom: min(48vh, 356px); }
         #category-buttons { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px 12px; }
         #category-buttons button { min-height: 76px !important; border: 0 !important; background: transparent !important; padding: 0 !important; }
         #category-buttons button > div,
@@ -283,16 +298,24 @@
         body.modal-open .account-picker-panel,
         body.modal-open .project-picker-panel,
         body.modal-open .icon-grid-scroll { touch-action: pan-y; }
-        .add-compose-grid { display: grid; grid-template-columns: 1fr 2.9fr; gap: 12px; align-items: stretch; }
-        .photo-tile { min-height: 102px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); color: #c4cad1; display: grid; place-items: center; font-size: 2rem; cursor: pointer; }
-        .add-long-field { min-height: 50px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: 8px; padding: 10px 12px; }
+        .add-compose-grid { display: grid; grid-template-columns: minmax(96px, 1fr) minmax(0, 2.9fr); gap: 12px; align-items: stretch; }
+        .photo-tile { min-height: 136px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); color: #c4cad1; display: grid; place-items: center; font-size: 2rem; cursor: pointer; box-shadow: 0 3px 10px rgba(31,41,51,.035); }
+        .add-long-field { min-height: 62px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: 8px; padding: 10px 12px; box-shadow: 0 3px 10px rgba(31,41,51,.035); }
         .add-long-field input { border: 0; outline: 0; background: transparent; min-width: 0; text-align: right; font-size: 1.2rem; font-weight: 700; color: var(--ink); }
         .add-chip { border-radius: 12px; background: #e5e7eb; color: var(--ink); padding: 7px 12px; font-weight: 700; font-size: .9rem; }
         .add-note { width: 100%; min-height: 132px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); padding: 14px; outline: 0; resize: vertical; color: var(--ink); font-size: 1rem; }
         .add-tags { color: var(--muted); font-size: 1.05rem; font-weight: 600; }
-        .calculator-panel-fixed { position: fixed; left: 50%; right: auto; bottom: 0; z-index: 100; width: min(100vw, 448px); transform: translateX(-50%); background: rgba(243,244,246,.98); margin: 0; padding: 12px 20px max(18px, env(safe-area-inset-bottom)); backdrop-filter: blur(10px); border-top: 1px solid var(--line); box-shadow: 0 -12px 34px rgba(31,41,51,.08); }
+        .add-date-display { color: var(--ink); }
+        .add-date-display.today { border-color: #5ab8d6; background: #eefaff; color: #0f6f86; }
+        .add-date-display.past { border-color: #e7d3a7; background: #fff8e8; color: #8a5b12; }
+        .add-date-display.future { border-color: #c8d9b6; background: #f3faec; color: #3e6b1f; }
+        .daily-project-card { display: grid; grid-template-columns: 58px minmax(0,1fr) auto; gap: 12px; align-items: center; border: 1px solid var(--line); border-radius: 18px; background: #fff; padding: 14px; box-shadow: 0 6px 16px rgba(31,41,51,.035); }
+        .daily-project-icon { width: 52px; height: 52px; border-radius: 9999px; background: #f1f3f5; display: grid; place-items: center; font-size: 1.55rem; }
+        .daily-project-progress { height: 5px; border-radius: 9999px; background: #eef0f3; overflow: hidden; margin-top: 8px; }
+        .daily-project-progress span { display: block; height: 100%; background: #111827; border-radius: inherit; }
+        .calculator-panel-fixed { position: fixed; left: 50%; right: auto; bottom: 0; z-index: 100; width: min(100vw, 448px); transform: translateX(-50%); background: rgba(243,244,246,.98); margin: 0; padding: 10px 18px max(14px, env(safe-area-inset-bottom)); backdrop-filter: blur(10px); border-top: 1px solid var(--line); box-shadow: 0 -12px 34px rgba(31,41,51,.08); }
         @media (max-width: 480px) {
-            .calculator-grid button { min-height: 44px; font-size: 1.25rem; }
+            .calculator-grid button { min-height: 44px; font-size: 1.2rem; }
             .quick-amounts button { padding: 7px 12px; }
             .calculator-panel-fixed { padding-top: 10px; }
         }
@@ -302,7 +325,7 @@
             #category-buttons button > div,
             #category-buttons button > img { width: 50px; height: 50px; }
             .add-note { min-height: 110px; }
-            .calculator-grid button { min-height: 42px; }
+            .calculator-grid button { min-height: 40px; }
         }
         .project-picker { position: fixed; inset: 0; z-index: 96; background: rgba(15, 23, 42, .22); backdrop-filter: blur(4px); }
         .project-picker-panel { position: absolute; inset: auto 0 0 0; max-width: 448px; margin: 0 auto; max-height: 70vh; overflow-y: auto; border-radius: 24px 24px 0 0; background: var(--panel); border: 1px solid var(--line); padding: 18px; }
@@ -360,6 +383,8 @@
                 <p class="text-[11px] text-gray-400 mt-3" data-i18n="entryDateHint">先選日期，再按底部中間的＋新增紀錄。</p>
             </div>
 
+            <div id="daily-budget-projects" class="space-y-3 mb-6"></div>
+
             <div class="mb-6">
                 <h3 class="section-label mb-3 flex justify-between items-center">
                     <span data-i18n="dailyRecordsTitle">當日紀錄</span>
@@ -374,7 +399,7 @@
                 <button id="amount-visibility-toggle" onclick="toggleAmountVisibility()" class="asset-top-action" aria-label="顯示金額"></button>
                 <h1 class="text-2xl font-bold tracking-tight" data-i18n="dashboardTitle">資產總覽</h1>
                 <span class="flex items-center gap-2">
-                    <button onclick="openStatsModal()" class="asset-top-action text-2xl" aria-label="Statistics">↗</button>
+                    <button onclick="toggleAssetFullscreen()" class="asset-top-action text-2xl" aria-label="Fullscreen">↗</button>
                     <button onclick="addAccountGroup()" class="asset-top-action text-3xl leading-none">+</button>
                 </span>
             </div>
@@ -398,12 +423,6 @@
                 </div>
                 <div id="asset-trend-panel" class="asset-trend-panel"></div>
             </div>
-
-            <h3 class="dark-section-title flex justify-between items-center">
-                <span data-i18n="budgetProjectsTitle">預算專案</span>
-                <button onclick="addBudgetProject()" class="text-[10px] text-blue-600 font-semibold normal-case monochrome-action px-2 py-1 rounded-lg" data-i18n="addProjectShort">＋新增專案</button>
-            </h3>
-            <div id="budget-projects-dashboard" class="space-y-3 mb-8"></div>
 
             <h3 class="dark-section-title flex justify-between items-center">
                 <span data-i18n="accountBalances">各帳戶餘額</span>
@@ -526,7 +545,11 @@
                     </div>
 
                     <div class="add-field-tile">
-                        <input type="date" id="date" class="add-summary-tile text-center text-lg font-semibold text-gray-800">
+                        <button type="button" id="add-date-display" onclick="openAddDatePicker()" class="add-summary-tile add-date-display">
+                            <span id="add-date-main" class="add-summary-value">今天</span>
+                            <span id="add-date-sub" class="add-summary-label">2026/06/17</span>
+                        </button>
+                        <input type="date" id="date" class="sr-only" onchange="syncAddDateFromInput()">
                     </div>
                     <div class="add-field-tile">
                         <input type="time" id="record-time" class="add-summary-tile text-center text-lg font-semibold text-gray-800">
@@ -548,7 +571,11 @@
                 <div class="add-tags">#標籤 / 紅利回饋</div>
                 <textarea id="note" class="add-note" data-i18n-placeholder="notePlaceholder" placeholder="備註"></textarea>
 
-                <div id="calculator-panel" class="calculator-panel-fixed hidden space-y-3">
+                <div id="calculator-panel" class="calculator-panel-fixed hidden space-y-2">
+                        <div class="calculator-readout">
+                            <span id="calculator-currency-label" class="text-xs font-bold text-gray-400">JPY</span>
+                            <span id="calculator-live-value" class="calculator-readout-value">0</span>
+                        </div>
                         <div class="quick-amounts no-scrollbar">
                             <button type="button" onclick="calculatorQuick(538)">538</button>
                             <button type="button" onclick="calculatorQuick(1299)">1,299</button>
@@ -1878,6 +1905,53 @@
         }
 
 
+        function formatAddDateMain(dateString) {
+            const date = parseLocalDate(dateString);
+            const today = todayString();
+            if (dateString === today) return currentLang === 'ja' ? '今日' : '今天';
+            const yesterday = parseLocalDate(today); yesterday.setDate(yesterday.getDate() - 1);
+            const tomorrow = parseLocalDate(today); tomorrow.setDate(tomorrow.getDate() + 1);
+            if (dateString === formatLocalDate(yesterday)) return currentLang === 'ja' ? '昨日' : '昨天';
+            if (dateString === formatLocalDate(tomorrow)) return currentLang === 'ja' ? '明日' : '明天';
+            return date.toLocaleDateString(currentLang === 'ja' ? 'ja-JP' : 'zh-TW', { month: 'short', day: 'numeric' });
+        }
+
+        function addDateTone(dateString) {
+            const current = normalizeProjectDate(dateString);
+            const today = todayString();
+            if (current === today) return 'today';
+            if (current < today) return 'past';
+            return 'future';
+        }
+
+        function renderAddDateField() {
+            const input = document.getElementById('date');
+            const button = document.getElementById('add-date-display');
+            const main = document.getElementById('add-date-main');
+            const sub = document.getElementById('add-date-sub');
+            if (!input || !button || !main || !sub) return;
+            const value = input.value || selectedEntryDate || todayString();
+            input.value = value;
+            button.classList.remove('today', 'past', 'future');
+            button.classList.add(addDateTone(value));
+            main.textContent = formatAddDateMain(value);
+            sub.textContent = formatEntryDateLabel(value);
+        }
+
+        function openAddDatePicker() {
+            const input = document.getElementById('date');
+            if (!input) return;
+            if (typeof input.showPicker === 'function') input.showPicker();
+            else input.click();
+        }
+
+        function syncAddDateFromInput() {
+            const input = document.getElementById('date');
+            if (input?.value) selectedEntryDate = input.value;
+            renderAddDateField();
+        }
+
+
         let lockedScrollY = 0;
         function lockModalScroll() {
             lockedScrollY = window.scrollY || document.documentElement.scrollTop || 0;
@@ -1899,6 +1973,7 @@
 
             label.textContent = formatEntryDateLabel(selectedEntryDate);
             input.value = selectedEntryDate;
+            renderDailyBudgetProjects();
 
             const selected = parseLocalDate(selectedEntryDate);
             const weekStart = new Date(selected);
@@ -1943,8 +2018,9 @@
         function openAddWithSelectedDate() {
             editingRecordIndex = null;
             openAddModal();
-            document.getElementById('date').value = selectedEntryDate;
+            document.getElementById('date').value = selectedEntryDate || todayString();
             document.getElementById('record-time').value = new Date().toTimeString().slice(0, 5);
+            renderAddDateField();
         }
 
         function recordSign(item) {
@@ -1962,6 +2038,44 @@
         function dailyRecordsForSelectedDate() {
             return data.map((item, index) => ({ item, index }))
                 .filter(({ item }) => item.date === selectedEntryDate);
+        }
+
+        function renderDailyBudgetProjects() {
+            const container = document.getElementById('daily-budget-projects');
+            if (!container) return;
+            normalizeBudgetProjectRecords();
+            if (!budgetProjects.length) {
+                container.innerHTML = `
+                    <button type="button" onclick="addBudgetProject()" class="daily-project-card w-full text-left tap-target">
+                        <span class="daily-project-icon">＋</span>
+                        <span class="min-w-0">
+                            <span class="block font-semibold">${t('budgetProjectsTitle')}</span>
+                            <span class="block text-xs text-gray-400 mt-1">${t('budgetProjectsHint')}</span>
+                        </span>
+                        <span class="text-gray-300">›</span>
+                    </button>
+                `;
+                return;
+            }
+            const preferred = preferredBudgetProject() || budgetProjects[0];
+            const spent = projectSpentJPY(preferred);
+            const budget = projectBudgetJPY(preferred);
+            const remaining = budget - spent;
+            const ratio = budget > 0 ? Math.min(Math.max(spent / budget, 0), 1) : 0;
+            container.innerHTML = `
+                <button type="button" onclick="switchPage('dashboard')" class="daily-project-card w-full text-left tap-target">
+                    <span class="daily-project-icon">🐖</span>
+                    <span class="min-w-0">
+                        <span class="block text-lg font-semibold truncate">${escapeHTML(preferred.name)}</span>
+                        <span class="block text-xs text-gray-500 mt-1">${t('projectRemaining')} <strong class="text-gray-800">${formatPrivateJPY(Math.max(remaining, 0), '¥')}</strong></span>
+                        <span class="daily-project-progress"><span style="width:${Math.round(ratio * 100)}%"></span></span>
+                    </span>
+                    <span class="text-right shrink-0 text-xs text-gray-400">
+                        <span class="block font-bold text-gray-700">${formatPrivateJPY(spent, '¥')}</span>
+                        <span class="block">/ ${formatPrivateJPY(budget, '¥')}</span>
+                    </span>
+                </button>
+            `;
         }
 
         function renderDailyRecords() {
@@ -2035,7 +2149,8 @@
             renderProjectButtons();
             toggleInstallmentFields();
             hideCalculator();
-            document.getElementById('date').value = selectedEntryDate;
+            document.getElementById('date').value = selectedEntryDate || todayString();
+            renderAddDateField();
         }
 
         function closeAddModal() {
@@ -3709,6 +3824,36 @@
             }
         }
 
+
+        async function toggleAssetFullscreen() {
+            const dashboard = document.getElementById('page-dashboard');
+            if (!dashboard) return;
+            try {
+                if (!document.fullscreenElement) {
+                    dashboard.classList.add('fullscreen-active');
+                    if (dashboard.requestFullscreen) await dashboard.requestFullscreen();
+                    if (screen.orientation?.lock) {
+                        try { await screen.orientation.lock('landscape'); } catch (_) {}
+                    }
+                    showToast(currentLang === 'ja' ? '横向き表示を開始しました' : '已開啟橫向全螢幕檢視');
+                } else {
+                    if (document.exitFullscreen) await document.exitFullscreen();
+                }
+            } catch (error) {
+                dashboard.classList.toggle('fullscreen-active');
+            }
+        }
+
+        document.addEventListener('fullscreenchange', () => {
+            const dashboard = document.getElementById('page-dashboard');
+            if (!document.fullscreenElement) {
+                dashboard?.classList.remove('fullscreen-active');
+                if (screen.orientation?.unlock) {
+                    try { screen.orientation.unlock(); } catch (_) {}
+                }
+            }
+        });
+
         window.openAssetAnalysisModal = openAssetAnalysisModal;
         window.closeAssetAnalysisModal = closeAssetAnalysisModal;
         window.setAssetAnalysisSide = setAssetAnalysisSide;
@@ -3958,6 +4103,7 @@
 
         function renderBudgetProjectsDashboard() {
             normalizeBudgetProjectRecords();
+            renderDailyBudgetProjects();
             const container = document.getElementById('budget-projects-dashboard');
             if (!container) return;
             if (!budgetProjects.length) {
@@ -4332,6 +4478,8 @@
         function renderCalculator() {
             const input = document.getElementById('price');
             const expressionEl = document.getElementById('calculator-expression');
+            const liveValue = document.getElementById('calculator-live-value');
+            const currencyLabel = document.getElementById('calculator-currency-label');
             if (!input || !expressionEl) return;
             const displayExpression = calculatorExpression
                 .replace(/\*/g, ' × ')
@@ -4342,11 +4490,16 @@
                 .trim();
             expressionEl.textContent = /[+\-*/]/.test(calculatorExpression) ? displayExpression : '';
             if (!/[+\-*/]/.test(calculatorExpression)) input.value = calculatorExpression;
+            if (liveValue) liveValue.textContent = input.value || calculatorExpression || '0';
+            if (currencyLabel) currencyLabel.textContent = currencyCodeFromSymbol(document.getElementById('currency')?.value || '¥');
         }
 
         function showCalculator() {
             document.getElementById('calculator-panel')?.classList.remove('hidden');
             document.getElementById('add-modal-body')?.classList.add('calculator-visible');
+            renderCalculator();
+            const amountField = document.getElementById('price')?.closest('.add-long-field');
+            amountField?.scrollIntoView({ block: 'center', behavior: 'smooth' });
         }
 
         function hideCalculator() {
@@ -4426,6 +4579,9 @@
         window.closeAccountPicker = closeAccountPicker;
         window.calculatorPress = calculatorPress;
         window.calculatorQuick = calculatorQuick;
+        window.openAddDatePicker = openAddDatePicker;
+        window.syncAddDateFromInput = syncAddDateFromInput;
+        window.toggleAssetFullscreen = toggleAssetFullscreen;
 
         let lastTouchEnd = 0;
         document.addEventListener('touchend', event => {
@@ -5077,7 +5233,7 @@
             showToast(t('toastExported'));
         }
 
-        const APP_VERSION = '20260615-07';
+        const APP_VERSION = '20260617-01';
 
         function registerServiceWorker() {
             if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
