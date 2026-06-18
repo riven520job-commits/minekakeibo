@@ -27,6 +27,11 @@
             --panel: #ffffff;
             --soft: #f6f8fb;
             --accent: #111827;
+            --fun-blue: #5ab8d6;
+            --fun-yellow: #f6d28b;
+            --fun-green: #9fd37a;
+            --fun-rose: #e47d84;
+            --fun-lavender: #b7a6e8;
         }
         html, body { overscroll-behavior-y: none; touch-action: manipulation; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; width: 100%; overflow-x: hidden; }
         body.eye-care {
@@ -82,7 +87,7 @@
         .nav-btn.nav-fab.active { background: #ffffff !important; }
         .nav-fab-symbol { display: grid; place-items: center; width: 100%; height: 100%; font-size: 2.25rem; font-weight: 300; line-height: 1; }
         .date-chip { border-radius: 9999px; transition: border-color 160ms ease, color 160ms ease, background 160ms ease; }
-        .date-chip.active { border-color: #111827; color: var(--ink); background: #f3f4f6; }
+        .date-chip.active { border-color: var(--fun-blue); color: var(--ink); background: #eefaff; box-shadow: 0 0 0 4px rgba(90,184,214,.13); }
         nav { padding-bottom: max(1.25rem, env(safe-area-inset-bottom)); box-shadow: none !important; }
         nav .nav-btn span[data-i18n] { display: none; }
         nav .nav-btn span.text-lg { margin-bottom: 0 !important; font-size: 1.65rem; line-height: 1; }
@@ -186,8 +191,15 @@
         .account-switch { width: 48px; height: 30px; border-radius: 9999px; background: #d7d7d7; padding: 3px; display: inline-flex; justify-content: flex-start; }
         .account-switch.on { background: var(--ink); justify-content: flex-end; }
         .account-switch::before { content: ""; width: 24px; height: 24px; border-radius: 9999px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,.12); }
-        .account-more-card { background: #fff; border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 22px 60px rgba(31,41,51,.22); }
-        .account-more-option { width: 100%; border-radius: 14px; background: #e5e5e5; padding: 14px 16px; font-weight: 800; text-align: center; color: var(--ink); }
+        .account-more-card { background: #fff; border: 1px solid rgba(31,41,51,.08); border-radius: 28px; box-shadow: 0 24px 70px rgba(31,41,51,.22); }
+        .account-more-option { width: 100%; border-radius: 18px; background: #f4f5f7; padding: 14px 16px; font-weight: 800; color: var(--ink); display:flex; align-items:center; justify-content:space-between; gap:12px; border:1px solid rgba(31,41,51,.06); transition: transform .16s ease, box-shadow .16s ease, background .16s ease; }
+        .account-more-option:active { transform: scale(.985); }
+        .account-more-option:nth-child(1) { background:#eaf7fb; }
+        .account-more-option:nth-child(2) { background:#fff6df; }
+        .account-more-option:nth-child(3) { background:#eef8ea; }
+        .account-more-option:nth-child(4) { background:#f2efff; }
+        .account-more-option.danger { background:#fff0f1; color:#d6525b; }
+        .account-more-icon { width:34px; height:34px; border-radius:12px; background:#fff; display:grid; place-items:center; box-shadow: inset 0 0 0 1px rgba(31,41,51,.06); font-size:13px; }
         .adjust-row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 14px; align-items: center; padding: 11px 0; font-size: 1rem; }
         .asset-analysis-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .asset-analysis-switch button { border: 1px solid var(--line); border-radius: 12px; background: var(--soft); color: var(--muted); padding: 10px 12px; font-size: .82rem; font-weight: 800; }
@@ -264,14 +276,15 @@
         #category-buttons button > div,
         #category-buttons button > img { width: 58px; height: 58px; border-radius: 9999px; display: grid; place-items: center; margin: 0 auto 7px !important; background: #f1f3f5; border: 3px solid transparent; box-shadow: none; object-fit: cover; }
         #category-buttons button.border-blue-500 > div,
-        #category-buttons button.border-blue-500 > img { border-color: #d4d8dd !important; background: #e9ecef; }
+        #category-buttons button.border-blue-500 > img { border-color: var(--fun-blue) !important; background: #fffaf0; box-shadow: 0 0 0 5px rgba(90,184,214,.14); }
         .main-category-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 15px 12px; }
         .main-category-btn { min-height: 82px; display: flex; flex-direction: column; align-items: center; justify-content: start; gap: 7px; color: var(--muted); font-size: .74rem; font-weight: 700; }
         .main-category-icon { width: 58px; height: 58px; border-radius: 9999px; display: grid; place-items: center; color: var(--ink); border: 1px solid var(--line); font-size: 1.55rem; background: var(--soft) !important; }
         .main-category-btn.active { color: var(--ink); }
-        .main-category-btn.active .main-category-icon { border-color: var(--ink); background: #ffffff !important; box-shadow: 0 0 0 3px rgba(17, 24, 39, .06); }
+        .main-category-btn.active .main-category-icon { border-color: var(--fun-blue); background: #ffffff !important; box-shadow: 0 0 0 5px rgba(90,184,214,.14); }
         .category-back-icon { opacity: .58; }
         .icon-modal { position: fixed; inset: 0; z-index: 110; background: rgba(17, 24, 39, .22); backdrop-filter: blur(3px); display: grid; place-items: center; padding: 20px; }
+        #icon-source-modal, #icon-picker-modal { z-index: 130; }
         .icon-modal.hidden { display: none; }
         .icon-panel { width: min(100%, 360px); max-height: min(88vh, 720px); overflow: hidden; display: flex; flex-direction: column; background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 22px; box-shadow: 0 24px 70px rgba(31,41,51,.22); }
         .icon-panel-large { width: min(100%, 430px); height: min(92vh, 760px); }
@@ -283,8 +296,8 @@
         .icon-tabs button.active { color: var(--ink); border-color: var(--ink); }
         .icon-grid-scroll { overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 18px; }
         .icon-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 18px 16px; }
-        .icon-choice { display: grid; place-items: center; width: 54px; height: 54px; border-radius: 9999px; background: #f0f1f2; color: #30313f; font-size: 1.65rem; margin: 0 auto; border: 2px solid transparent; }
-        .icon-choice.active { border-color: #111827; }
+        .icon-choice { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 16px; background: #f5f6f8; color: #30313f; font-size: 1.55rem; margin: 0 auto; border: 2px solid transparent; box-shadow: 0 2px 8px rgba(31,41,51,.035); }
+        .icon-choice.active { border-color: var(--fun-blue); background: #eefaff; }
         .custom-category-form { padding: 22px 18px 18px; display: grid; gap: 18px; }
         .custom-category-preview { width: 92px; height: 92px; border-radius: 9999px; background: var(--soft) !important; color: var(--ink); border: 1px solid var(--line); display: grid; place-items: center; margin: 0 auto 4px; font-size: 2.6rem; }
         .custom-category-row { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 16px; font-size: 1.02rem; }
@@ -545,11 +558,11 @@
                     </div>
 
                     <div class="add-field-tile">
-                        <button type="button" id="add-date-display" onclick="openAddDatePicker()" class="add-summary-tile add-date-display">
+                        <label id="add-date-display" class="add-summary-tile add-date-display relative overflow-hidden cursor-pointer">
                             <span id="add-date-main" class="add-summary-value">今天</span>
                             <span id="add-date-sub" class="add-summary-label">2026/06/17</span>
-                        </button>
-                        <input type="date" id="date" class="sr-only" onchange="syncAddDateFromInput()">
+                            <input type="date" id="date" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="syncAddDateFromInput()">
+                        </label>
                     </div>
                     <div class="add-field-tile">
                         <input type="time" id="record-time" class="add-summary-tile text-center text-lg font-semibold text-gray-800">
@@ -870,14 +883,14 @@
 
     <div id="account-more-modal" class="hidden fixed inset-0 z-[86] bg-black/45 backdrop-blur-sm">
         <div class="absolute inset-x-7 top-[28vh] max-w-sm mx-auto account-more-card p-5">
-            <div class="mx-auto -mt-14 mb-5 w-24 h-24 rounded-full bg-gray-100 border-4 border-white grid place-items-center text-4xl">☰</div>
+            <div class="mx-auto -mt-14 mb-5 w-24 h-24 rounded-full bg-[#eaf7fb] border-4 border-white grid place-items-center text-4xl">☰</div>
             <h2 class="text-center text-2xl font-bold mb-5" data-i18n="accountMoreTitle">更多功能</h2>
             <div class="space-y-3">
-                <button onclick="closeAccountMoreMenu(); openBalanceAdjustModal();" class="account-more-option" data-i18n="adjustBalance">調整餘額</button>
-                <button onclick="closeAccountMoreMenu(); showToast(t('comingSoon'));" class="account-more-option" data-i18n="reconciliationMode">對帳模式</button>
-                <button onclick="exportAccountCsv()" class="account-more-option" data-i18n="exportCsvShort">匯出 CSV</button>
-                <button onclick="closeAccountMoreMenu(); renderAccountDetail();" class="account-more-option" data-i18n="recalculateBalance">重新計算餘額</button>
-                <button onclick="closeAccountMoreMenu(); showToast(t('toastAccountInUse'));" class="account-more-option text-red-500" data-i18n="deleteAccount">刪除帳戶</button>
+                <button onclick="closeAccountMoreMenu(); openBalanceAdjustModal();" class="account-more-option"><span class="flex items-center gap-3"><span class="account-more-icon">⚖</span><span data-i18n="adjustBalance">調整餘額</span></span><span>›</span></button>
+                <button onclick="closeAccountMoreMenu(); showToast(t('comingSoon'));" class="account-more-option"><span class="flex items-center gap-3"><span class="account-more-icon">✓</span><span data-i18n="reconciliationMode">對帳模式</span></span><span>›</span></button>
+                <button onclick="exportAccountCsv()" class="account-more-option"><span class="flex items-center gap-3"><span class="account-more-icon">CSV</span><span data-i18n="exportCsvShort">匯出 CSV</span></span><span>›</span></button>
+                <button onclick="closeAccountMoreMenu(); renderAccountDetail();" class="account-more-option"><span class="flex items-center gap-3"><span class="account-more-icon">↻</span><span data-i18n="recalculateBalance">重新計算餘額</span></span><span>›</span></button>
+                <button onclick="closeAccountMoreMenu(); showToast(t('toastAccountInUse'));" class="account-more-option danger"><span class="flex items-center gap-3"><span class="account-more-icon">×</span><span data-i18n="deleteAccount">刪除帳戶</span></span><span>›</span></button>
             </div>
         </div>
     </div>
@@ -1081,11 +1094,15 @@
         const iconCategoryTabs = ['飲食', '交通', '娛樂', '購物', '個人', '醫療', '家居', '家庭', '生活', '學習'];
         const lineIconSets = {
             '飲食': ['☷','◉','▣','△','○','☕','♨','⌁','□','◇','◎','◌','◍','◒','◐','◓','◯','●','◔','◕','◑','◭','◮','◫','◨'],
-            '交通': ['▤','↗','▭','◇','✈','⛴','▱','⌁','Ⓟ','⇄'], '娛樂': ['♪','♫','▶','▣','☆','◇','◎','●','✦','✧'],
-            '購物': ['▥','▢','▧','▤','◇','□','☆','▣','▭','♡'], '個人': ['○','♡','▣','☆','◉','▤','◇','▭','□','⚙'],
-            '醫療': ['✚','◇','♡','▣','＋','◌','○','☆','□','●'], '家居': ['⌂','▭','◇','▧','◌','◫','□','▱','▤','⚙'],
-            '家庭': ['○','◉','♡','☆','⌂','◌','●','◎','◇','☷'], '生活': ['◌','⌁','♨','▤','☎','▧','◇','◫','⌂','▥'],
-            '學習': ['▤','▥','✎','▧','▣','□','◇','▭','☆','◉']
+            '交通': ['↗','⇄','↔','⟲','⟶','⟵','▭','▱','⌁','⌖','⌗','◇','□','○','◉','◎','●','▤','▥','▧'],
+            '娛樂': ['♪','♫','▶','▷','▣','☆','✦','✧','◇','◎','○','●','◐','◑','⌁','☾','☼','♢','♧','♤'],
+            '購物': ['▥','▤','▧','▣','□','◇','◌','◉','▭','☆','◈','◍','●','○','◎','▦','▨','⌑','⌘','✦'],
+            '個人': ['○','◉','◎','◇','□','▣','☆','✦','✧','●','◐','◑','◒','◓','◌','◍','◈','△','▽','⬡'],
+            '醫療': ['✚','＋','◇','◎','○','□','▣','◌','●','☆','◉','◈','△','▤','▥','✦','⊕','⊙','◍','○'],
+            '家居': ['⌂','□','▤','▥','▧','◇','◎','○','◌','▭','▣','◈','◉','●','△','⌑','▦','▨','☆','✦'],
+            '家庭': ['◎','○','◉','☆','◇','□','▣','✦','◌','●','◐','◑','◈','◍','♡','♢','△','▽','▤','▥'],
+            '生活': ['⚡','○','□','▤','▧','◇','◎','◌','▭','☆','☼','☾','⌁','◉','●','◐','◑','◈','△','▣'],
+            '學習': ['▤','▥','✎','▧','▣','□','◇','▭','☆','◉','○','◎','◈','◌','●','△','⌘','⌑','✦','✧']
         };
         const colorIconSets = {
             '飲食': ['🍽️','🍔','🌭','🍚','🍜','🍞','🥩','🥗','🧁','🍩','🥤','☕','🥛','🍺','🍷','🫖','🍌','🍦','🍭','🍬','🍳','🍼','🍫','🍿','🥡','🍪','🍤','🍗','🍣','🍕','🍟','🍖','🥨','🦐','🥬','🍲','🍡','🍢','🍶','🍊','🎂'],
@@ -1095,7 +1112,7 @@
             '家庭': ['👨‍👩‍👧','🧸','🐾','🎂','🎁','🍽️','❤️','🏠','👶','🍼'], '生活': ['⚡','💧','🔥','🌐','📞','🧻','🧴','🧹','🧺','🔧'],
             '學習': ['📚','🎓','✏️','📝','💻','📖','📐','🖊️','⭐','🧠']
         };
-        const customMainColors = ['#f3f4f6', '#e5e7eb', '#d1d5db', '#9ca3af', '#6b7280', '#374151', '#111827'];
+        const customMainColors = ['#f6d28b', '#f0b37e', '#e47d84', '#c993c7', '#b7a6e8', '#86b7e8', '#5ab8d6', '#8fd0c2', '#9fd37a', '#d7dc85', '#f3f4f6', '#d1d5db'];
         let categoryDepth = 'main';
         let customMainDraft = { icon: '?', color: customMainColors[0], name: '', asSubCategory: false };
         let iconPickerMode = 'line';
@@ -1122,8 +1139,8 @@
         let categoryChartObj = null;
         let currencyChartObj = null;
         
-        const chartColors = ['#111827', '#374151', '#4b5563', '#6b7280', '#9ca3af', '#d1d5db', '#52525b', '#71717a', '#a1a1aa'];
-        const assetPieColors = ['#111827', '#374151', '#4b5563', '#6b7280', '#9ca3af', '#d1d5db', '#52525b', '#71717a', '#a1a1aa', '#e5e7eb'];
+        const chartColors = ['#5ab8d6', '#f6d28b', '#9fd37a', '#e47d84', '#b7a6e8', '#8fd0c2', '#f0b37e', '#86b7e8', '#c993c7'];
+        const assetPieColors = ['#5ab8d6', '#f6d28b', '#9fd37a', '#e47d84', '#b7a6e8', '#8fd0c2', '#f0b37e', '#86b7e8', '#c993c7', '#d7dc85'];
         let currentLang = localStorage.getItem('myBudgetLang') || 'zh';
         let statsRange = localStorage.getItem('myStatsRange') || '6m';
         let selectedEntryDate = localStorage.getItem('mySelectedEntryDate') || todayString();
@@ -2603,6 +2620,8 @@
             document.getElementById('note').value = item.note || '';
             document.getElementById('currency').value = item.currency || getAccountCurrency(item.account) || '¥';
             document.getElementById('price').value = item.price || '';
+            calculatorExpression = String(item.price || '').replace(/,/g, '');
+            renderAddDateField();
             const nameInput = document.getElementById('name');
             nameInput.value = displayLabel(item.name || item.subCatName || '');
             nameInput.dataset.rawValue = item.name || item.subCatName || '';
@@ -4481,25 +4500,26 @@
             const liveValue = document.getElementById('calculator-live-value');
             const currencyLabel = document.getElementById('calculator-currency-label');
             if (!input || !expressionEl) return;
-            const displayExpression = calculatorExpression
+            const expression = String(calculatorExpression || '');
+            const displayExpression = expression
                 .replace(/\*/g, ' × ')
                 .replace(/\//g, ' ÷ ')
                 .replace(/-/g, ' − ')
                 .replace(/\+/g, ' + ')
                 .replace(/\s+/g, ' ')
                 .trim();
-            expressionEl.textContent = /[+\-*/]/.test(calculatorExpression) ? displayExpression : '';
-            if (!/[+\-*/]/.test(calculatorExpression)) input.value = calculatorExpression;
-            if (liveValue) liveValue.textContent = input.value || calculatorExpression || '0';
+            expressionEl.textContent = /[+\-*/]/.test(expression) ? displayExpression : '';
+            if (expression && !/[+\-*/]/.test(expression)) input.value = expression;
+            if (liveValue) liveValue.textContent = input.value || expression || '0';
             if (currencyLabel) currencyLabel.textContent = currencyCodeFromSymbol(document.getElementById('currency')?.value || '¥');
         }
 
         function showCalculator() {
+            const input = document.getElementById('price');
+            if (!calculatorExpression && input?.value) calculatorExpression = String(input.value).replace(/,/g, '');
             document.getElementById('calculator-panel')?.classList.remove('hidden');
             document.getElementById('add-modal-body')?.classList.add('calculator-visible');
             renderCalculator();
-            const amountField = document.getElementById('price')?.closest('.add-long-field');
-            amountField?.scrollIntoView({ block: 'center', behavior: 'smooth' });
         }
 
         function hideCalculator() {
@@ -4510,7 +4530,7 @@
         function evaluateCalculatorExpression() {
             const input = document.getElementById('price');
             const expressionEl = document.getElementById('calculator-expression');
-            const raw = calculatorExpression || input?.value || '';
+            const raw = String(calculatorExpression || input?.value || '').replace(/,/g, '').trim();
             if (!raw) return;
             if (!/^[0-9+\-*/. ()]+$/.test(raw)) return;
             try {
@@ -4523,6 +4543,23 @@
             } catch (error) {
                 showToast(t('toastEnterAmount'));
             }
+        }
+
+        function commitCalculatorValue() {
+            const input = document.getElementById('price');
+            if (!input) return '';
+            const raw = String(calculatorExpression || input.value || '').replace(/,/g, '').trim();
+            if (!raw) {
+                input.value = '';
+                calculatorExpression = '';
+                renderCalculator();
+                return '';
+            }
+            calculatorExpression = raw;
+            if (/[+\-*/]/.test(raw)) evaluateCalculatorExpression();
+            else input.value = raw;
+            renderCalculator();
+            return String(input.value || calculatorExpression || '').replace(/,/g, '').trim();
         }
 
         function calculatorPress(key) {
@@ -4542,8 +4579,7 @@
                 return;
             }
             if (key === '✓' || key === '↵') {
-                evaluateCalculatorExpression();
-                renderCalculator();
+                commitCalculatorValue();
                 hideCalculator();
                 return;
             }
@@ -4815,7 +4851,7 @@
             customMainDraft.color = customMainColors[(index + 1) % customMainColors.length];
             updateCustomMainPreview();
         }
-        function openIconSourceModal() { document.getElementById('icon-source-modal').classList.remove('hidden'); }
+        function openIconSourceModal() { document.activeElement?.blur?.(); document.getElementById('icon-source-modal').classList.remove('hidden'); }
         function closeIconSourceModal() { document.getElementById('icon-source-modal').classList.add('hidden'); }
         function openBuiltInIconPicker(mode = 'line') {
             iconPickerMode = mode;
@@ -4835,8 +4871,8 @@
             }).join('');
         }
         function setIconPickerTab(tab) { iconPickerTab = tab; renderIconPicker(); }
-        function chooseCategoryIcon(icon) { customMainDraft.icon = icon; updateCustomMainPreview(); renderIconPicker(); }
-        function triggerMainCategoryUpload() { closeIconSourceModal(); document.getElementById('custom-main-cat-upload').click(); }
+        function chooseCategoryIcon(icon) { customMainDraft.icon = icon; updateCustomMainPreview(); closeIconPicker(); closeIconSourceModal(); }
+        function triggerMainCategoryUpload() { closeIconSourceModal(); document.activeElement?.blur?.(); document.getElementById('custom-main-cat-upload').click(); }
         async function handleMainCategoryImageUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -4883,7 +4919,12 @@
         window.handleMainCategoryImageUpload = handleMainCategoryImageUpload;
         window.showMainCategoryGrid = showMainCategoryGrid;
 
-        function setTodayDate() { document.getElementById('date').value = new Date().toISOString().split('T')[0]; }
+        function setTodayDate() {
+            const input = document.getElementById('date');
+            if (input) input.value = todayString();
+            selectedEntryDate = todayString();
+            renderAddDateField();
+        }
 
         function switchPage(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -4926,6 +4967,10 @@
         }
 
         async function addExpense() {
+            const committedPrice = commitCalculatorValue();
+            const dateInput = document.getElementById('date');
+            if (dateInput && !dateInput.value) dateInput.value = selectedEntryDate || todayString();
+            renderAddDateField();
             const type = document.getElementById('selected-type').value;
             const mainCat = document.getElementById('selected-main-cat').value;
             const subCatName = document.getElementById('selected-sub-cat-name').value;
@@ -4938,7 +4983,7 @@
             const note = document.getElementById('note')?.value || '';
             const nameInput = document.getElementById('name');
             const name = nameInput.dataset.autoFilled === 'true' ? (nameInput.dataset.rawValue || subCatName) : (nameInput.value || subCatName);
-            const price = document.getElementById('price').value;
+            const price = committedPrice || String(document.getElementById('price').value || '').replace(/,/g, '').trim();
             const currency = document.getElementById('currency').value;
             let projectId = document.getElementById('selected-project-id').value;
             let selectedProject = projectById(projectId);
@@ -5233,7 +5278,7 @@
             showToast(t('toastExported'));
         }
 
-        const APP_VERSION = '20260617-01';
+        const APP_VERSION = '20260619-02';
 
         function registerServiceWorker() {
             if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
