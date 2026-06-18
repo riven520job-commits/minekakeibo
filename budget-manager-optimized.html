@@ -178,7 +178,20 @@
         .account-detail-line svg { width: 100%; height: auto; display: block; overflow: visible; }
         .account-transaction-row { display: grid; grid-template-columns: 52px minmax(0,1fr) auto; gap: 12px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line); }
         .account-transaction-icon { width: 48px; height: 48px; border-radius: 9999px; background: var(--soft); display: grid; place-items: center; font-size: 1.2rem; overflow: hidden; }
-        .account-info-row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 14px; align-items: center; padding: 13px 0; border-top: 1px solid transparent; font-size: 1.02rem; }
+        .account-info-row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 14px; align-items: center; padding: 15px 0; border-top: 1px solid transparent; font-size: 1.02rem; width: 100%; text-align:left; }
+        button.account-info-row { cursor:pointer; }
+        .account-info-row.indent { padding-left: 18px; }
+        .account-info-value { color: var(--muted); text-align:right; min-width: 0; max-width: 58vw; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .account-setting-modal { position: fixed; inset: 0; z-index: 91; background: rgba(17,24,39,.42); backdrop-filter: blur(4px); display:grid; place-items:center; padding:24px; }
+        .account-setting-modal.hidden { display:none; }
+        .account-setting-panel { width:min(100%, 390px); max-height:82vh; overflow:hidden; border-radius:24px; background:#fff; box-shadow:0 24px 70px rgba(31,41,51,.25); display:flex; flex-direction:column; }
+        .account-setting-header { display:grid; grid-template-columns:48px 1fr 48px; align-items:center; gap:8px; padding:18px; border-bottom:1px solid var(--line); }
+        .account-setting-body { overflow-y:auto; -webkit-overflow-scrolling:touch; padding:18px; }
+        .account-setting-option { width:100%; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:12px; align-items:center; padding:14px 4px; border-bottom:1px solid var(--line); text-align:left; }
+        .account-setting-option.active { background:#eefaff; margin-inline:-18px; padding-inline:22px; border-left:4px solid var(--fun-blue); }
+        .account-setting-input { width:100%; border:1px solid var(--line); border-radius:16px; padding:14px; outline:0; font-weight:700; font-size:1.05rem; text-align:right; }
+        .account-setting-actions { display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:0 18px 18px; }
+        .account-setting-actions button { border-radius:14px; background:#e5e7eb; padding:13px; font-weight:800; }
         .account-info-row span:last-child { color: var(--muted); text-align: right; min-width: 0; overflow-wrap: anywhere; }
         .account-switch { width: 48px; height: 30px; border-radius: 9999px; background: #d7d7d7; padding: 3px; display: inline-flex; justify-content: flex-start; }
         .account-switch.on { background: var(--ink); justify-content: flex-end; }
@@ -274,6 +287,10 @@
         .main-category-icon { width: 58px; height: 58px; border-radius: 9999px; display: grid; place-items: center; color: var(--ink); border: 1px solid var(--line); font-size: 1.55rem; background: var(--soft) !important; }
         .main-category-btn.active { color: var(--ink); }
         .main-category-btn.active .main-category-icon { border-color: var(--fun-blue); background: #ffffff !important; box-shadow: 0 0 0 5px rgba(90,184,214,.14); }
+        .category-tile-wrap { position: relative; min-height: 82px; }
+        .category-tile-wrap .main-category-btn, .category-tile-wrap .sub-category-select { width: 100%; height: 100%; }
+        .category-manage-button { position: absolute; top: -5px; right: 0; width: 26px !important; height: 26px !important; min-height: 26px !important; border-radius: 9999px !important; background: #fff !important; border: 1px solid var(--line) !important; padding: 0 !important; display: grid !important; place-items: center !important; font-size: 14px !important; font-weight: 900 !important; color: var(--muted) !important; box-shadow: 0 4px 10px rgba(31,41,51,.08); z-index: 3; }
+        .category-manage-button:active { transform: scale(.94); }
         .category-back-icon { opacity: .58; }
         .icon-modal { position: fixed; inset: 0; z-index: 110; background: rgba(17, 24, 39, .22); backdrop-filter: blur(3px); display: grid; place-items: center; padding: 20px; }
         #icon-source-modal, #icon-picker-modal { z-index: 130; }
@@ -326,7 +343,7 @@
         .custom-manager-row { display: grid; grid-template-columns: 34px minmax(0,1fr) auto auto; align-items: center; gap: 8px; padding: 8px; border: 1px solid var(--line); border-radius: 14px; background: #fafafa; }
         .custom-manager-row button { min-width: 42px; border-radius: 10px; padding: 7px 9px; font-size: 11px; font-weight: 800; background: #f1f3f5; }
         .custom-manager-row button.danger { background: #fff0f1; color: #d6525b; }
-        .calculator-panel-fixed { position: fixed; left: 50%; right: auto; bottom: 0; bottom: env(safe-area-inset-bottom, 0); z-index: 140; width: min(100vw, 448px); max-height: min(46vh, 356px); overflow: hidden; transform: translate3d(-50%,0,0); background: rgba(243,244,246,.98); margin: 0; padding: 10px 18px max(14px, env(safe-area-inset-bottom)); backdrop-filter: blur(10px); border-top: 1px solid var(--line); box-shadow: 0 -12px 34px rgba(31,41,51,.08); touch-action: manipulation; }
+        .calculator-panel-fixed { position: fixed; left: 50%; right: auto; bottom: 0 !important; z-index: 140; width: min(100vw, 448px); max-height: min(46vh, 356px); overflow: hidden; transform: translate3d(-50%,0,0); background: rgba(243,244,246,.98); margin: 0; padding: 10px 18px calc(14px + env(safe-area-inset-bottom)); backdrop-filter: blur(10px); border-top: 1px solid var(--line); box-shadow: 0 -12px 34px rgba(31,41,51,.08); touch-action: manipulation; }
         @media (max-width: 480px) {
             .calculator-grid button { min-height: 44px; font-size: 1.2rem; }
             .quick-amounts button { padding: 7px 12px; }
@@ -920,6 +937,21 @@
         </div>
     </div>
 
+    <div id="account-setting-modal" class="account-setting-modal hidden">
+        <div class="account-setting-panel">
+            <div class="account-setting-header">
+                <button type="button" onclick="closeAccountSettingModal()" class="icon-round-action" aria-label="Close">×</button>
+                <div id="account-setting-title" class="text-center text-xl font-black">設定</div>
+                <button type="button" onclick="confirmAccountSettingModal()" class="icon-round-action add-modal-check" aria-label="Save">✓</button>
+            </div>
+            <div id="account-setting-body" class="account-setting-body"></div>
+            <div id="account-setting-actions" class="account-setting-actions hidden">
+                <button type="button" onclick="closeAccountSettingModal()">取消</button>
+                <button type="button" onclick="confirmAccountSettingModal()">確定</button>
+            </div>
+        </div>
+    </div>
+
     <div id="monthly-report-modal" class="report-modal hidden fixed inset-0 z-[72] bg-black/40">
         <div class="absolute inset-x-0 bottom-0 top-0 max-w-md mx-auto overflow-hidden flex flex-col">
             <div class="px-5 py-5 flex items-center justify-between gap-3">
@@ -1004,6 +1036,7 @@
         let accountGroups = JSON.parse(localStorage.getItem('myAccountGroups')) || defaultAccountGroups;
         let accountGroupMap = JSON.parse(localStorage.getItem('myAccountGroupMap')) || {};
         let accountGroupCollapsed = JSON.parse(localStorage.getItem('myAccountGroupCollapsed')) || {};
+        let accountSettings = JSON.parse(localStorage.getItem('myAccountSettingsV1')) || {};
         let amountsHidden = JSON.parse(localStorage.getItem('myAmountsHidden')) || false;
         let eyeCareMode = JSON.parse(localStorage.getItem('myEyeCareMode')) || false;
         let nightMode = JSON.parse(localStorage.getItem('myNightMode')) || false;
@@ -1067,8 +1100,36 @@
             localStorage.setItem('myAccountGroups', JSON.stringify(accountGroups));
             localStorage.setItem('myAccountGroupMap', JSON.stringify(accountGroupMap));
             localStorage.setItem('myAccountGroupCollapsed', JSON.stringify(accountGroupCollapsed));
+            persistAccountSettings();
         }
         normalizeAccountGroups();
+        function defaultAccountSetting(acc) {
+            const group = accountGroupMap[acc] || '';
+            return {
+                name: displayLabel(acc),
+                isCredit: group.includes('信用卡'),
+                statementDay: 0,
+                paymentDueDays: 27,
+                creditLimit: 0,
+                sharedLimitAccounts: [],
+                primaryAccount: '',
+                rebate: '',
+                autoStoredValue: false,
+                foreignFee: false,
+                includeInTotal: true,
+                archived: false,
+                showWidget: true,
+                autoDebit: false,
+                carryOver: false
+            };
+        }
+        function ensureAccountSetting(acc) {
+            if (!accountSettings[acc]) accountSettings[acc] = defaultAccountSetting(acc);
+            return accountSettings[acc];
+        }
+        function persistAccountSettings() { localStorage.setItem('myAccountSettingsV1', JSON.stringify(accountSettings)); }
+        userAccounts.forEach(ensureAccountSetting);
+        persistAccountSettings();
         if (!localStorage.getItem('myAccountCollapseDefaultedV2')) {
             accountGroups.forEach(group => accountGroupCollapsed[group] = true);
             localStorage.setItem('myAccountGroupCollapsed', JSON.stringify(accountGroupCollapsed));
@@ -2993,6 +3054,7 @@
                 accountGroups,
                 accountGroupMap,
                 accountGroupCollapsed,
+                accountSettings,
                 customCategories,
                 settings: {
                     lang: currentLang,
@@ -3014,6 +3076,8 @@
             localStorage.setItem('myAccountGroups', JSON.stringify(payload.accountGroups || defaultAccountGroups));
             localStorage.setItem('myAccountGroupMap', JSON.stringify(payload.accountGroupMap || {}));
             localStorage.setItem('myAccountGroupCollapsed', JSON.stringify(payload.accountGroupCollapsed || {}));
+            accountSettings = payload.accountSettings || {};
+            localStorage.setItem('myAccountSettingsV1', JSON.stringify(accountSettings));
             localStorage.setItem('myCustomCatsV3', JSON.stringify(payload.customCategories || {}));
             if (payload.settings) {
                 localStorage.setItem('myBudgetLang', payload.settings.lang || 'zh');
@@ -3470,40 +3534,75 @@
             `;
         }
 
+        function accountInfoButton(label, value, action = '', indent = false) {
+            const click = action ? ` onclick="${action}"` : '';
+            const tag = action ? 'button' : 'div';
+            return `<${tag} type="button" class="account-info-row ${indent ? 'indent' : ''}"${click}><span class="font-semibold">${escapeHTML(label)}</span><span class="account-info-value">${String(value).startsWith('<') ? value : escapeHTML(value)}</span></${tag}>`;
+        }
+
+        function accountSwitchHtml(on) {
+            return `<span class="account-switch ${on ? 'on' : ''}"></span>`;
+        }
+
+        function accountStatementLabel(acc) {
+            const setting = ensureAccountSetting(acc);
+            const day = Number(setting.statementDay || 0);
+            const current = activeAccountDetail.month || monthKey(new Date());
+            const start = `${current}-01`;
+            const endDay = day > 0 ? Math.min(day, monthLastDay(current)) : monthLastDay(current);
+            const end = `${current}-${String(endDay).padStart(2, '0')}`;
+            return `${start.replace(/-/g, '/')} － ${end.replace(/-/g, '/')}`;
+        }
+
+        function accountPaymentDueLabel(acc) {
+            const setting = ensureAccountSetting(acc);
+            const days = Number(setting.paymentDueDays || 0);
+            const current = new Date(`${activeAccountDetail.month || monthKey(new Date())}-01`);
+            current.setMonth(current.getMonth() + 1);
+            current.setDate(Math.max(1, Math.min(days || 27, monthLastDay(monthKey(current)))));
+            return formatLocalDate(current).replace(/-/g, '/');
+        }
+
         function renderAccountInfoTab(acc) {
             const balances = computeAccountBalances(todayString());
             const currency = getAccountCurrency(acc);
             const group = accountGroupMap[acc] || t('uncategorized');
-            const monthLabel = monthRangeLabel(activeAccountDetail.month || monthKey(new Date()));
+            const setting = ensureAccountSetting(acc);
+            const shared = (setting.sharedLimitAccounts || []).length ? `${setting.sharedLimitAccounts.length} 項` : t('uncategorized');
             const rows = [
-                [t('accountName'), displayLabel(acc)],
-                [t('accountCurrencyMain'), currencyCodeFromSymbol(currency)],
-                [t('accountGroupLabel'), displayLabel(group)],
-                [t('initialPrefix'), formatPrivateMoney(accountInitials[acc] || 0, currency)],
-                [t('accountStatementPeriod'), monthLabel],
-                [t('creditAccount'), '<span class="account-switch"></span>'],
-                [t('primaryAccount'), t('uncategorized')],
-                [t('rebateLabel'), t('uncategorized')],
-                [t('autoStoredValue'), '<span class="account-switch"></span>'],
-                [t('foreignFee'), '<span class="account-switch"></span>'],
-                [t('includeInTotal'), '<span class="account-switch on"></span>'],
-                [t('archivedAccount'), '<span class="account-switch"></span>'],
-                [t('showWidgetWatch'), '<span class="account-switch on"></span>']
+                accountInfoButton(t('accountName'), displayLabel(acc), 'openAccountNameEditor()'),
+                accountInfoButton(t('accountCurrencyMain'), currencyCodeFromSymbol(currency), 'openAccountCurrencyPicker()'),
+                accountInfoButton(t('accountGroupLabel'), displayLabel(group), 'openAccountGroupPicker()'),
+                accountInfoButton(t('initialPrefix'), formatPrivateMoney(accountInitials[acc] || 0, currency), 'openAccountNumberEditor("initial")'),
+                accountInfoButton(t('accountStatementPeriod'), accountStatementLabel(acc), 'openStatementPeriodEditor()'),
+                accountInfoButton(t('creditAccount'), accountSwitchHtml(!!setting.isCredit), 'toggleAccountSetting("isCredit")')
             ];
+            if (setting.isCredit) {
+                rows.push(
+                    accountInfoButton('－ 繳款期限', accountPaymentDueLabel(acc), 'openPaymentDueEditor()', true),
+                    accountInfoButton('－ 信用額度', formatPrivateMoney(setting.creditLimit || 0, currency), 'openAccountNumberEditor("creditLimit")', true),
+                    accountInfoButton('－ 額度共用', shared, 'openSharedLimitPicker()', true),
+                    accountInfoButton('－ 主帳戶', setting.primaryAccount ? displayLabel(setting.primaryAccount) : t('uncategorized'), 'openPrimaryAccountPicker()', true),
+                    accountInfoButton('－ 帳單折抵', accountSwitchHtml(!!setting.carryOver), 'toggleAccountSetting("carryOver")', true),
+                    accountInfoButton('自動扣繳', setting.autoDebit ? '開啟' : '無', 'toggleAccountSetting("autoDebit")'),
+                    accountInfoButton('紅利回饋', setting.rebate || t('uncategorized'), 'openAccountTextSetting("rebate", "紅利回饋")')
+                );
+            }
+            rows.push(
+                accountInfoButton(t('autoStoredValue'), accountSwitchHtml(!!setting.autoStoredValue), 'toggleAccountSetting("autoStoredValue")'),
+                accountInfoButton(t('foreignFee'), accountSwitchHtml(!!setting.foreignFee), 'toggleAccountSetting("foreignFee")'),
+                accountInfoButton(t('includeInTotal'), accountSwitchHtml(setting.includeInTotal !== false), 'toggleAccountSetting("includeInTotal")'),
+                accountInfoButton(t('archivedAccount'), accountSwitchHtml(!!setting.archived), 'toggleAccountSetting("archived")'),
+                accountInfoButton(t('showWidgetWatch'), accountSwitchHtml(setting.showWidget !== false), 'toggleAccountSetting("showWidget")')
+            );
             return `
                 <div class="text-center py-7">
+                    <div class="mx-auto mb-5 w-28 h-28 rounded-full bg-gray-100 grid place-items-center text-5xl">▭</div>
                     <div class="text-sm font-bold text-gray-500">${t('currentBalance')} <span class="block text-xl text-gray-800">${currencyCodeFromSymbol(currency)}</span></div>
-                    <div class="account-detail-total">${formatPrivateMoney(balances[acc] || 0, currency).replace(currency, '')}</div>
-                    <div class="mt-4 text-lg font-semibold">${escapeHTML(displayLabel(acc))}</div>
+                    <div class="account-detail-total ${balances[acc] < 0 ? 'text-red-500' : ''}">${formatPrivateMoney(balances[acc] || 0, currency).replace(currency, '')}</div>
+                    <div class="mt-3 text-sm text-gray-300">請在這裡填寫備註事項</div>
                 </div>
-                <div class="space-y-1">
-                    ${rows.map(([label, value]) => `
-                        <div class="account-info-row">
-                            <span class="font-semibold">${escapeHTML(label)}</span>
-                            <span>${String(value).startsWith('<') ? value : escapeHTML(value)}</span>
-                        </div>
-                    `).join('')}
-                </div>
+                <div class="space-y-1">${rows.join('')}</div>
             `;
         }
 
@@ -3623,6 +3722,148 @@
             closeAccountMoreMenu();
         }
 
+        let accountSettingModalState = null;
+        function openAccountSettingModal(title, bodyHtml, onConfirm = null, showActions = false) {
+            accountSettingModalState = { onConfirm };
+            const titleEl = document.getElementById('account-setting-title');
+            const body = document.getElementById('account-setting-body');
+            const actions = document.getElementById('account-setting-actions');
+            if (titleEl) titleEl.textContent = title;
+            if (body) body.innerHTML = bodyHtml;
+            actions?.classList.toggle('hidden', !showActions);
+            document.getElementById('account-setting-modal')?.classList.remove('hidden');
+        }
+        function closeAccountSettingModal() {
+            document.getElementById('account-setting-modal')?.classList.add('hidden');
+            accountSettingModalState = null;
+        }
+        function confirmAccountSettingModal() {
+            if (accountSettingModalState?.onConfirm) accountSettingModalState.onConfirm();
+            else closeAccountSettingModal();
+        }
+        function saveAccountMeta() {
+            localStorage.setItem('myAccounts', JSON.stringify(userAccounts));
+            localStorage.setItem('myAccountInitials', JSON.stringify(accountInitials));
+            localStorage.setItem('myAccountCurrencies', JSON.stringify(accountCurrencies));
+            localStorage.setItem('myAccountGroups', JSON.stringify(accountGroups));
+            localStorage.setItem('myAccountGroupMap', JSON.stringify(accountGroupMap));
+            persistAccountSettings();
+        }
+        function openAccountNameEditor() {
+            const acc = activeAccountDetail.account;
+            const current = displayLabel(acc);
+            openAccountSettingModal(t('accountName'), `<input id="account-setting-input" class="account-setting-input" value="${escapeHTML(current)}">`, () => {
+                const value = document.getElementById('account-setting-input')?.value?.trim();
+                if (!value) return;
+                const next = internalLabel(value);
+                if (next !== acc && userAccounts.includes(next)) { showToast(t('toastAccountExists')); return; }
+                const idx = userAccounts.indexOf(acc);
+                if (idx >= 0) userAccounts[idx] = next;
+                accountInitials[next] = accountInitials[acc] || 0; delete accountInitials[acc];
+                accountCurrencies[next] = accountCurrencies[acc] || '¥'; delete accountCurrencies[acc];
+                accountGroupMap[next] = accountGroupMap[acc] || accountGroups[0]; delete accountGroupMap[acc];
+                accountSettings[next] = { ...ensureAccountSetting(acc), name: value }; delete accountSettings[acc];
+                data.forEach(item => { if (item.account === acc) item.account = next; if (item.toAccount === acc) item.toAccount = next; });
+                localStorage.setItem('myBudget', JSON.stringify(data));
+                activeAccountDetail.account = next;
+                saveAccountMeta(); closeAccountSettingModal(); updateBalances(); renderAccountDetail();
+            }, true);
+            setTimeout(() => document.getElementById('account-setting-input')?.focus(), 80);
+        }
+        function openAccountTextSetting(key, title) {
+            const acc = activeAccountDetail.account;
+            const setting = ensureAccountSetting(acc);
+            openAccountSettingModal(title, `<input id="account-setting-input" class="account-setting-input" value="${escapeHTML(setting[key] || '')}">`, () => {
+                setting[key] = document.getElementById('account-setting-input')?.value?.trim() || '';
+                persistAccountSettings(); closeAccountSettingModal(); renderAccountDetail();
+            }, true);
+        }
+        function openAccountNumberEditor(kind) {
+            const acc = activeAccountDetail.account;
+            const setting = ensureAccountSetting(acc);
+            const isInitial = kind === 'initial';
+            const value = isInitial ? (accountInitials[acc] || 0) : (setting.creditLimit || 0);
+            const title = isInitial ? t('initialPrefix') : '信用額度';
+            openAccountSettingModal(title, `<input id="account-setting-input" type="number" inputmode="decimal" class="account-setting-input" value="${value}">`, () => {
+                const next = parseFloat(document.getElementById('account-setting-input')?.value || '0');
+                if (!Number.isFinite(next)) return;
+                if (isInitial) accountInitials[acc] = next; else setting.creditLimit = next;
+                saveAccountMeta(); closeAccountSettingModal(); updateBalances(); renderAccountDetail();
+            }, true);
+        }
+        function openAccountCurrencyPicker() {
+            const acc = activeAccountDetail.account;
+            const current = accountCurrencies[acc] || '¥';
+            const currencies = [
+                ['¥','JPY','Japanese Yen'], ['NT$','TWD','Taiwan Dollar'], ['₩','KRW','South Korean Won'], ['$','USD','US Dollar'], ['€','EUR','Euro'], ['£','GBP','Pound Sterling'], ['A$','AUD','Australian Dollar'], ['C$','CAD','Canadian Dollar']
+            ];
+            openAccountSettingModal(t('accountCurrencyMain'), `<div class="grid grid-cols-3 gap-2 mb-3"><button class="p-3 rounded-xl bg-[#5ab8d6] text-white font-bold">外匯</button><button class="p-3 rounded-xl bg-gray-50 text-gray-400 font-bold">加密</button><button class="p-3 rounded-xl bg-gray-50 text-gray-400 font-bold">自訂</button></div>${currencies.map(([sym, code, label]) => `<button class="account-setting-option ${sym === current ? 'active' : ''}" onclick="setAccountCurrencyFromPicker('${sym}')"><span class="font-bold">${code}</span><span class="text-gray-400">${label}</span></button>`).join('')}`);
+        }
+        function setAccountCurrencyFromPicker(symbol) {
+            const acc = activeAccountDetail.account;
+            accountCurrencies[acc] = symbol;
+            saveAccountMeta(); closeAccountSettingModal(); updateBalances(); renderAccountDetail();
+        }
+        function openAccountGroupPicker() {
+            const acc = activeAccountDetail.account;
+            const current = accountGroupMap[acc] || '';
+            openAccountSettingModal(t('accountGroupLabel'), accountGroups.map(group => `<button class="account-setting-option ${group === current ? 'active' : ''}" onclick="setAccountGroupFromPicker(decodeURIComponent('${encodeURIComponent(group)}'))"><span class="font-bold">${escapeHTML(displayLabel(group))}</span><span>${group === current ? '✓' : '›'}</span></button>`).join('') + `<button class="account-setting-option" onclick="addAccountGroupFromPicker()"><span class="font-bold">＋ 新增分組</span><span>›</span></button>`);
+        }
+        function setAccountGroupFromPicker(group) {
+            const acc = activeAccountDetail.account;
+            accountGroupMap[acc] = group;
+            saveAccountMeta(); closeAccountSettingModal(); updateBalances(); renderAccountDetail();
+        }
+        function addAccountGroupFromPicker() {
+            const name = prompt(t('promptAddGroup'));
+            if (!name?.trim()) return;
+            const group = internalLabel(name.trim());
+            if (!accountGroups.includes(group)) accountGroups.push(group);
+            setAccountGroupFromPicker(group);
+        }
+        function openStatementPeriodEditor() {
+            const acc = activeAccountDetail.account;
+            const setting = ensureAccountSetting(acc);
+            openAccountSettingModal(t('accountStatementPeriod'), `<div class="text-center text-xl font-bold py-4">${accountStatementLabel(acc)}</div><input id="account-statement-day" type="range" min="0" max="31" value="${setting.statementDay || 0}" class="w-full"><div class="text-center text-gray-400 mt-5">帳單結帳日：${setting.statementDay ? '每月 ' + setting.statementDay + ' 日' : '每月月底'}</div>`, () => {
+                setting.statementDay = parseInt(document.getElementById('account-statement-day')?.value || '0', 10);
+                persistAccountSettings(); closeAccountSettingModal(); renderAccountDetail();
+            }, true);
+        }
+        function openPaymentDueEditor() {
+            const acc = activeAccountDetail.account;
+            const setting = ensureAccountSetting(acc);
+            openAccountSettingModal('繳款期限', `<button class="account-setting-option" onclick="setPaymentDueMode(27)"><span class="font-bold">每月固定第幾日</span><span>›</span></button><button class="account-setting-option" onclick="setPaymentDueMode(10)"><span class="font-bold">結帳日後第幾日</span><span>›</span></button><input id="account-payment-days" type="number" min="1" max="31" class="account-setting-input mt-4" value="${setting.paymentDueDays || 27}">`, () => {
+                setting.paymentDueDays = parseInt(document.getElementById('account-payment-days')?.value || '27', 10);
+                persistAccountSettings(); closeAccountSettingModal(); renderAccountDetail();
+            }, true);
+        }
+        function setPaymentDueMode(day) { const input = document.getElementById('account-payment-days'); if (input) input.value = day; }
+        function openPrimaryAccountPicker() {
+            const acc = activeAccountDetail.account;
+            const setting = ensureAccountSetting(acc);
+            const choices = [''].concat(userAccounts.filter(item => item !== acc));
+            openAccountSettingModal('主帳戶', choices.map(item => `<button class="account-setting-option ${item === (setting.primaryAccount || '') ? 'active' : ''}" onclick="setPrimaryAccountFromPicker(decodeURIComponent('${encodeURIComponent(item)}'))"><span class="font-bold">${item ? escapeHTML(displayLabel(item)) : '無'}</span><span>${item === (setting.primaryAccount || '') ? '✓' : '›'}</span></button>`).join(''));
+        }
+        function setPrimaryAccountFromPicker(value) { const setting = ensureAccountSetting(activeAccountDetail.account); setting.primaryAccount = value; persistAccountSettings(); closeAccountSettingModal(); renderAccountDetail(); }
+        function openSharedLimitPicker() {
+            const acc = activeAccountDetail.account;
+            const setting = ensureAccountSetting(acc);
+            const current = new Set(setting.sharedLimitAccounts || []);
+            const choices = userAccounts.filter(item => item !== acc && (accountGroupMap[item] || '').includes('信用卡'));
+            openAccountSettingModal('額度共用', `<div class="flex justify-between text-gray-400 mb-3"><span>總共 ${choices.length} 項</span><button onclick="selectAllSharedLimit()">全部選取</button></div>${choices.map(item => `<button class="account-setting-option ${current.has(item) ? 'active' : ''}" data-shared-account="${escapeHTML(item)}" onclick="this.classList.toggle('active')"><span class="font-bold">${escapeHTML(displayLabel(item))}</span><span>✓</span></button>`).join('')}`, () => {
+                setting.sharedLimitAccounts = [...document.querySelectorAll('#account-setting-body .account-setting-option.active[data-shared-account]')].map(el => el.dataset.sharedAccount);
+                persistAccountSettings(); closeAccountSettingModal(); renderAccountDetail();
+            }, true);
+        }
+        function selectAllSharedLimit() { document.querySelectorAll('#account-setting-body .account-setting-option[data-shared-account]').forEach(el => el.classList.add('active')); }
+        function toggleAccountSetting(key) {
+            const acc = activeAccountDetail.account;
+            const setting = ensureAccountSetting(acc);
+            setting[key] = !(setting[key] === true);
+            if (key === 'includeInTotal' && setting[key] === undefined) setting[key] = false;
+            persistAccountSettings(); renderAccountDetail(); updateBalances();
+        }
+
         window.openAccountDetail = openAccountDetail;
         window.closeAccountDetail = closeAccountDetail;
         window.setAccountDetailTab = setAccountDetailTab;
@@ -3633,6 +3874,24 @@
         window.closeBalanceAdjustModal = closeBalanceAdjustModal;
         window.saveBalanceAdjustment = saveBalanceAdjustment;
         window.exportAccountCsv = exportAccountCsv;
+        window.closeAccountSettingModal = closeAccountSettingModal;
+        window.confirmAccountSettingModal = confirmAccountSettingModal;
+        window.openAccountNameEditor = openAccountNameEditor;
+        window.openAccountTextSetting = openAccountTextSetting;
+        window.openAccountNumberEditor = openAccountNumberEditor;
+        window.openAccountCurrencyPicker = openAccountCurrencyPicker;
+        window.setAccountCurrencyFromPicker = setAccountCurrencyFromPicker;
+        window.openAccountGroupPicker = openAccountGroupPicker;
+        window.setAccountGroupFromPicker = setAccountGroupFromPicker;
+        window.addAccountGroupFromPicker = addAccountGroupFromPicker;
+        window.openStatementPeriodEditor = openStatementPeriodEditor;
+        window.openPaymentDueEditor = openPaymentDueEditor;
+        window.setPaymentDueMode = setPaymentDueMode;
+        window.openPrimaryAccountPicker = openPrimaryAccountPicker;
+        window.setPrimaryAccountFromPicker = setPrimaryAccountFromPicker;
+        window.openSharedLimitPicker = openSharedLimitPicker;
+        window.selectAllSharedLimit = selectAllSharedLimit;
+        window.toggleAccountSetting = toggleAccountSetting;
 
         function addAccountGroup() {
             const newGroup = prompt(t('promptAddGroup'));
@@ -3877,12 +4136,14 @@
             accountInitials[accountName] = 0;
             accountCurrencies[accountName] = suggestCurrencyForAccount(accountName);
             accountGroupMap[accountName] = group;
+            accountSettings[accountName] = defaultAccountSetting(accountName);
             accountGroupCollapsed[group] = false;
             localStorage.setItem('myAccounts', JSON.stringify(userAccounts));
             localStorage.setItem('myAccountInitials', JSON.stringify(accountInitials));
             localStorage.setItem('myAccountCurrencies', JSON.stringify(accountCurrencies));
             localStorage.setItem('myAccountGroupMap', JSON.stringify(accountGroupMap));
             localStorage.setItem('myAccountGroupCollapsed', JSON.stringify(accountGroupCollapsed));
+            persistAccountSettings();
             if (document.getElementById('selected-account-group').value === group) {
                 document.getElementById('selected-account').value = accountName;
             }
@@ -3924,12 +4185,14 @@
             delete accountInitials[acc];
             delete accountCurrencies[acc];
             delete accountGroupMap[acc];
+            delete accountSettings[acc];
             if (document.getElementById('selected-account').value === acc) document.getElementById('selected-account').value = '';
             if (document.getElementById('selected-to-account').value === acc) document.getElementById('selected-to-account').value = '';
             localStorage.setItem('myAccounts', JSON.stringify(userAccounts));
             localStorage.setItem('myAccountInitials', JSON.stringify(accountInitials));
             localStorage.setItem('myAccountCurrencies', JSON.stringify(accountCurrencies));
             localStorage.setItem('myAccountGroupMap', JSON.stringify(accountGroupMap));
+            persistAccountSettings();
             renderAccounts();
             updateBalances();
             showToast(t('toastAccountDeleted'));
@@ -4753,6 +5016,17 @@
             return `<span>${escapeHTML(icon)}</span>`;
         }
         function getMainCategoryMeta(name) { return mainCategoryMeta[name] || { icon: '•••', color: '#f3f4f6' }; }
+        function isCustomMainCategory(type, name) {
+            return customMainCategories.some(cat => cat.type === type && cat.name === name);
+        }
+        function isCustomSubCategory(type, mainCat, name) {
+            return ((customCategories[type] || {})[mainCat] || []).some(cat => cat.name === name);
+        }
+        function openCustomCategoryEditor(mode, name) {
+            const asSub = mode === 'sub';
+            openCustomMainCategoryModal(asSub);
+            editCustomCategory(mode, name);
+        }
         function renderTypes() {
             categoryDepth = 'main';
             const container = document.getElementById('type-buttons');
@@ -4790,7 +5064,10 @@
                 container.innerHTML = mainCats.map(m => {
                     const meta = getMainCategoryMeta(m);
                     const isActive = m === currentMainCat;
-                    return `<button type="button" onclick="selectMainCat('${m}')" class="main-category-btn ${isActive ? 'active' : ''}"><span class="main-category-icon" style="background:${meta.color}">${categoryIconHtml(meta.icon)}</span><span>${escapeHTML(displayLabel(m))}</span></button>`;
+                    const safeName = encodeURIComponent(m);
+                    const baseButton = `<button type="button" onclick="selectMainCat(decodeURIComponent('${safeName}'))" class="main-category-btn ${isActive ? 'active' : ''}"><span class="main-category-icon" style="background:${meta.color}">${categoryIconHtml(meta.icon)}</span><span>${escapeHTML(displayLabel(m))}</span></button>`;
+                    if (!isCustomMainCategory(currentType, m)) return baseButton;
+                    return `<div class="category-tile-wrap">${baseButton}<button type="button" class="category-manage-button" aria-label="管理類別" onclick="event.stopPropagation(); openCustomCategoryEditor('main', decodeURIComponent('${safeName}'))">⋯</button></div>`;
                 }).join('') + `<button type="button" onclick="openCustomMainCategoryModal(false)" class="main-category-btn"><span class="main-category-icon" style="background:#e5e7eb;color:#555">+</span><span>${escapeHTML(t('customCat'))}</span></button>`;
                 return;
             }
@@ -4803,7 +5080,10 @@
                 const activeClass = isActive ? 'border-gray-900 bg-gray-50 shadow-sm' : 'border-transparent bg-white hover:bg-gray-50';
                 const safeIcon = cat.icon || '📝';
                 const iconHtml = safeIcon.startsWith('data:image') ? `<img src="${safeIcon}" class="w-7 h-7 object-cover rounded-full mb-1 border border-gray-200 shadow-sm">` : `<div class="text-2xl mb-1">${escapeHTML(safeIcon)}</div>`;
-                return `<button type="button" onclick="selectSubCat(decodeURIComponent('${encodeURIComponent(cat.name)}'), decodeURIComponent('${encodeURIComponent(safeIcon)}'))" class="flex flex-col items-center justify-center min-h-[82px] p-3 rounded-2xl border-2 transition ${activeClass}">${iconHtml}<span class="text-[11px] font-semibold ${isActive ? 'text-gray-900' : 'text-gray-600'}">${escapeHTML(displayLabel(cat.name))}</span></button>`;
+                const safeName = encodeURIComponent(cat.name);
+                const selectButton = `<button type="button" onclick="selectSubCat(decodeURIComponent('${safeName}'), decodeURIComponent('${encodeURIComponent(safeIcon)}'))" class="sub-category-select flex flex-col items-center justify-center min-h-[82px] p-3 rounded-2xl border-2 transition ${activeClass}">${iconHtml}<span class="text-[11px] font-semibold ${isActive ? 'text-gray-900' : 'text-gray-600'}">${escapeHTML(displayLabel(cat.name))}</span></button>`;
+                if (!isCustomSubCategory(currentType, currentMainCat, cat.name)) return selectButton;
+                return `<div class="category-tile-wrap">${selectButton}<button type="button" class="category-manage-button" aria-label="管理類別" onclick="event.stopPropagation(); openCustomCategoryEditor('sub', decodeURIComponent('${safeName}'))">⋯</button></div>`;
             }).join('');
             html += `<button type="button" onclick="openCustomMainCategoryModal(true)" class="flex flex-col items-center justify-center min-h-[82px] p-3 rounded-2xl border border-dashed border-gray-300 text-gray-400 hover:bg-gray-50 transition"><div class="text-2xl mb-1">+</div><span class="text-[11px] font-medium">${t('customCat')}</span></button>`;
             container.innerHTML = html;
@@ -5055,6 +5335,7 @@
         window.saveCustomMainCategory = saveCustomMainCategory;
         window.editCustomCategory = editCustomCategory;
         window.deleteCustomCategory = deleteCustomCategory;
+        window.openCustomCategoryEditor = openCustomCategoryEditor;
         window.openBudgetProjectRecords = openBudgetProjectRecords;
         window.closeProjectRecordModal = closeProjectRecordModal;
         window.cycleCustomMainColor = cycleCustomMainColor;
@@ -5381,6 +5662,7 @@
                 accountGroups = [...defaultAccountGroups];
                 accountGroupMap = { '💵 現金':'💵 現金', '💳 信用卡':'💳 信用卡', '🪪 交通卡':'🪪 交通卡', '📱 行動支付':'📱 行動支付' };
                 accountGroupCollapsed = { '💵 現金':true, '💳 信用卡':true, '🪪 交通卡':true, '📱 行動支付':true };
+                accountSettings = {};
                 budgetProjects = [];
                 amountsHidden = false;
                 statsRange = '6m';
@@ -5427,7 +5709,7 @@
             showToast(t('toastExported'));
         }
 
-        const APP_VERSION = '20260619-03';
+        const APP_VERSION = '20260619-05';
 
         function registerServiceWorker() {
             if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
