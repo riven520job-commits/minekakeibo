@@ -143,14 +143,6 @@
         .report-modal .section-label { color: var(--muted); }
         .asset-top-action { width: 3.25rem; height: 3.25rem; border-radius: 9999px; border: 1px solid var(--line); background: var(--panel); display: grid; place-items: center; color: var(--ink); box-shadow: 0 8px 18px rgba(31, 41, 51, .05); }
         .asset-top-action:active { box-shadow: 0 3px 8px rgba(31,41,51,.08) inset; }
-        .asset-dashboard.fullscreen-active { max-width: none; min-height: 100dvh; padding: max(18px, env(safe-area-inset-top)) 20px calc(90px + env(safe-area-inset-bottom)); background: #fff; }
-        .asset-dashboard.fullscreen-active .asset-hero { max-width: 980px; margin-left: auto; margin-right: auto; }
-        .asset-dashboard.fullscreen-active #account-balances-list { max-width: 980px; margin-left: auto; margin-right: auto; }
-        @media (orientation: landscape) {
-            .asset-dashboard.fullscreen-active .asset-hero { display: grid; grid-template-columns: minmax(280px, .9fr) minmax(360px, 1.1fr); align-items: center; gap: 22px; text-align: left; }
-            .asset-dashboard.fullscreen-active .asset-analysis-actions { max-width: 420px; }
-            .asset-dashboard.fullscreen-active .asset-trend-panel { margin-top: 0; }
-        }
         .asset-hero { text-align: center; padding: 20px 14px 16px; border: 0; border-radius: 0; background: transparent; box-shadow: none; margin-bottom: 18px; }
         .asset-total { font-size: clamp(2.5rem, 15vw, 4rem); line-height: .95; color: var(--ink); font-weight: 800; letter-spacing: 0; margin-top: 4px; }
         .asset-subtotals { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; color: var(--muted); font-size: .78rem; margin-top: 14px; }
@@ -326,7 +318,15 @@
         .daily-project-icon { width: 52px; height: 52px; border-radius: 9999px; background: #f1f3f5; display: grid; place-items: center; font-size: 1.55rem; }
         .daily-project-progress { height: 5px; border-radius: 9999px; background: #eef0f3; overflow: hidden; margin-top: 8px; }
         .daily-project-progress span { display: block; height: 100%; background: #111827; border-radius: inherit; }
-        .calculator-panel-fixed { position: fixed; left: 50%; right: auto; bottom: 0; z-index: 100; width: min(100vw, 448px); transform: translateX(-50%); background: rgba(243,244,246,.98); margin: 0; padding: 10px 18px max(14px, env(safe-area-inset-bottom)); backdrop-filter: blur(10px); border-top: 1px solid var(--line); box-shadow: 0 -12px 34px rgba(31,41,51,.08); }
+        .project-record-modal { position: fixed; inset: 0; z-index: 78; background: rgba(17,24,39,.36); backdrop-filter: blur(4px); display: grid; place-items: end center; padding: 18px; }
+        .project-record-modal.hidden { display: none; }
+        .project-record-panel { width: min(100%, 430px); max-height: 86vh; overflow: hidden; border-radius: 26px; background: #fff; border: 1px solid var(--line); box-shadow: 0 24px 70px rgba(31,41,51,.24); display: flex; flex-direction: column; }
+        .project-record-body { overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .custom-manager-list { display: grid; gap: 8px; max-height: 190px; overflow-y: auto; padding-right: 2px; }
+        .custom-manager-row { display: grid; grid-template-columns: 34px minmax(0,1fr) auto auto; align-items: center; gap: 8px; padding: 8px; border: 1px solid var(--line); border-radius: 14px; background: #fafafa; }
+        .custom-manager-row button { min-width: 42px; border-radius: 10px; padding: 7px 9px; font-size: 11px; font-weight: 800; background: #f1f3f5; }
+        .custom-manager-row button.danger { background: #fff0f1; color: #d6525b; }
+        .calculator-panel-fixed { position: fixed; left: 50%; right: auto; bottom: 0; bottom: env(safe-area-inset-bottom, 0); z-index: 140; width: min(100vw, 448px); max-height: min(46vh, 356px); overflow: hidden; transform: translate3d(-50%,0,0); background: rgba(243,244,246,.98); margin: 0; padding: 10px 18px max(14px, env(safe-area-inset-bottom)); backdrop-filter: blur(10px); border-top: 1px solid var(--line); box-shadow: 0 -12px 34px rgba(31,41,51,.08); touch-action: manipulation; }
         @media (max-width: 480px) {
             .calculator-grid button { min-height: 44px; font-size: 1.2rem; }
             .quick-amounts button { padding: 7px 12px; }
@@ -412,7 +412,6 @@
                 <button id="amount-visibility-toggle" onclick="toggleAmountVisibility()" class="asset-top-action" aria-label="顯示金額"></button>
                 <h1 class="text-2xl font-bold tracking-tight" data-i18n="dashboardTitle">資產總覽</h1>
                 <span class="flex items-center gap-2">
-                    <button onclick="toggleAssetFullscreen()" class="asset-top-action text-2xl" aria-label="Fullscreen">↗</button>
                     <button onclick="addAccountGroup()" class="asset-top-action text-3xl leading-none">+</button>
                 </span>
             </div>
@@ -846,14 +845,29 @@
         <div class="icon-panel">
             <div class="icon-panel-header">
                 <button type="button" onclick="closeCustomMainCategoryModal()" class="icon-round-action" aria-label="Close">×</button>
-                <div class="icon-panel-title">新增主類別</div>
+                <div id="custom-main-title" class="icon-panel-title">新增類別</div>
                 <button type="button" onclick="saveCustomMainCategory()" class="icon-round-action add-modal-check" aria-label="Save">✓</button>
             </div>
             <div class="custom-category-form">
                 <button type="button" onclick="openIconSourceModal()" id="custom-main-preview" class="custom-category-preview">?</button>
                 <label class="custom-category-row"><span>名稱</span><input id="custom-main-name" type="text" placeholder="名稱"></label>
                 <button type="button" onclick="cycleCustomMainColor()" class="custom-category-row text-left"><span>類別顏色</span><span id="custom-main-color-dot" class="custom-color-dot"></span></button>
+                <div id="custom-category-manager" class="space-y-2"></div>
             </div>
+        </div>
+    </div>
+
+    <div id="project-record-modal" class="project-record-modal hidden">
+        <div class="project-record-panel">
+            <div class="flex items-center justify-between gap-3 p-4 border-b border-gray-100">
+                <button type="button" onclick="closeProjectRecordModal()" class="icon-round-action" aria-label="Close">×</button>
+                <div class="text-center min-w-0">
+                    <div id="project-record-title" class="font-black text-lg truncate">專案紀錄</div>
+                    <div id="project-record-summary" class="text-[11px] text-gray-400 mt-1"></div>
+                </div>
+                <button type="button" onclick="closeProjectRecordModal()" class="icon-round-action add-modal-check" aria-label="Done">✓</button>
+            </div>
+            <div id="project-record-content" class="project-record-body p-4 space-y-2"></div>
         </div>
     </div>
 
@@ -1118,6 +1132,7 @@
         let iconPickerMode = 'line';
         let iconPickerTab = '飲食';
         let customMainCategories = JSON.parse(localStorage.getItem('myCustomMainCatsV1') || '[]');
+        let customCategoryEditing = null;
         customMainCategories.forEach(cat => {
             if (!cat || !cat.type || !cat.name) return;
             if (!defaultCategories[cat.type]) defaultCategories[cat.type] = {};
@@ -2080,7 +2095,7 @@
             const remaining = budget - spent;
             const ratio = budget > 0 ? Math.min(Math.max(spent / budget, 0), 1) : 0;
             container.innerHTML = `
-                <button type="button" onclick="switchPage('dashboard')" class="daily-project-card w-full text-left tap-target">
+                <button type="button" onclick="openBudgetProjectRecords('${preferred.id}')" class="daily-project-card w-full text-left tap-target">
                     <span class="daily-project-icon">🐖</span>
                     <span class="min-w-0">
                         <span class="block text-lg font-semibold truncate">${escapeHTML(preferred.name)}</span>
@@ -3844,35 +3859,6 @@
         }
 
 
-        async function toggleAssetFullscreen() {
-            const dashboard = document.getElementById('page-dashboard');
-            if (!dashboard) return;
-            try {
-                if (!document.fullscreenElement) {
-                    dashboard.classList.add('fullscreen-active');
-                    if (dashboard.requestFullscreen) await dashboard.requestFullscreen();
-                    if (screen.orientation?.lock) {
-                        try { await screen.orientation.lock('landscape'); } catch (_) {}
-                    }
-                    showToast(currentLang === 'ja' ? '横向き表示を開始しました' : '已開啟橫向全螢幕檢視');
-                } else {
-                    if (document.exitFullscreen) await document.exitFullscreen();
-                }
-            } catch (error) {
-                dashboard.classList.toggle('fullscreen-active');
-            }
-        }
-
-        document.addEventListener('fullscreenchange', () => {
-            const dashboard = document.getElementById('page-dashboard');
-            if (!document.fullscreenElement) {
-                dashboard?.classList.remove('fullscreen-active');
-                if (screen.orientation?.unlock) {
-                    try { screen.orientation.unlock(); } catch (_) {}
-                }
-            }
-        });
-
         window.openAssetAnalysisModal = openAssetAnalysisModal;
         window.closeAssetAnalysisModal = closeAssetAnalysisModal;
         window.setAssetAnalysisSide = setAssetAnalysisSide;
@@ -4119,6 +4105,57 @@
         function projectBudgetJPY(project) {
             return toJPY(project.budget || 0, project.currency || '¥');
         }
+        function projectRelatedRecords(project) {
+            if (!project) return [];
+            normalizeBudgetProjectRecords();
+            return data.map((item, index) => ({ item, index }))
+                .filter(({ item }) => recordBelongsToProject(item, project) && dateInProjectRange(item.date, project))
+                .sort((a, b) => `${b.item.date || ''} ${b.item.time || ''}`.localeCompare(`${a.item.date || ''} ${a.item.time || ''}`));
+        }
+
+        function openBudgetProjectRecords(projectId) {
+            const project = projectById(projectId) || preferredBudgetProject();
+            if (!project) { addBudgetProject(); return; }
+            const records = projectRelatedRecords(project);
+            const expense = records.filter(({ item }) => isExpenseType(item.type)).reduce((sum, { item }) => sum + toJPY(item.price, item.currency || '¥'), 0);
+            const income = records.filter(({ item }) => ['收入', '應收帳款'].includes(item.type)).reduce((sum, { item }) => sum + toJPY(item.price, item.currency || '¥'), 0);
+            const title = document.getElementById('project-record-title');
+            const summary = document.getElementById('project-record-summary');
+            const content = document.getElementById('project-record-content');
+            if (title) title.textContent = project.name;
+            if (summary) summary.textContent = `${records.length} 筆 · 支出 ${formatPrivateJPY(expense, '¥')} · 收入 ${formatPrivateJPY(income, '¥')}`;
+            if (content) {
+                if (!records.length) {
+                    content.innerHTML = `<div class="empty-state">尚無相關紀錄</div>`;
+                } else {
+                    content.innerHTML = records.map(({ item, index }) => {
+                        const sign = recordSign(item);
+                        const safeIcon = item.subCatIcon || '📝';
+                        const iconHtml = safeIcon.startsWith('data:image') ? `<img src="${safeIcon}" class="w-9 h-9 rounded-full object-cover">` : `<span class="text-xl">${escapeHTML(safeIcon)}</span>`;
+                        const tone = sign === '-' ? 'text-red-500' : (sign === '+' ? 'text-green-600' : 'text-blue-600');
+                        return `<button type="button" onclick="openRecordDetail(${index})" class="w-full text-left flex items-center justify-between gap-3 p-3 rounded-2xl hover:bg-gray-50 transition border border-gray-100">
+                            <span class="flex items-center gap-3 min-w-0">
+                                <span class="w-12 h-12 rounded-full bg-gray-100 border border-gray-100 flex items-center justify-center shrink-0">${iconHtml}</span>
+                                <span class="min-w-0">
+                                    <span class="block text-sm font-semibold truncate">${escapeHTML(displayLabel(item.name || item.subCatName || item.type))}</span>
+                                    <span class="block text-[11px] text-gray-400 truncate">${escapeHTML(item.date || '')} ${escapeHTML(item.time || '')} · ${escapeHTML(displayLabel(item.type || ''))}</span>
+                                </span>
+                            </span>
+                            <span class="text-right shrink-0">
+                                <span class="block text-sm font-black ${tone}">${sign}${formatPrivateMoney(item.price, item.currency)}</span>
+                                <span class="block text-[10px] text-gray-400">${escapeHTML(displayLabel(item.account || t('uncategorized')))}</span>
+                            </span>
+                        </button>`;
+                    }).join('');
+                }
+            }
+            document.getElementById('project-record-modal')?.classList.remove('hidden');
+        }
+
+        function closeProjectRecordModal() {
+            document.getElementById('project-record-modal')?.classList.add('hidden');
+        }
+
 
         function renderBudgetProjectsDashboard() {
             normalizeBudgetProjectRecords();
@@ -4617,7 +4654,6 @@
         window.calculatorQuick = calculatorQuick;
         window.openAddDatePicker = openAddDatePicker;
         window.syncAddDateFromInput = syncAddDateFromInput;
-        window.toggleAssetFullscreen = toggleAssetFullscreen;
 
         let lastTouchEnd = 0;
         document.addEventListener('touchend', event => {
@@ -4831,13 +4867,39 @@
             event.target.value = '';
         }
 
+        function customCategoryListForCurrentMode(asSubCategory = customMainDraft.asSubCategory) {
+            const currentType = document.getElementById('selected-type').value;
+            const currentMainCat = document.getElementById('selected-main-cat').value;
+            if (asSubCategory) return [...((customCategories[currentType] || {})[currentMainCat] || [])].map(cat => ({ ...cat, mode: 'sub' }));
+            return customMainCategories.filter(cat => cat.type === currentType).map(cat => ({ ...cat, mode: 'main' }));
+        }
+
+        function renderCustomCategoryManager() {
+            const box = document.getElementById('custom-category-manager');
+            if (!box) return;
+            const list = customCategoryListForCurrentMode();
+            const title = customMainDraft.asSubCategory ? '已自訂子類別' : '已自訂主類別';
+            if (!list.length) {
+                box.innerHTML = `<div class="text-xs text-gray-400 border-t border-gray-100 pt-3">${title}：尚無項目</div>`;
+                return;
+            }
+            box.innerHTML = `<div class="text-xs font-bold text-gray-500 border-t border-gray-100 pt-3">${title}</div><div class="custom-manager-list">${list.map(cat => {
+                const safeName = encodeURIComponent(cat.name);
+                const icon = cat.icon || '📝';
+                return `<div class="custom-manager-row"><span class="w-8 h-8 rounded-xl bg-white border border-gray-100 grid place-items-center">${categoryIconHtml(icon)}</span><span class="truncate text-sm font-semibold">${escapeHTML(cat.name)}</span><button type="button" onclick="editCustomCategory('${cat.mode}', decodeURIComponent('${safeName}'))">修改</button><button type="button" class="danger" onclick="deleteCustomCategory('${cat.mode}', decodeURIComponent('${safeName}'))">刪除</button></div>`;
+            }).join('')}</div>`;
+        }
+
         function openCustomMainCategoryModal(asSubCategory = false) {
+            customCategoryEditing = null;
             customMainDraft = { icon: asSubCategory ? '📝' : '?', color: customMainColors[0], name: '', asSubCategory };
             document.getElementById('custom-main-name').value = '';
+            document.getElementById('custom-main-title').textContent = asSubCategory ? '新增子類別' : '新增主類別';
             updateCustomMainPreview();
+            renderCustomCategoryManager();
             document.getElementById('custom-main-category-modal').classList.remove('hidden');
         }
-        function closeCustomMainCategoryModal() { document.getElementById('custom-main-category-modal').classList.add('hidden'); }
+        function closeCustomMainCategoryModal() { document.getElementById('custom-main-category-modal').classList.add('hidden'); customCategoryEditing = null; }
         function updateCustomMainPreview() {
             const preview = document.getElementById('custom-main-preview');
             const dot = document.getElementById('custom-main-color-dot');
@@ -4880,19 +4942,101 @@
             updateCustomMainPreview();
             event.target.value = '';
         }
+        function editCustomCategory(mode, oldName) {
+            const currentType = document.getElementById('selected-type').value;
+            const currentMainCat = document.getElementById('selected-main-cat').value;
+            const source = mode === 'main'
+                ? customMainCategories.find(cat => cat.type === currentType && cat.name === oldName)
+                : ((customCategories[currentType] || {})[currentMainCat] || []).find(cat => cat.name === oldName);
+            if (!source) return;
+            customCategoryEditing = { mode, oldName, type: currentType, parent: currentMainCat };
+            customMainDraft = { icon: source.icon || '📝', color: source.color || customMainColors[0], name: source.name, asSubCategory: mode === 'sub' };
+            document.getElementById('custom-main-name').value = source.name;
+            document.getElementById('custom-main-title').textContent = mode === 'sub' ? '修改子類別' : '修改主類別';
+            updateCustomMainPreview();
+        }
+
+        function deleteCustomCategory(mode, oldName) {
+            const currentType = document.getElementById('selected-type').value;
+            const currentMainCat = document.getElementById('selected-main-cat').value;
+            if (!confirm(`刪除「${oldName}」？既有紀錄不會被刪除。`)) return;
+            if (mode === 'main') {
+                customMainCategories = customMainCategories.filter(cat => !(cat.type === currentType && cat.name === oldName));
+                delete defaultCategories[currentType][oldName];
+                delete mainCategoryMeta[oldName];
+                if (customCategories[currentType]) delete customCategories[currentType][oldName];
+                if (document.getElementById('selected-main-cat').value === oldName) {
+                    document.getElementById('selected-main-cat').value = Object.keys(defaultCategories[currentType] || {})[0] || '';
+                }
+            } else {
+                if (customCategories[currentType]?.[currentMainCat]) {
+                    customCategories[currentType][currentMainCat] = customCategories[currentType][currentMainCat].filter(cat => cat.name !== oldName);
+                }
+                if (document.getElementById('selected-sub-cat-name').value === oldName) {
+                    document.getElementById('selected-sub-cat-name').value = '';
+                    document.getElementById('selected-sub-cat-icon').value = '';
+                }
+            }
+            localStorage.setItem('myCustomMainCatsV1', JSON.stringify(customMainCategories));
+            localStorage.setItem('myCustomCatsV3', JSON.stringify(customCategories));
+            customCategoryEditing = null;
+            renderTypes();
+            renderCustomCategoryManager();
+            showToast('自訂類別已刪除');
+        }
+
         function saveCustomMainCategory() {
             const name = (document.getElementById('custom-main-name').value || '').trim();
             if (!name) { showToast(t('promptCustomCat')); return; }
             const currentType = document.getElementById('selected-type').value;
             const currentMainCat = document.getElementById('selected-main-cat').value;
-            if (customMainDraft.asSubCategory || categoryDepth === 'sub') {
-                saveCustomCategory(name, customMainDraft.icon);
+            const editing = customCategoryEditing;
+            if (customMainDraft.asSubCategory || categoryDepth === 'sub' || editing?.mode === 'sub') {
+                if (!customCategories[currentType]) customCategories[currentType] = {};
+                if (!customCategories[currentType][currentMainCat]) customCategories[currentType][currentMainCat] = [];
+                if (editing?.mode === 'sub') {
+                    const list = customCategories[editing.type]?.[editing.parent] || [];
+                    const target = list.find(cat => cat.name === editing.oldName);
+                    if (target) {
+                        const oldName = target.name;
+                        target.name = name;
+                        target.icon = customMainDraft.icon;
+                        data.forEach(item => {
+                            if (item.type === editing.type && item.mainCat === editing.parent && item.subCatName === oldName) {
+                                item.subCatName = name;
+                                item.subCatIcon = customMainDraft.icon;
+                                if (item.name === oldName) item.name = name;
+                            }
+                        });
+                        localStorage.setItem('myBudget', JSON.stringify(data));
+                    }
+                } else {
+                    const exists = customCategories[currentType][currentMainCat].some(cat => cat.name === name);
+                    if (!exists) customCategories[currentType][currentMainCat].push({ name, icon: customMainDraft.icon });
+                }
+                localStorage.setItem('myCustomCatsV3', JSON.stringify(customCategories));
+                selectSubCat(name, customMainDraft.icon);
                 closeCustomMainCategoryModal();
+                renderTypes();
+                showToast(editing ? '自訂類別已修改' : t('toastCustomCatAdded'));
                 return;
             }
-            if (!defaultCategories[currentType][name]) defaultCategories[currentType][name] = [];
+            const oldName = editing?.mode === 'main' ? editing.oldName : name;
+            if (editing?.mode === 'main' && oldName !== name) {
+                const oldChildren = defaultCategories[currentType][oldName] || [];
+                delete defaultCategories[currentType][oldName];
+                defaultCategories[currentType][name] = oldChildren;
+                if (customCategories[currentType]?.[oldName]) {
+                    customCategories[currentType][name] = customCategories[currentType][oldName];
+                    delete customCategories[currentType][oldName];
+                }
+                data.forEach(item => { if (item.type === currentType && item.mainCat === oldName) item.mainCat = name; });
+                localStorage.setItem('myBudget', JSON.stringify(data));
+            } else if (!defaultCategories[currentType][name]) {
+                defaultCategories[currentType][name] = [];
+            }
             mainCategoryMeta[name] = { icon: customMainDraft.icon, color: customMainDraft.color };
-            customMainCategories = customMainCategories.filter(cat => !(cat.type === currentType && cat.name === name));
+            customMainCategories = customMainCategories.filter(cat => !(cat.type === currentType && cat.name === oldName));
             customMainCategories.push({ type: currentType, name, icon: customMainDraft.icon, color: customMainDraft.color });
             localStorage.setItem('myCustomMainCatsV1', JSON.stringify(customMainCategories));
             if (!customCategories[currentType]) customCategories[currentType] = {};
@@ -4900,6 +5044,7 @@
             localStorage.setItem('myCustomCatsV3', JSON.stringify(customCategories));
             closeCustomMainCategoryModal();
             selectMainCat(name);
+            showToast(editing ? '自訂類別已修改' : t('toastCustomCatAdded'));
         }
 
         window.saveCustomCategory = saveCustomCategory;
@@ -4908,6 +5053,10 @@
         window.openCustomMainCategoryModal = openCustomMainCategoryModal;
         window.closeCustomMainCategoryModal = closeCustomMainCategoryModal;
         window.saveCustomMainCategory = saveCustomMainCategory;
+        window.editCustomCategory = editCustomCategory;
+        window.deleteCustomCategory = deleteCustomCategory;
+        window.openBudgetProjectRecords = openBudgetProjectRecords;
+        window.closeProjectRecordModal = closeProjectRecordModal;
         window.cycleCustomMainColor = cycleCustomMainColor;
         window.openIconSourceModal = openIconSourceModal;
         window.closeIconSourceModal = closeIconSourceModal;
@@ -5278,7 +5427,7 @@
             showToast(t('toastExported'));
         }
 
-        const APP_VERSION = '20260619-02';
+        const APP_VERSION = '20260619-03';
 
         function registerServiceWorker() {
             if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
