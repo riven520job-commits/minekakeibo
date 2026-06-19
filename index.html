@@ -35,23 +35,26 @@
         }
         html, body { overscroll-behavior-y: none; touch-action: manipulation; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; width: 100%; overflow-x: hidden; }
         body.eye-care {
-            --ink: #1f2933;
-            --muted: #6b7280;
-            --line: #e5e7eb;
-            --panel: #ffffff;
-            --soft: #f5f5f5;
-            --accent: #111827;
-            background: linear-gradient(180deg, #f4f4f5 0%, #ffffff 38%);
+            color-scheme: light;
+            --ink: #2f2a24;
+            --muted: #7d7468;
+            --line: #e8dfd2;
+            --panel: #fffdf7;
+            --soft: #f6efe4;
+            --accent: #2f2a24;
+            --fun-blue: #7ca7a0;
+            background: #fbf7ef;
         }
         body.night-mode {
             color-scheme: dark;
-            --ink: #edf2f7;
-            --muted: #9aa8bb;
-            --line: #243244;
-            --panel: #121a27;
-            --soft: #0b1220;
-            --accent: #f8fafc;
-            background: linear-gradient(180deg, #050505 0%, #111111 42%);
+            --ink: #e6e6e6;
+            --muted: #9b9b9b;
+            --line: #303030;
+            --panel: #191919;
+            --soft: #202020;
+            --accent: #f1f1f1;
+            --fun-blue: #8f8f8f;
+            background: #0f0f0f;
         }
         * { box-sizing: border-box; touch-action: manipulation; }
         button, input, select, textarea { font: inherit; }
@@ -86,41 +89,62 @@
         .nav-fab { width: 68px; height: 68px; margin-top: -32px; border: 1px solid var(--line); border-radius: 18px; background: #ffffff; color: var(--ink); box-shadow: 0 14px 28px rgba(31, 41, 51, .12); line-height: 1; }
         .nav-btn.nav-fab.active { background: #ffffff !important; }
         .nav-fab-symbol { display: grid; place-items: center; width: 100%; height: 100%; font-size: 2.25rem; font-weight: 300; line-height: 1; }
-        .date-chip { border-radius: 9999px; transition: border-color 160ms ease, color 160ms ease, background 160ms ease; }
+        .date-chip { border-radius: 9999px; position: relative; transition: border-color 160ms ease, color 160ms ease, background 160ms ease, box-shadow 160ms ease; }
+        .date-chip.has-record:not(.active) { background: #f3f7fb; border-color: #d7e3ec; box-shadow: inset 0 0 0 1px rgba(90, 184, 214, .12); }
+        .date-chip.has-record:not(.active)::after { content: ''; position: absolute; left: 50%; bottom: 5px; width: 5px; height: 5px; border-radius: 9999px; transform: translateX(-50%); background: var(--fun-blue); opacity: .85; }
         .date-chip.active { border-color: var(--fun-blue); color: var(--ink); background: #eefaff; box-shadow: 0 0 0 4px rgba(90,184,214,.13); }
         nav { padding-bottom: max(1.25rem, env(safe-area-inset-bottom)); box-shadow: none !important; }
         nav .nav-btn span[data-i18n] { display: none; }
         nav .nav-btn span.text-lg { margin-bottom: 0 !important; font-size: 1.65rem; line-height: 1; }
         .empty-state { border: 1px dashed #d8dee8; background: #f8fafc; border-radius: 14px; padding: 18px; text-align: center; color: var(--muted); font-size: 13px; }
-        body.eye-care .empty-state { background: #faf7ea; border-color: #d9dec9; }
-        body.night-mode .surface { box-shadow: 0 16px 36px rgba(0, 0, 0, .28); }
-        body.night-mode .empty-state { background: #0f172a; border-color: #263347; }
-        body.night-mode nav { background: rgba(10, 16, 28, .94) !important; border-color: #1f2a3a !important; }
+        body.eye-care .surface,
+        body.eye-care .bg-white,
+        body.eye-care .bg-white\/90,
+        body.eye-care .bg-white\/95 { background-color: var(--panel) !important; }
+        body.eye-care .bg-gray-50,
+        body.eye-care .bg-blue-50,
+        body.eye-care .bg-green-50 { background-color: var(--soft) !important; }
+        body.eye-care .empty-state { background: #f8f1e5; border-color: #e2d6c8; }
+        body.eye-care nav { background: rgba(255, 253, 247, .94) !important; border-color: #e8dfd2 !important; }
+        body.eye-care .date-chip.has-record:not(.active) { background: #f0eadf; border-color: #d9cfc0; }
+        body.eye-care .date-chip.active { background: #edf5f2; border-color: #7ca7a0; box-shadow: 0 0 0 4px rgba(124,167,160,.16); }
+        body.night-mode .surface { background: var(--panel) !important; box-shadow: none; }
+        body.night-mode .empty-state { background: #202020; border-color: #303030; }
+        body.night-mode nav { background: rgba(25, 25, 25, .96) !important; border-color: #303030 !important; }
         body.night-mode .bg-white,
         body.night-mode .bg-white\/90,
         body.night-mode .bg-white\/95,
         body.night-mode .bg-gray-50,
         body.night-mode .bg-blue-50,
-        body.night-mode .bg-green-50 { background-color: #162033 !important; }
-        body.night-mode .text-gray-300 { color: #64748b !important; }
+        body.night-mode .bg-green-50 { background-color: var(--panel) !important; }
+        body.night-mode .text-gray-900,
+        body.night-mode .text-gray-800,
+        body.night-mode .text-gray-700 { color: var(--ink) !important; }
+        body.night-mode .text-gray-300,
         body.night-mode .text-gray-400,
         body.night-mode .text-gray-500,
-        body.night-mode .text-gray-600,
-        body.night-mode .text-gray-700 { color: #a8b4c6 !important; }
+        body.night-mode .text-gray-600 { color: var(--muted) !important; }
         body.night-mode .text-blue-600,
         body.night-mode .text-blue-700,
-        body.night-mode .text-green-700 { color: #f8fafc !important; }
+        body.night-mode .text-green-700 { color: var(--ink) !important; }
         body.night-mode .border-gray-100,
         body.night-mode .border-gray-200,
-        body.night-mode .border-t { border-color: #243244 !important; }
+        body.night-mode .border-t { border-color: var(--line) !important; }
+        body.night-mode input,
+        body.night-mode select,
+        body.night-mode textarea,
+        body.night-mode .notion-input { background-color: #202020 !important; color: var(--ink) !important; border-color: var(--line) !important; }
+        body.night-mode input::placeholder,
+        body.night-mode textarea::placeholder { color: #777 !important; }
         body.night-mode .hover\:bg-gray-50:hover,
         body.night-mode .hover\:bg-gray-100:hover,
         body.night-mode .hover\:bg-blue-100:hover,
-        body.night-mode .hover\:bg-green-100:hover { background-color: #1d2a3f !important; }
-        body.night-mode .nav-btn.active { background: rgba(248, 250, 252, .08); }
-        body.night-mode .nav-btn.nav-fab.active { background: #111827 !important; }
-        body.night-mode .nav-fab { border-color: #243244; background: #111827; box-shadow: 0 16px 28px rgba(0, 0, 0, .34); color: #f8fafc; }
-        body.night-mode .date-chip.active { background: rgba(248, 250, 252, .08); border-color: #f8fafc; }
+        body.night-mode .hover\:bg-green-100:hover { background-color: #262626 !important; }
+        body.night-mode .nav-btn.active { background: #262626; }
+        body.night-mode .nav-btn.nav-fab.active { background: #202020 !important; }
+        body.night-mode .nav-fab { border-color: var(--line); background: #202020; box-shadow: 0 10px 24px rgba(0, 0, 0, .28); color: var(--ink); }
+        body.night-mode .date-chip.has-record:not(.active) { background: #202020; border-color: #3a3a3a; }
+        body.night-mode .date-chip.active { background: #2a2a2a; border-color: #e6e6e6; box-shadow: 0 0 0 4px rgba(255,255,255,.08); }
         .record-detail-card { background: var(--panel); color: var(--ink); }
         .record-detail-hero { background: linear-gradient(135deg, #e9eef5 0%, #f7fafc 100%); color: #243244; }
         .record-detail-action { background: rgba(255, 255, 255, .82); color: #243244; border: 1px solid rgba(148, 163, 184, .32); box-shadow: 0 10px 20px rgba(31, 41, 51, .08); }
@@ -268,6 +292,17 @@
         .add-field-tile .account-choice span { min-width: 0; }
         .add-field-tile .account-choice .block { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .add-field-tile.expanded { grid-column: 1 / -1; }
+        .installment-state-on { border-color: #111827; background: #f7f8fa; box-shadow: inset 0 0 0 1px #111827, 0 3px 10px rgba(31,41,51,.035); }
+        .installment-modal { position: fixed; inset: 0; z-index: 118; background: rgba(17,24,39,.28); backdrop-filter: blur(4px); display: grid; place-items: end center; padding: 20px; }
+        .installment-modal.hidden { display: none; }
+        .installment-panel { width: min(100%, 390px); border-radius: 24px; background: #fff; border: 1px solid var(--line); box-shadow: 0 22px 60px rgba(31,41,51,.22); overflow: hidden; }
+        .installment-panel-header { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; gap: 8px; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+        .installment-mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .installment-mode-grid button { min-height: 52px; border-radius: 16px; border: 1px solid var(--line); background: #f7f8fa; font-weight: 900; }
+        .installment-mode-grid button.active { background: #111827; color: #fff; border-color: #111827; }
+        .installment-stepper { display: grid; grid-template-columns: 52px 1fr 52px; align-items: center; gap: 10px; }
+        .installment-stepper button { height: 52px; border-radius: 16px; background: #f1f3f5; font-size: 1.5rem; font-weight: 900; }
+        .installment-stepper input { height: 52px; border: 1px solid var(--line); border-radius: 16px; text-align: center; font-size: 1.35rem; font-weight: 900; outline: 0; }
         .add-modal-shell { background: #fff; color: var(--ink); }
         .add-modal-action { width: 3.2rem; height: 3.2rem; border-radius: 9999px; background: #fff; border: 1px solid var(--line); box-shadow: 0 10px 24px rgba(31,41,51,.08); display: grid; place-items: center; font-size: 2rem; line-height: 1; color: var(--ink); }
         .add-modal-check { font-size: 1.7rem; }
@@ -562,15 +597,13 @@
                     </div>
 
                     <div id="installment-card" class="add-field-tile">
-                        <label class="add-summary-tile cursor-pointer">
+                        <button type="button" onclick="openInstallmentModal()" id="installment-trigger" class="add-summary-tile">
                             <span id="installment-summary" class="add-summary-value" data-i18n="installmentSingle">單次</span>
-                            <input type="checkbox" id="installment-enabled" onchange="toggleInstallmentFields()" class="sr-only">
-                        </label>
-                        <div id="installment-fields" class="hidden mt-3 surface p-3 shadow-none grid grid-cols-[1fr_auto] gap-3 items-center">
-                            <label for="installment-count" class="text-xs text-gray-500" data-i18n="installmentCount">分期期數</label>
-                            <input type="number" id="installment-count" min="2" max="60" value="3" inputmode="numeric" onchange="renderInstallmentSummary()" oninput="renderInstallmentSummary()" class="notion-input w-24 py-2 text-sm text-right">
-                            <p class="col-span-2 text-[11px] text-gray-400 leading-relaxed" data-i18n="installmentHint">輸入總金額，系統會從所選日期開始每月建立一筆紀錄。</p>
-                        </div>
+                            <span id="installment-detail" class="add-summary-label">一次付款</span>
+                        </button>
+                        <input type="checkbox" id="installment-enabled" onchange="toggleInstallmentFields()" class="sr-only">
+                        <input type="number" id="installment-count" min="2" max="60" value="3" inputmode="numeric" onchange="renderInstallmentSummary()" oninput="renderInstallmentSummary()" class="hidden">
+                        <div id="installment-fields" class="hidden"></div>
                     </div>
 
                     <div class="add-field-tile">
@@ -823,6 +856,31 @@
                 <button onclick="addExpense()" class="add-modal-action add-modal-check" aria-label="Save">✓</button>
             </div>
             <div id="add-modal-body" class="px-5 pb-4 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <div id="installment-modal" class="installment-modal hidden">
+        <div class="installment-panel">
+            <div class="installment-panel-header">
+                <button type="button" onclick="closeInstallmentModal()" class="icon-round-action" aria-label="Close">×</button>
+                <div class="text-center text-xl font-black" data-i18n="installmentLabel">費用分期</div>
+                <button type="button" onclick="confirmInstallmentModal()" class="icon-round-action add-modal-check" aria-label="Save">✓</button>
+            </div>
+            <div class="p-5 space-y-5">
+                <div class="installment-mode-grid">
+                    <button type="button" id="installment-mode-single" onclick="setInstallmentModalMode(false)" data-i18n="installmentSingle">單次</button>
+                    <button type="button" id="installment-mode-multiple" onclick="setInstallmentModalMode(true)" data-i18n="installmentLabel">費用分期</button>
+                </div>
+                <div id="installment-modal-count-wrap" class="space-y-3">
+                    <div class="text-sm font-bold text-gray-500" data-i18n="installmentCount">分期期數</div>
+                    <div class="installment-stepper">
+                        <button type="button" onclick="changeInstallmentModalCount(-1)">−</button>
+                        <input type="number" id="installment-count-modal" min="2" max="60" value="3" inputmode="numeric">
+                        <button type="button" onclick="changeInstallmentModalCount(1)">+</button>
+                    </div>
+                    <p class="text-xs text-gray-400 leading-relaxed" data-i18n="installmentHint">輸入總金額，系統會從所選日期開始每月建立一筆紀錄。</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1223,6 +1281,7 @@
         let dailyRecordsExpanded = false;
         let activeMonthlyReportTab = 'overview';
         let editingRecordIndex = null;
+        let installmentModalEnabled = false;
         let assetAnalysisData = { group: { assets: [], liabilities: [] }, currency: { assets: [], liabilities: [] } };
         let activeAssetAnalysisKind = 'group';
         let activeAssetAnalysisSide = 'assets';
@@ -2084,11 +2143,12 @@
                 date.setDate(weekStart.getDate() + index);
                 const dateValue = formatLocalDate(date);
                 const active = dateValue === selectedEntryDate;
+                const hasRecord = data.some(item => (item.date || '') === dateValue);
                 const isSunday = index === 0;
                 const isSaturday = index === 6;
-                const colorClass = active ? '' : (isSunday ? 'text-red-500' : (isSaturday ? 'text-green-600' : 'text-gray-500'));
+                const colorClass = active ? '' : (hasRecord ? 'text-gray-900' : (isSunday ? 'text-red-500' : (isSaturday ? 'text-green-600' : 'text-gray-500')));
                 return `
-                    <button onclick="selectDashboardDate('${dateValue}')" class="date-chip ${active ? 'active border-2' : 'border border-transparent'} py-2 text-center">
+                    <button onclick="selectDashboardDate('${dateValue}')" class="date-chip ${active ? 'active border-2' : 'border'} ${hasRecord ? 'has-record' : 'border-transparent'} py-2 text-center" aria-label="${dateValue}${hasRecord ? ' 有紀錄' : ''}">
                         <span class="block text-[10px] font-semibold text-gray-400">${weekdays[index]}</span>
                         <span class="block text-lg font-semibold ${colorClass}">${String(date.getDate()).padStart(2, '0')}</span>
                     </button>
@@ -2804,13 +2864,17 @@
 
         function toggleEyeCareMode() {
             eyeCareMode = !eyeCareMode;
+            if (eyeCareMode) nightMode = false;
             localStorage.setItem('myEyeCareMode', JSON.stringify(eyeCareMode));
+            localStorage.setItem('myNightMode', JSON.stringify(nightMode));
             applyAppearance();
         }
 
         function toggleNightMode() {
             nightMode = !nightMode;
+            if (nightMode) eyeCareMode = false;
             localStorage.setItem('myNightMode', JSON.stringify(nightMode));
+            localStorage.setItem('myEyeCareMode', JSON.stringify(eyeCareMode));
             applyAppearance();
         }
 
@@ -2846,21 +2910,74 @@
         }
 
         function toggleInstallmentFields() {
-            const enabled = document.getElementById('installment-enabled')?.checked;
-            const fields = document.getElementById('installment-fields');
+            const enabled = !!document.getElementById('installment-enabled')?.checked;
             const card = document.getElementById('installment-card');
-            if (!fields) return;
-            fields.classList.toggle('hidden', !enabled);
-            card?.classList.toggle('expanded', !!enabled);
+            const trigger = document.getElementById('installment-trigger');
+            card?.classList.toggle('expanded', enabled);
+            trigger?.classList.toggle('installment-state-on', enabled);
             renderInstallmentSummary();
         }
 
         function renderInstallmentSummary() {
             const summary = document.getElementById('installment-summary');
+            const detail = document.getElementById('installment-detail');
             if (!summary) return;
-            const enabled = document.getElementById('installment-enabled')?.checked;
-            const count = document.getElementById('installment-count')?.value || 3;
+            const enabled = !!document.getElementById('installment-enabled')?.checked;
+            const count = Math.max(2, Math.min(60, parseInt(document.getElementById('installment-count')?.value || '3', 10) || 3));
             summary.textContent = enabled ? t('installmentMultiple', count) : t('installmentSingle');
+            if (detail) detail.textContent = enabled ? `${count} 期 · 每月一筆` : '一次付款';
+        }
+
+        function openInstallmentModal() {
+            const enabled = !!document.getElementById('installment-enabled')?.checked;
+            installmentModalEnabled = enabled;
+            const input = document.getElementById('installment-count-modal');
+            if (input) input.value = document.getElementById('installment-count')?.value || '3';
+            setInstallmentModalMode(enabled);
+            document.getElementById('installment-modal')?.classList.remove('hidden');
+        }
+
+        function closeInstallmentModal() {
+            document.getElementById('installment-modal')?.classList.add('hidden');
+        }
+
+        function setInstallmentModalMode(enabled) {
+            installmentModalEnabled = !!enabled;
+            document.getElementById('installment-mode-single')?.classList.toggle('active', !installmentModalEnabled);
+            document.getElementById('installment-mode-multiple')?.classList.toggle('active', installmentModalEnabled);
+            document.getElementById('installment-modal-count-wrap')?.classList.toggle('hidden', !installmentModalEnabled);
+        }
+
+        function changeInstallmentModalCount(delta) {
+            const input = document.getElementById('installment-count-modal');
+            if (!input) return;
+            const current = parseInt(input.value || '3', 10) || 3;
+            input.value = Math.max(2, Math.min(60, current + delta));
+        }
+
+        function confirmInstallmentModal() {
+            const enabledInput = document.getElementById('installment-enabled');
+            const countInput = document.getElementById('installment-count');
+            const modalCount = parseInt(document.getElementById('installment-count-modal')?.value || '3', 10) || 3;
+            if (enabledInput) enabledInput.checked = installmentModalEnabled;
+            if (countInput) countInput.value = Math.max(2, Math.min(60, modalCount));
+            toggleInstallmentFields();
+            closeInstallmentModal();
+        }
+
+        function pushInstallmentRecords(baseRecord, installmentCount, photoData, installmentId, baseDate) {
+            const amounts = splitInstallmentAmounts(baseRecord.price, installmentCount);
+            amounts.forEach((amount, index) => {
+                data.push({
+                    ...baseRecord,
+                    date: addMonthsToDate(baseDate, index),
+                    price: amount,
+                    photoData: index === 0 ? photoData : null,
+                    installmentId,
+                    installmentIndex: index + 1,
+                    installmentCount
+                });
+            });
         }
 
         function monthKey(date) {
@@ -3896,6 +4013,8 @@
         window.openSharedLimitPicker = openSharedLimitPicker;
         window.selectAllSharedLimit = selectAllSharedLimit;
         window.toggleAccountSetting = toggleAccountSetting;
+        window.renameAccountGroup = renameAccountGroup;
+        window.deleteAccountGroup = deleteAccountGroup;
 
         function addAccountGroup() {
             const newGroup = prompt(t('promptAddGroup'));
@@ -3910,6 +4029,71 @@
             renderAccountGroupSettings();
             updateBalances();
             showToast(t('toastGroupAdded'));
+        }
+
+        function persistAccountGroupState() {
+            localStorage.setItem('myAccountGroups', JSON.stringify(accountGroups));
+            localStorage.setItem('myAccountGroupMap', JSON.stringify(accountGroupMap));
+            localStorage.setItem('myAccountGroupCollapsed', JSON.stringify(accountGroupCollapsed));
+        }
+
+        function renameAccountGroup(group) {
+            if (!accountGroups.includes(group)) return;
+            const nextLabel = prompt('請輸入新的大分類名稱', displayLabel(group));
+            const trimmed = nextLabel ? nextLabel.trim() : '';
+            if (!trimmed) return;
+            const nextGroup = internalLabel(trimmed);
+            if (nextGroup !== group && accountGroups.includes(nextGroup)) {
+                showToast(t('toastGroupExists'));
+                return;
+            }
+            const index = accountGroups.indexOf(group);
+            if (index >= 0) accountGroups[index] = nextGroup;
+            Object.keys(accountGroupMap).forEach(acc => {
+                if (accountGroupMap[acc] === group) accountGroupMap[acc] = nextGroup;
+            });
+            if (accountGroupCollapsed[group] !== undefined) {
+                accountGroupCollapsed[nextGroup] = accountGroupCollapsed[group];
+                delete accountGroupCollapsed[group];
+            }
+            persistAccountGroupState();
+            persistAccountSettings();
+            renderAccountGroupSettings();
+            renderAccounts();
+            updateBalances();
+            showToast(t('toastGroupUpdated'));
+        }
+
+        function deleteAccountGroup(group) {
+            if (!accountGroups.includes(group)) return;
+            if (accountGroups.length <= 1) {
+                showToast('至少需要保留一個大分類');
+                return;
+            }
+            const fallback = accountGroups.find(item => item !== group) || accountGroups[0];
+            const count = userAccounts.filter(acc => !isPrimaryAccount(acc) && accountGroupMap[acc] === group).length;
+            const message = count > 0
+                ? `刪除「${displayLabel(group)}」後，底下 ${count} 個帳戶會移到「${displayLabel(fallback)}」。確定刪除嗎？`
+                : `確定刪除「${displayLabel(group)}」嗎？`;
+            if (!confirm(message)) return;
+            accountGroups = accountGroups.filter(item => item !== group);
+            Object.keys(accountGroupMap).forEach(acc => {
+                if (accountGroupMap[acc] === group) accountGroupMap[acc] = fallback;
+            });
+            delete accountGroupCollapsed[group];
+            userAccounts = userAccounts.filter(acc => acc !== group);
+            delete accountInitials[group];
+            delete accountCurrencies[group];
+            delete accountSettings[group];
+            localStorage.setItem('myAccounts', JSON.stringify(userAccounts));
+            localStorage.setItem('myAccountInitials', JSON.stringify(accountInitials));
+            localStorage.setItem('myAccountCurrencies', JSON.stringify(accountCurrencies));
+            persistAccountGroupState();
+            persistAccountSettings();
+            renderAccountGroupSettings();
+            renderAccounts();
+            updateBalances();
+            showToast('已刪除大分類');
         }
 
         function toggleAccountGroup(group) {
@@ -4255,14 +4439,19 @@
                         </div>
                     `;
                 }).join('') : `<div class="text-xs text-gray-400 border-t border-gray-100 pt-3">${t('emptySubAccounts')}</div>`;
+                const safeGroup = encodeURIComponent(group);
                 return `
                     <div class="border-t border-gray-100 pt-3 first:border-t-0 first:pt-0">
-                        <div class="flex items-center justify-between gap-3 mb-3">
+                        <div class="flex items-start justify-between gap-3 mb-3">
                             <div class="min-w-0">
                                 <div class="text-sm font-bold truncate">${escapeHTML(displayLabel(group))}</div>
                                 <div class="text-[11px] text-gray-400">${grouped[group].length} ${t('accountCount')}</div>
                             </div>
-                            <button onclick="addSubAccount(decodeURIComponent('${encodeURIComponent(group)}'))" class="shrink-0 text-xs font-semibold text-blue-600 bg-blue-50 px-3 py-2 rounded-xl">${t('addSubAccount')}</button>
+                            <div class="flex flex-wrap justify-end gap-2 shrink-0">
+                                <button onclick="renameAccountGroup(decodeURIComponent('${safeGroup}'))" class="text-xs font-semibold text-gray-600 bg-gray-100 px-3 py-2 rounded-xl">${t('change')}</button>
+                                <button onclick="deleteAccountGroup(decodeURIComponent('${safeGroup}'))" class="text-xs font-semibold text-red-500 bg-red-50 px-3 py-2 rounded-xl">${t('delete')}</button>
+                                <button onclick="addSubAccount(decodeURIComponent('${safeGroup}'))" class="text-xs font-semibold text-blue-600 bg-blue-50 px-3 py-2 rounded-xl">${t('addSubAccount')}</button>
+                            </div>
                         </div>
                         <div class="space-y-3">${accountRows}</div>
                     </div>
@@ -4915,6 +5104,11 @@
         window.openProjectPicker = openProjectPicker;
         window.closeProjectPicker = closeProjectPicker;
         window.renderInstallmentSummary = renderInstallmentSummary;
+        window.openInstallmentModal = openInstallmentModal;
+        window.closeInstallmentModal = closeInstallmentModal;
+        window.setInstallmentModalMode = setInstallmentModalMode;
+        window.changeInstallmentModalCount = changeInstallmentModalCount;
+        window.confirmInstallmentModal = confirmInstallmentModal;
         window.openAccountPicker = openAccountPicker;
         window.closeAccountPicker = closeAccountPicker;
         window.calculatorPress = calculatorPress;
@@ -5471,14 +5665,22 @@
                     showToast(t('monthlyNoData'));
                     return;
                 }
-                data[editingRecordIndex] = {
-                    ...original,
-                    ...baseRecord,
-                    photoData: file ? photoData : (original.photoData || null),
-                    installmentId: installmentEnabled ? (original.installmentId || `installment-${Date.now()}`) : undefined,
-                    installmentIndex: installmentEnabled ? (original.installmentIndex || 1) : undefined,
-                    installmentCount: installmentEnabled ? installmentCount : undefined
-                };
+                if (installmentEnabled) {
+                    const installmentId = original.installmentId || `installment-${Date.now()}`;
+                    const originalIndex = parseInt(original.installmentIndex || '1', 10) || 1;
+                    const baseDate = original.installmentId ? addMonthsToDate(date, -(originalIndex - 1)) : date;
+                    data = data.filter((item, index) => original.installmentId ? item.installmentId !== original.installmentId : index !== editingRecordIndex);
+                    pushInstallmentRecords(baseRecord, installmentCount, file ? photoData : (original.photoData || null), installmentId, baseDate);
+                } else {
+                    data[editingRecordIndex] = {
+                        ...original,
+                        ...baseRecord,
+                        photoData: file ? photoData : (original.photoData || null),
+                        installmentId: undefined,
+                        installmentIndex: undefined,
+                        installmentCount: undefined
+                    };
+                }
                 data.sort((a, b) => new Date(b.date) - new Date(a.date));
                 localStorage.setItem('myBudget', JSON.stringify(data));
                 selectedEntryDate = date;
@@ -5509,19 +5711,7 @@
             }
 
             if (installmentEnabled) {
-                const installmentId = `installment-${Date.now()}`;
-                const amounts = splitInstallmentAmounts(price, installmentCount);
-                amounts.forEach((amount, index) => {
-                    data.push({
-                        ...baseRecord,
-                        date: addMonthsToDate(date, index),
-                        price: amount,
-                        photoData: index === 0 ? photoData : null,
-                        installmentId,
-                        installmentIndex: index + 1,
-                        installmentCount
-                    });
-                });
+                pushInstallmentRecords(baseRecord, installmentCount, photoData, `installment-${Date.now()}`, date);
             } else {
                 data.push(baseRecord);
             }
@@ -5713,7 +5903,7 @@
             showToast(t('toastExported'));
         }
 
-        const APP_VERSION = '20260620-01';
+        const APP_VERSION = '20260620-04';
 
         function registerServiceWorker() {
             if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
