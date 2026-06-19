@@ -1106,7 +1106,7 @@
         function defaultAccountSetting(acc) {
             const group = accountGroupMap[acc] || '';
             return {
-                name: displayLabel(acc),
+                name: acc,
                 isCredit: group.includes('信用卡'),
                 statementDay: 0,
                 paymentDueDays: 27,
@@ -1234,7 +1234,7 @@
         let supabaseClient = null;
         let cloudUser = null;
 
-        const translations = {
+        var translations = {
             zh: {
                 langToggle: '日本語',
                 recordKicker: 'Record',
@@ -1827,7 +1827,7 @@
             }
         };
 
-        const labelTranslations = {
+        var labelTranslations = {
             ja: {
                 '日常資金': '日常資金',
                 '卡片與支付': 'カード・決済',
@@ -1906,12 +1906,16 @@
         };
 
         function t(key, ...args) {
-            const value = translations[currentLang][key] || translations.zh[key] || key;
+            const packs = translations || {};
+            const langPack = packs[currentLang] || {};
+            const zhPack = packs.zh || {};
+            const value = langPack[key] ?? zhPack[key] ?? key;
             return typeof value === 'function' ? value(...args) : value;
         }
 
         function displayLabel(value) {
-            return currentLang === 'ja' ? (labelTranslations.ja[value] || value) : value;
+            const labels = labelTranslations || {};
+            return currentLang === 'ja' ? ((labels.ja && labels.ja[value]) || value) : value;
         }
 
         function internalLabel(value) {
@@ -5709,7 +5713,7 @@
             showToast(t('toastExported'));
         }
 
-        const APP_VERSION = '20260619-06';
+        const APP_VERSION = '20260620-01';
 
         function registerServiceWorker() {
             if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
