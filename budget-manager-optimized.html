@@ -309,7 +309,7 @@
         #add-record-modal, #account-detail-modal { height: 100vh; height: 100dvh; overflow: hidden; overscroll-behavior: none; touch-action: pan-y; }
         #add-record-modal { position: fixed; inset: 0; width: 100%; max-width: 100vw; }
         #add-record-modal .add-modal-shell { height: 100%; max-height: 100dvh; }
-        #add-modal-body { overscroll-behavior: contain; -webkit-overflow-scrolling: auto; flex: 1 1 auto; min-height: 0; overflow-x: hidden; scroll-behavior: auto; transform: translateZ(0); }
+        #add-modal-body { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; flex: 1 1 auto; min-height: 0; overflow-x: hidden; scroll-behavior: auto; transform: translateZ(0); }
         #add-modal-body.calculator-visible { padding-bottom: min(58vh, 440px); }
         #category-buttons { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px 12px; }
         #category-buttons button { min-height: 76px !important; border: 0 !important; background: transparent !important; padding: 0 !important; }
@@ -5138,11 +5138,9 @@
             if (!document.getElementById('page-add')?.classList.contains('active')) return;
             const target = event.target;
             if (target?.closest?.('#price, #calculator-panel')) return;
-            hideCalculator();
+            if (event.type === 'focusin' && target?.matches?.('input, textarea, select')) hideCalculator();
         }
 
-        document.addEventListener('pointerdown', hideCalculatorWhenLeavingAmount, true);
-        document.addEventListener('mousedown', hideCalculatorWhenLeavingAmount, true);
         document.addEventListener('focusin', hideCalculatorWhenLeavingAmount, true);
 
         function selectAccountGroup(group, type) {
@@ -5911,7 +5909,7 @@
             showToast(t('toastExported'));
         }
 
-        const APP_VERSION = '20260622-01';
+        const APP_VERSION = '20260622-02';
 
         function registerServiceWorker() {
             if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
