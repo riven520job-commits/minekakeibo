@@ -1858,6 +1858,11 @@
         background: #111827;
         border-radius: inherit;
       }
+      .project-overview-hero { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+      .project-stat-card { border: 1px solid var(--line); border-radius: 16px; background: var(--panel); padding: 14px; }
+      .project-overview-card { border: 1px solid var(--line); border-radius: 18px; background: var(--panel); padding: 16px; box-shadow: 0 6px 16px rgba(31,41,51,.035); }
+      .project-overview-card:active { transform: scale(.99); }
+      .project-cycle-badge { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--line); border-radius: 9999px; padding: 4px 9px; font-size: 11px; font-weight: 800; color: var(--muted); background: var(--soft); }
       .project-record-modal {
         position: fixed;
         inset: 0;
@@ -2155,6 +2160,28 @@
             </h3>
             <div id="daily-record-list" class="space-y-3"></div>
           </div>
+        </section>
+
+        <section id="page-projects" class="page">
+          <div class="mb-5 flex items-center justify-between gap-3">
+            <div>
+              <p class="section-label mb-1" data-i18n="projectOverviewKicker">Projects</p>
+              <h1 class="text-2xl font-bold tracking-tight" data-i18n="projectOverviewTitle">專案總覽</h1>
+            </div>
+            <button onclick="addBudgetProject()" class="asset-top-action text-3xl leading-none">+</button>
+          </div>
+          <div class="surface p-4 mb-4">
+            <div class="flex items-center justify-between gap-3 mb-4">
+              <button onclick="shiftProjectOverviewMonth(-1)" class="w-10 h-10 rounded-full bg-gray-50 border border-gray-100 text-gray-500 font-bold">‹</button>
+              <button onclick="setProjectOverviewMonth(monthKey(new Date()))" class="text-center">
+                <span id="project-overview-month-label" class="block text-lg font-black">2026/06</span>
+                <span class="block text-[11px] text-gray-400 font-semibold" data-i18n="projectMonthHint">點選回到本月</span>
+              </button>
+              <button onclick="shiftProjectOverviewMonth(1)" class="w-10 h-10 rounded-full bg-gray-50 border border-gray-100 text-gray-500 font-bold">›</button>
+            </div>
+            <div id="project-overview-summary" class="project-overview-hero"></div>
+          </div>
+          <div id="project-overview-list" class="space-y-3"></div>
         </section>
 
         <section id="page-dashboard" class="page asset-dashboard">
@@ -3566,12 +3593,12 @@
           ><span data-i18n="navDashboard">總覽</span>
         </button>
         <button
-          data-page="report"
-          onclick="switchPage('report')"
+          data-page="projects"
+          onclick="switchPage('projects')"
           class="nav-btn p-2 text-xs font-semibold flex flex-col items-center justify-center"
         >
-          <span class="text-lg mb-1">💴</span
-          ><span data-i18n="navReport">省錢</span>
+          <span class="text-lg mb-1">🐖</span
+          ><span data-i18n="navProjects">專案</span>
         </button>
         <button
           data-page="record"
@@ -3656,6 +3683,7 @@
       ) || { "¥": 1, NT$: 4.8, "₩": 0.11, $: 155, "€": 170 };
       let budgetProjects =
         JSON.parse(localStorage.getItem("myBudgetProjects")) || [];
+      let activeProjectOverviewMonth = monthKey(new Date());
       const defaultAccountGroups = [
         "💵 現金",
         "💳 信用卡",
@@ -4505,6 +4533,16 @@
           balanceAdjusted: "餘額已調整",
           budgetProjectsTitle: "預算專案",
           budgetProjectsHint: "設定與修改專案預算，追蹤期間內支出",
+          projectOverviewKicker: "Projects",
+          projectOverviewTitle: "專案總覽",
+          projectMonthHint: "點選回到本月",
+          navProjects: "專案",
+          projectTotalBudget: "總預算",
+          projectTotalSpent: "本期已花",
+          projectRecurringMonthly: "每月刷新",
+          projectOneTime: "單次專案",
+          projectRecordsButton: "查看紀錄",
+          promptProjectRecurring: "是否設為定期專案？確定後每月會自動刷新預算統計。",
           addProjectShort: "＋新增專案",
           budgetProjectLabel: "預算專案",
           noProject: "不指定專案",
@@ -4837,6 +4875,16 @@
           addProjectShort: "＋プロジェクト追加",
           budgetProjectLabel: "予算プロジェクト",
           noProject: "指定なし",
+          projectOverviewKicker: "Projects",
+          projectOverviewTitle: "プロジェクト概要",
+          projectMonthHint: "タップで今月へ戻る",
+          navProjects: "プロジェクト",
+          projectTotalBudget: "総予算",
+          projectTotalSpent: "使用済み合計",
+          projectRecurringMonthly: "毎月更新",
+          projectOneTime: "単発プロジェクト",
+          projectRecordsButton: "関連記録",
+          promptProjectRecurring: "定期プロジェクトにしますか？OKにすると毎月の予算集計を自動で切り替えます。",
           projectSpent: "使用済み",
           projectRemaining: "残り",
           projectOver: "超過",
@@ -5515,7 +5563,7 @@
           return;
         }
         const preferred = preferredBudgetProject() || budgetProjects[0];
-        const spent = projectSpentJPY(preferred);
+        const spent = projectSpentJPY(preferred, monthKey(parseLocalDate(selectedEntryDate || todayString())));
         const budget = projectBudgetJPY(preferred);
         const remaining = budget - spent;
         const ratio = budget > 0 ? Math.min(Math.max(spent / budget, 0), 1) : 0;
@@ -8817,11 +8865,22 @@
         return raw.replace(/\//g, "-");
       }
 
-      function dateInProjectRange(date, project) {
+      function projectMonthRange(monthValue) {
+        const [year, month] = String(monthValue || monthKey(new Date())).split("-").map(Number);
+        const startDate = new Date(year, (month || 1) - 1, 1);
+        const endDate = new Date(year, month || 1, 0);
+        return { start: formatLocalDate(startDate), end: formatLocalDate(endDate) };
+      }
+
+      function projectEffectiveRange(project, monthValue) {
+        if (project?.recurring === "monthly") return projectMonthRange(monthValue || monthKey(parseLocalDate(selectedEntryDate || todayString())));
+        return { start: normalizeProjectDate(project?.start), end: normalizeProjectDate(project?.end) };
+      }
+
+      function dateInProjectRange(date, project, monthValue) {
         const recordDate = normalizeProjectDate(date);
         if (!recordDate) return true;
-        const start = normalizeProjectDate(project?.start);
-        const end = normalizeProjectDate(project?.end);
+        const { start, end } = projectEffectiveRange(project, monthValue);
         return (!start || recordDate >= start) && (!end || recordDate <= end);
       }
 
@@ -8843,7 +8902,23 @@
         return false;
       }
 
+      function normalizeBudgetProjectMetadata() {
+        let changed = false;
+        const currentMonth = monthKey(new Date());
+        budgetProjects.forEach((project) => {
+          if (!project.id) { project.id = `project-${Date.now()}-${Math.random().toString(16).slice(2)}`; changed = true; }
+          if (!project.recurring) { project.recurring = "none"; changed = true; }
+          if (project.recurring === "monthly" && project.lastRefreshMonth !== currentMonth) {
+            project.lastRefreshMonth = currentMonth;
+            changed = true;
+          }
+        });
+        if (changed) localStorage.setItem("myBudgetProjects", JSON.stringify(budgetProjects));
+        return changed;
+      }
+
       function normalizeBudgetProjectRecords() {
+        normalizeBudgetProjectMetadata();
         let changed = false;
         data.forEach((item) => {
           const project =
@@ -8864,14 +8939,14 @@
         return changed;
       }
 
-      function projectSpentJPY(project) {
+      function projectSpentJPY(project, monthValue) {
         if (!project) return 0;
         return data
           .filter(
             (item) =>
               isExpenseType(item.type) && recordBelongsToProject(item, project),
           )
-          .filter((item) => dateInProjectRange(item.date, project))
+          .filter((item) => dateInProjectRange(item.date, project, monthValue))
           .reduce(
             (sum, item) => sum + toJPY(item.price, item.currency || "¥"),
             0,
@@ -8881,7 +8956,7 @@
       function projectBudgetJPY(project) {
         return toJPY(project.budget || 0, project.currency || "¥");
       }
-      function projectRelatedRecords(project) {
+      function projectRelatedRecords(project, monthValue) {
         if (!project) return [];
         normalizeBudgetProjectRecords();
         return data
@@ -8889,7 +8964,7 @@
           .filter(
             ({ item }) =>
               recordBelongsToProject(item, project) &&
-              dateInProjectRange(item.date, project),
+              dateInProjectRange(item.date, project, monthValue),
           )
           .sort((a, b) =>
             `${b.item.date || ""} ${b.item.time || ""}`.localeCompare(
@@ -8898,13 +8973,13 @@
           );
       }
 
-      function openBudgetProjectRecords(projectId) {
+      function openBudgetProjectRecords(projectId, monthValue) {
         const project = projectById(projectId) || preferredBudgetProject();
         if (!project) {
           addBudgetProject();
           return;
         }
-        const records = projectRelatedRecords(project);
+        const records = projectRelatedRecords(project, monthValue || (project?.recurring === "monthly" ? activeProjectOverviewMonth : undefined));
         const expense = records
           .filter(({ item }) => isExpenseType(item.type))
           .reduce(
@@ -8966,6 +9041,75 @@
         document
           .getElementById("project-record-modal")
           ?.classList.add("hidden");
+      }
+
+      function projectPeriodLabel(project, monthValue) {
+        const range = projectEffectiveRange(project, monthValue);
+        return `${range.start || "..."} - ${range.end || "..."}`;
+      }
+
+      function renderProjectOverviewPage() {
+        normalizeBudgetProjectRecords();
+        const monthLabel = document.getElementById("project-overview-month-label");
+        const summary = document.getElementById("project-overview-summary");
+        const list = document.getElementById("project-overview-list");
+        if (monthLabel) monthLabel.textContent = activeProjectOverviewMonth.replace("-", "/");
+        if (!summary || !list) return;
+        if (!budgetProjects.length) {
+          summary.innerHTML = `<div class="project-stat-card col-span-2"><div class="text-sm font-bold">${t("budgetProjectsTitle")}</div><div class="text-xs text-gray-400 mt-1">${t("budgetProjectsHint")}</div></div>`;
+          list.innerHTML = `<button type="button" onclick="addBudgetProject()" class="daily-project-card w-full text-left"><span class="daily-project-icon">＋</span><span><span class="block font-semibold">${t("addProjectShort")}</span><span class="block text-xs text-gray-400 mt-1">${t("budgetProjectsHint")}</span></span></button>`;
+          return;
+        }
+        const rows = budgetProjects.map((project) => {
+          const spent = projectSpentJPY(project, activeProjectOverviewMonth);
+          const budget = projectBudgetJPY(project);
+          return { project, spent, budget, remaining: budget - spent };
+        });
+        const totalBudget = rows.reduce((sum, row) => sum + row.budget, 0);
+        const totalSpent = rows.reduce((sum, row) => sum + row.spent, 0);
+        summary.innerHTML = `
+          <div class="project-stat-card"><div class="text-[11px] text-gray-400 font-bold">${t("projectTotalBudget")}</div><div class="text-lg font-black mt-1">${formatPrivateJPY(totalBudget, "¥")}</div></div>
+          <div class="project-stat-card"><div class="text-[11px] text-gray-400 font-bold">${t("projectTotalSpent")}</div><div class="text-lg font-black mt-1">${formatPrivateJPY(totalSpent, "¥")}</div></div>
+        `;
+        list.innerHTML = rows.map(({ project, spent, budget, remaining }) => {
+          const ratio = budget > 0 ? Math.min(spent / budget, 1) : 0;
+          const over = remaining < 0;
+          const badge = project.recurring === "monthly" ? t("projectRecurringMonthly") : t("projectOneTime");
+          return `
+            <article class="project-overview-card">
+              <button type="button" onclick="openBudgetProjectRecords('${project.id}', '${activeProjectOverviewMonth}')" class="w-full text-left">
+                <div class="flex items-start justify-between gap-3 mb-3">
+                  <div class="min-w-0">
+                    <div class="font-black text-base truncate">${escapeHTML(project.name)}</div>
+                    <div class="text-[11px] text-gray-400 mt-1">${escapeHTML(projectPeriodLabel(project, activeProjectOverviewMonth))}</div>
+                  </div>
+                  <span class="project-cycle-badge">${escapeHTML(badge)}</span>
+                </div>
+                <div class="flex items-end justify-between gap-3 mb-2">
+                  <div><div class="text-[11px] text-gray-400 font-bold">${t("projectSpent")}</div><div class="text-xl font-black">${formatPrivateJPY(spent, "¥")}</div></div>
+                  <div class="text-right"><div class="text-[11px] text-gray-400 font-bold">${over ? t("projectOver") : t("projectRemaining")}</div><div class="text-base font-black ${over ? "text-red-500" : "text-gray-800"}">${formatPrivateJPY(Math.abs(remaining), "¥")}</div></div>
+                </div>
+                <div class="h-2 bg-gray-100 rounded-full overflow-hidden"><div class="h-full ${over ? "bg-red-500" : "bg-gray-900"}" style="width:${Math.round(ratio * 100)}%"></div></div>
+              </button>
+              <div class="grid grid-cols-2 gap-2 mt-3">
+                <button type="button" onclick="openBudgetProjectRecords('${project.id}', '${activeProjectOverviewMonth}')" class="p-3 rounded-xl bg-gray-50 text-xs font-bold">${t("projectRecordsButton")}</button>
+                <button type="button" onclick="editBudgetProject('${project.id}')" class="p-3 rounded-xl bg-gray-50 text-xs font-bold">${t("change")}</button>
+              </div>
+            </article>
+          `;
+        }).join("");
+      }
+
+      function shiftProjectOverviewMonth(delta) {
+        const current = new Date(`${activeProjectOverviewMonth}-01T00:00:00`);
+        current.setMonth(current.getMonth() + delta);
+        activeProjectOverviewMonth = monthKey(current);
+        renderProjectOverviewPage();
+      }
+
+      function setProjectOverviewMonth(monthValue) {
+        activeProjectOverviewMonth = monthValue || monthKey(new Date());
+        renderProjectOverviewPage();
       }
 
       function renderBudgetProjectsDashboard() {
@@ -9140,7 +9284,7 @@
                     <div class="flex items-center justify-between gap-3 border-t border-gray-100 pt-3 first:border-t-0 first:pt-0">
                         <div class="min-w-0">
                             <div class="text-sm font-semibold truncate">${escapeHTML(project.name)}</div>
-                            <div class="text-[11px] text-gray-400">${formatPrivateMoney(project.budget, project.currency)} · ${formatPrivateJPY(spent, "¥")} / ${formatPrivateJPY(budget, "¥")}</div>
+                            <div class="text-[11px] text-gray-400">${formatPrivateMoney(project.budget, project.currency)} · ${formatPrivateJPY(spent, "¥")} / ${formatPrivateJPY(budget, "¥")} · ${project.recurring === "monthly" ? t("projectRecurringMonthly") : t("projectOneTime")}</div>
                         </div>
                         <div class="flex items-center gap-2 shrink-0">
                             <button onclick="editBudgetProject('${project.id}')" class="text-xs font-semibold text-gray-600 bg-gray-100 px-3 py-2 rounded-xl">${t("change")}</button>
@@ -9176,6 +9320,7 @@
         const end = normalizeProjectDate(
           prompt(t("promptProjectEnd"), "") || "",
         );
+        const recurring = confirm(t("promptProjectRecurring"));
         budgetProjects.push({
           id: `project-${Date.now()}`,
           name: name.trim(),
@@ -9183,12 +9328,15 @@
           currency,
           start,
           end,
+          recurring: recurring ? "monthly" : "none",
+          lastRefreshMonth: recurring ? monthKey(new Date()) : "",
         });
         localStorage.setItem(
           "myBudgetProjects",
           JSON.stringify(budgetProjects),
         );
         renderBudgetProjectsDashboard();
+        renderProjectOverviewPage();
         renderBudgetProjectSettings();
         renderProjectButtons();
         showToast(t("toastProjectAdded"));
@@ -9222,12 +9370,15 @@
         const end = normalizeProjectDate(
           prompt(t("promptEditProjectEnd"), project.end || "") || "",
         );
+        const recurring = confirm(t("promptProjectRecurring"));
         const oldName = project.name;
         project.name = name.trim();
         project.budget = budget;
         project.currency = currency;
         project.start = start;
         project.end = end;
+        project.recurring = recurring ? "monthly" : "none";
+        project.lastRefreshMonth = recurring ? monthKey(new Date()) : "";
         data.forEach((item) => {
           if (
             item.projectId === project.id ||
@@ -9243,6 +9394,7 @@
           JSON.stringify(budgetProjects),
         );
         renderBudgetProjectsDashboard();
+        renderProjectOverviewPage();
         renderBudgetProjectSettings();
         renderProjectButtons();
         showToast(t("toastProjectUpdated"));
@@ -9268,6 +9420,7 @@
           JSON.stringify(budgetProjects),
         );
         renderBudgetProjectsDashboard();
+        renderProjectOverviewPage();
         renderBudgetProjectSettings();
         renderProjectButtons();
         showToast(t("toastProjectDeleted"));
@@ -9680,27 +9833,22 @@
           return;
         const target = event.target;
         if (target?.closest?.("#price, #calculator-panel")) return;
-
-        // 如果使用者點擊了外部，且算式中包含加減乘除，則自動結算
-        if (calculatorExpression && /[+\-*/]/.test(calculatorExpression)) {
-          commitCalculatorValue();
-        }
-
         if (
           event.type === "focusin" &&
           target?.matches?.("input, textarea, select")
-        )
+        ) {
+          if (calculatorExpression && /[+\-*/]/.test(calculatorExpression)) {
+            commitCalculatorValue();
+          }
           hideCalculator();
-        if (event.type === "click") hideCalculator();
+        }
       }
 
-      // 確保同時監聽 focusin 和 click
       document.addEventListener(
         "focusin",
         hideCalculatorWhenLeavingAmount,
         true,
       );
-      document.addEventListener("click", hideCalculatorWhenLeavingAmount, true);
 
       function selectAccountGroup(group, type) {
         const children = childAccountsForGroup(group);
@@ -10320,6 +10468,8 @@
       window.openCustomCategoryEditor = openCustomCategoryEditor;
       window.openBudgetProjectRecords = openBudgetProjectRecords;
       window.closeProjectRecordModal = closeProjectRecordModal;
+      window.shiftProjectOverviewMonth = shiftProjectOverviewMonth;
+      window.setProjectOverviewMonth = setProjectOverviewMonth;
       window.cycleCustomMainColor = cycleCustomMainColor;
       window.openIconSourceModal = openIconSourceModal;
       window.closeIconSourceModal = closeIconSourceModal;
@@ -10353,6 +10503,7 @@
           renderDailyRecords();
         }
         if (id === "report") renderList();
+        if (id === "projects") renderProjectOverviewPage();
         if (id === "add") {
           categoryDepth = "main";
           renderTypes();
@@ -10862,7 +11013,7 @@
         showToast(t("toastExported"));
       }
 
-      const APP_VERSION = "20260622-02";
+      const APP_VERSION = "20260626-02";
 
       function registerServiceWorker() {
         if (!("serviceWorker" in navigator) || location.protocol === "file:")
@@ -10913,6 +11064,7 @@
       updateBalances();
       renderExchangeRateSettings();
       renderProjectButtons();
+      renderProjectOverviewPage();
       renderBudgetProjectSettings();
       initCloudSync();
     </script>
