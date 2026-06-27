@@ -1462,10 +1462,10 @@
         min-height: 0;
         overflow-x: hidden;
         scroll-behavior: auto;
-        transform: translateZ(0);
+        touch-action: pan-y;
       }
       #add-modal-body.calculator-visible {
-        padding-bottom: min(58vh, 440px);
+        padding-bottom: calc(min(58vh, 440px) + 28px + env(safe-area-inset-bottom));
       }
       #category-buttons {
         grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -1929,16 +1929,15 @@
         width: min(100vw, 448px);
         max-height: min(58vh, 440px);
         overflow: hidden;
-        transform: translate3d(-50%, 0, 0);
+        transform: translateX(-50%);
         background: rgba(243, 244, 246, 0.98);
         margin: 0;
         padding: 12px 16px calc(16px + env(safe-area-inset-bottom));
         backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
         border-top: 1px solid var(--line);
         box-shadow: 0 -12px 34px rgba(31, 41, 51, 0.08);
         touch-action: manipulation;
-        contain: layout paint;
-        will-change: transform;
       }
       @media (max-width: 480px) {
         .calculator-grid button {
@@ -3626,10 +3625,6 @@
         </button>
       </nav>
     </div>
-    // --- 工具函式：安全讀取 LocalStorage --- function safeJsonParse(key,
-    fallback) { try { const item = localStorage.getItem(key); return item ?
-    JSON.parse(item) : fallback; } catch (e) { console.error(`解析 LocalStorage
-    [${key}] 失敗:`, e); return fallback; } }
     <script>
       window.onerror = function (msg, url, line) {
         if (msg === "Script error." && line === 0) return true;
@@ -9675,22 +9670,26 @@
         const input = document.getElementById("price");
         const panel = document.getElementById("calculator-panel");
         const body = document.getElementById("add-modal-body");
+        const addPage = document.getElementById("page-add");
         if (!calculatorExpression && input?.value)
           calculatorExpression = String(input.value).replace(/,/g, "");
         if (panel?.classList.contains("hidden"))
           panel.classList.remove("hidden");
         if (body && !body.classList.contains("calculator-visible"))
           body.classList.add("calculator-visible");
+        addPage?.classList.add("calculator-visible");
         renderCalculator();
       }
 
       function hideCalculator() {
         const panel = document.getElementById("calculator-panel");
         const body = document.getElementById("add-modal-body");
+        const addPage = document.getElementById("page-add");
         if (!panel?.classList.contains("hidden"))
           panel?.classList.add("hidden");
         if (body?.classList.contains("calculator-visible"))
           body.classList.remove("calculator-visible");
+        addPage?.classList.remove("calculator-visible");
       }
 
       function evaluateCalculatorExpression() {
