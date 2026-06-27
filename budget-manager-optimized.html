@@ -1163,14 +1163,19 @@
         background: var(--panel);
       }
       .calculator-grid button {
-        min-height: 60px;
+        min-height: 64px;
         border-right: 1px solid var(--line);
         border-bottom: 1px solid var(--line);
-        font-size: 1.55rem;
-        font-weight: 800;
+        font-size: 1.62rem;
+        font-weight: 900;
         background: var(--panel);
         color: var(--ink);
         touch-action: manipulation;
+        cursor: pointer;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        transition: transform 60ms ease, background-color 80ms ease, box-shadow 80ms ease;
       }
       .calculator-grid button:nth-child(4n) {
         border-right: 0;
@@ -1179,8 +1184,14 @@
         border-bottom: 0;
       }
       .calculator-grid button:active {
-        background: #e9edf3;
-        box-shadow: inset 0 2px 8px rgba(31, 41, 51, 0.08);
+        background: #e2e6ec;
+        transform: scale(0.975);
+        box-shadow: inset 0 2px 10px rgba(31, 41, 51, 0.12);
+      }
+      .calculator-grid button:focus-visible,
+      .quick-amounts button:focus-visible {
+        outline: 3px solid rgba(17, 24, 39, 0.22);
+        outline-offset: -3px;
       }
       .calculator-readout {
         min-height: 50px;
@@ -1212,16 +1223,24 @@
         -webkit-overflow-scrolling: touch;
       }
       .quick-amounts button {
-        min-height: 42px;
+        min-height: 46px;
         white-space: nowrap;
         border: 1px solid var(--line);
         background: var(--panel);
         border-radius: 14px;
-        padding: 9px 16px;
+        padding: 10px 18px;
         font-weight: 900;
         color: var(--ink);
         box-shadow: 0 2px 8px rgba(31, 41, 51, 0.04);
         touch-action: manipulation;
+        cursor: pointer;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .quick-amounts button:active {
+        background: #e2e6ec;
+        transform: scale(0.98);
       }
       .account-picker {
         position: fixed;
@@ -1292,6 +1311,34 @@
         border-color: #111827;
         background: #f7f8fa;
         box-shadow: inset 0 2px 8px rgba(31, 41, 51, 0.06);
+        transform: translateY(1px);
+      }
+      .add-summary-tile.is-selected,
+      .add-long-field.is-selected,
+      .add-date-display.is-selected,
+      #installment-trigger.is-selected {
+        position: relative;
+        border-color: #111827;
+        background: #fbfbfa;
+        box-shadow: 0 0 0 2px rgba(17, 24, 39, 0.08), 0 6px 18px rgba(31, 41, 51, 0.06);
+      }
+      .add-summary-tile.is-selected::after,
+      .add-long-field.is-selected::after,
+      .add-date-display.is-selected::after,
+      #installment-trigger.is-selected::after {
+        content: "✓";
+        position: absolute;
+        top: 7px;
+        right: 8px;
+        width: 18px;
+        height: 18px;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        background: #111827;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 900;
       }
       .add-summary-label {
         color: var(--muted);
@@ -1491,10 +1538,36 @@
         object-fit: cover;
       }
       #category-buttons button.border-blue-500 > div,
-      #category-buttons button.border-blue-500 > img {
-        border-color: var(--fun-blue) !important;
+      #category-buttons button.border-blue-500 > img,
+      #category-buttons button.is-selected > div,
+      #category-buttons button.is-selected > img,
+      .sub-category-select.is-selected > div,
+      .sub-category-select.is-selected > img {
+        border-color: #111827 !important;
         background: #fffaf0;
-        box-shadow: 0 0 0 5px rgba(90, 184, 214, 0.14);
+        box-shadow: 0 0 0 5px rgba(17, 24, 39, 0.10);
+      }
+      #category-buttons button.is-selected,
+      .sub-category-select.is-selected {
+        color: #111827 !important;
+        font-weight: 900;
+      }
+      #category-buttons button.is-selected::after,
+      .sub-category-select.is-selected::after {
+        content: "✓";
+        position: absolute;
+        top: 3px;
+        right: 10px;
+        width: 20px;
+        height: 20px;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        background: #111827;
+        color: white;
+        font-size: 12px;
+        font-weight: 900;
+        box-shadow: 0 2px 8px rgba(31, 41, 51, 0.16);
       }
       .main-category-grid {
         display: grid;
@@ -1511,6 +1584,33 @@
         color: var(--muted);
         font-size: 0.74rem;
         font-weight: 700;
+      }
+      .main-category-btn.active {
+        color: #111827;
+        font-weight: 900;
+      }
+      .main-category-btn.active .main-category-icon {
+        border-color: #111827;
+        box-shadow: 0 0 0 5px rgba(17, 24, 39, 0.10);
+      }
+      .main-category-btn.active::after {
+        content: "✓";
+        position: absolute;
+        top: 2px;
+        right: 9px;
+        width: 20px;
+        height: 20px;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        background: #111827;
+        color: white;
+        font-size: 12px;
+        font-weight: 900;
+      }
+      .main-category-btn {
+        position: relative;
+        -webkit-tap-highlight-color: transparent;
       }
       .main-category-icon {
         width: 58px;
@@ -1941,11 +2041,12 @@
       }
       @media (max-width: 480px) {
         .calculator-grid button {
-          min-height: 58px;
-          font-size: 1.48rem;
+          min-height: 64px;
+          font-size: 1.55rem;
         }
         .quick-amounts button {
-          padding: 9px 15px;
+          min-height: 46px;
+          padding: 10px 17px;
         }
         .calculator-panel-fixed {
           padding-top: 12px;
@@ -1967,8 +2068,8 @@
           min-height: 110px;
         }
         .calculator-grid button {
-          min-height: 52px;
-          font-size: 1.38rem;
+          min-height: 58px;
+          font-size: 1.45rem;
         }
         .calculator-readout {
           min-height: 46px;
@@ -9156,6 +9257,22 @@
         if (preferredProject) selectedProject.value = preferredProject.id;
       }
 
+
+      function markAddSelectionStates() {
+        const pairs = [
+          ["selected-account-summary", "account"],
+          ["selected-to-account-summary", "account"],
+          ["selected-project-summary", "project"],
+          ["installment-summary", "installment"],
+          ["add-date-main", "date"],
+        ];
+        pairs.forEach(([id]) => {
+          const el = document.getElementById(id);
+          el?.closest?.(".add-summary-tile")?.classList.add("is-selected");
+        });
+        document.getElementById("price")?.closest?.(".add-long-field")?.classList.add("is-selected");
+      }
+
       function renderProjectButtons() {
         const container = document.getElementById("project-buttons");
         if (!container) return;
@@ -9197,6 +9314,7 @@
       function renderProjectSummary() {
         const summary = document.getElementById("selected-project-summary");
         if (summary) summary.textContent = projectSummaryText();
+        markAddSelectionStates();
       }
 
       function openProjectPicker() {
@@ -9567,6 +9685,7 @@
         );
         if (fromSummary) fromSummary.textContent = accountSummaryText("from");
         if (toSummary) toSummary.textContent = accountSummaryText("to");
+        markAddSelectionStates();
       }
 
       function openAccountPicker(type = "from") {
@@ -10041,7 +10160,7 @@
               ? `<img src="${safeIcon}" class="w-7 h-7 object-cover rounded-full mb-1 border border-gray-200 shadow-sm">`
               : `<div class="text-2xl mb-1">${escapeHTML(safeIcon)}</div>`;
             const safeName = encodeURIComponent(cat.name);
-            const selectButton = `<button type="button" onclick="selectSubCat(decodeURIComponent('${safeName}'), decodeURIComponent('${encodeURIComponent(safeIcon)}'))" class="sub-category-select flex flex-col items-center justify-center min-h-[82px] p-3 rounded-2xl border-2 transition ${activeClass}">${iconHtml}<span class="text-[11px] font-semibold ${isActive ? "text-gray-900" : "text-gray-600"}">${escapeHTML(displayLabel(cat.name))}</span></button>`;
+            const selectButton = `<button type="button" onclick="selectSubCat(decodeURIComponent('${safeName}'), decodeURIComponent('${encodeURIComponent(safeIcon)}'))" class="sub-category-select relative flex flex-col items-center justify-center min-h-[82px] p-3 rounded-2xl border-2 transition ${isActive ? "is-selected" : ""} ${activeClass}">${iconHtml}<span class="text-[11px] font-semibold ${isActive ? "text-gray-900" : "text-gray-600"}">${escapeHTML(displayLabel(cat.name))}</span></button>`;
             if (!isCustomSubCategory(currentType, currentMainCat, cat.name))
               return selectButton;
             return `<div class="category-tile-wrap">${selectButton}<button type="button" class="category-manage-button" aria-label="管理類別" onclick="event.stopPropagation(); openCustomCategoryEditor('sub', decodeURIComponent('${safeName}'))">⋯</button></div>`;
