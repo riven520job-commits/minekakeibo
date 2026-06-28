@@ -818,6 +818,51 @@
         padding: 13px;
         font-weight: 800;
       }
+      .credit-limit-card {
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: #fff;
+        padding: 16px;
+        margin: 0 0 14px;
+      }
+      .credit-limit-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 12px;
+      }
+      .credit-limit-grid span {
+        display: block;
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 700;
+      }
+      .credit-limit-grid strong {
+        display: block;
+        color: var(--ink);
+        font-size: 0.95rem;
+        overflow-wrap: anywhere;
+      }
+      .credit-limit-meter {
+        height: 8px;
+        border-radius: 9999px;
+        background: #f1f3f5;
+        overflow: hidden;
+        margin-top: 14px;
+      }
+      .credit-limit-meter > i {
+        display: block;
+        height: 100%;
+        width: var(--used, 0%);
+        border-radius: inherit;
+        background: #1f2933;
+      }
+      .account-setting-help {
+        color: var(--muted);
+        font-size: 0.92rem;
+        line-height: 1.7;
+        margin: 8px 0 14px;
+      }
       .account-info-row span:last-child {
         color: var(--muted);
         text-align: right;
@@ -1163,7 +1208,7 @@
         background: var(--panel);
       }
       .calculator-grid button {
-        min-height: clamp(50px, 7.2vh, 56px);
+        min-height: var(--calc-key-h, clamp(42px, 6.1dvh, 50px));
         border-right: 1px solid var(--line);
         border-bottom: 1px solid var(--line);
         font-size: clamp(1.22rem, 5.4vw, 1.42rem);
@@ -1194,7 +1239,7 @@
         outline-offset: -3px;
       }
       .calculator-readout {
-        min-height: 44px;
+        min-height: var(--calc-readout-h, 40px);
         border: 1px solid var(--line);
         border-radius: 16px;
         background: var(--panel);
@@ -1223,7 +1268,7 @@
         -webkit-overflow-scrolling: touch;
       }
       .quick-amounts button {
-        min-height: 40px;
+        min-height: var(--calc-quick-h, 36px);
         white-space: nowrap;
         border: 1px solid var(--line);
         background: var(--panel);
@@ -1308,9 +1353,9 @@
       .add-summary-tile:active,
       .add-long-field:active,
       .photo-tile:active {
-        border-color: #37352f;
-        background: #f7f6f3;
-        box-shadow: inset 0 2px 8px rgba(31, 41, 51, 0.06);
+        border-color: #9bd9f0;
+        background: #f5fbff;
+        box-shadow: inset 0 2px 8px rgba(90, 184, 214, 0.08);
         transform: translateY(1px);
       }
       .add-summary-tile.is-selected,
@@ -1318,27 +1363,17 @@
       .add-date-display.is-selected,
       #installment-trigger.is-selected {
         position: relative;
-        border-color: #37352f;
-        background: #fbfaf8;
-        box-shadow: 0 0 0 2px rgba(55, 53, 47, 0.06), 0 6px 16px rgba(55, 53, 47, 0.045);
+        border-color: #9bd9f0;
+        background: #f7fcff;
+        box-shadow:
+          0 0 0 3px rgba(90, 184, 214, 0.14),
+          0 8px 22px rgba(90, 184, 214, 0.12);
       }
       .add-summary-tile.is-selected::after,
       .add-long-field.is-selected::after,
       .add-date-display.is-selected::after,
       #installment-trigger.is-selected::after {
-        content: "";
-        position: absolute;
-        top: 10px;
-        right: 11px;
-        width: 8px;
-        height: 8px;
-        border-radius: 999px;
-        display: grid;
-        place-items: center;
-        background: #37352f;
-        color: transparent;
-        font-size: 0;
-        font-weight: 850;
+        content: none;
       }
       .add-summary-label {
         color: var(--muted);
@@ -1512,7 +1547,7 @@
         touch-action: pan-y;
       }
       #add-modal-body.calculator-visible {
-        padding-bottom: calc(min(52vh, 390px) + 28px + env(safe-area-inset-bottom));
+        padding-bottom: calc(var(--calc-panel-reserve, min(58dvh, 430px)) + 20px + env(safe-area-inset-bottom));
       }
       #category-buttons {
         grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -1543,31 +1578,20 @@
       #category-buttons button.is-selected > img,
       .sub-category-select.is-selected > div,
       .sub-category-select.is-selected > img {
-        border-color: #37352f !important;
-        background: #f7f6f3;
-        box-shadow: 0 0 0 4px rgba(55, 53, 47, 0.08);
+        border-color: #9bd9f0 !important;
+        background: #f7fcff;
+        box-shadow:
+          0 0 0 4px rgba(90, 184, 214, 0.16),
+          0 8px 20px rgba(90, 184, 214, 0.13);
       }
       #category-buttons button.is-selected,
       .sub-category-select.is-selected {
-        color: #37352f !important;
+        color: #243746 !important;
         font-weight: 850;
       }
       #category-buttons button.is-selected::after,
       .sub-category-select.is-selected::after {
-        content: "";
-        position: absolute;
-        top: 7px;
-        right: 14px;
-        width: 8px;
-        height: 8px;
-        border-radius: 999px;
-        display: grid;
-        place-items: center;
-        background: #37352f;
-        color: transparent;
-        font-size: 0;
-        font-weight: 850;
-        box-shadow: 0 1px 4px rgba(55, 53, 47, 0.12);
+        content: none;
       }
       .main-category-grid {
         display: grid;
@@ -1586,27 +1610,18 @@
         font-weight: 700;
       }
       .main-category-btn.active {
-        color: #37352f;
+        color: #243746;
         font-weight: 850;
       }
       .main-category-btn.active .main-category-icon {
-        border-color: #37352f;
-        box-shadow: 0 0 0 4px rgba(55, 53, 47, 0.08);
+        border-color: #9bd9f0;
+        background: #f7fcff;
+        box-shadow:
+          0 0 0 4px rgba(90, 184, 214, 0.16),
+          0 8px 20px rgba(90, 184, 214, 0.13);
       }
       .main-category-btn.active::after {
-        content: "";
-        position: absolute;
-        top: 8px;
-        right: 13px;
-        width: 8px;
-        height: 8px;
-        border-radius: 999px;
-        display: grid;
-        place-items: center;
-        background: #37352f;
-        color: transparent;
-        font-size: 0;
-        font-weight: 850;
+        content: none;
       }
       .main-category-btn {
         position: relative;
@@ -2021,18 +2036,22 @@
         color: #d6525b;
       }
       .calculator-panel-fixed {
+        --calc-key-h: clamp(42px, 6.1dvh, 50px);
+        --calc-readout-h: 40px;
+        --calc-quick-h: 36px;
         position: fixed;
         left: 50%;
         right: auto;
         bottom: 0 !important;
         z-index: 140;
         width: min(100vw, 448px);
-        max-height: min(52vh, 390px);
-        overflow: hidden;
+        max-height: calc(100dvh - 76px);
+        box-sizing: border-box;
+        overflow: visible;
         transform: translateX(-50%);
         background: rgba(243, 244, 246, 0.98);
         margin: 0;
-        padding: 10px 14px calc(14px + env(safe-area-inset-bottom));
+        padding: 8px 12px calc(24px + env(safe-area-inset-bottom));
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         border-top: 1px solid var(--line);
@@ -2041,15 +2060,14 @@
       }
       @media (max-width: 480px) {
         .calculator-grid button {
-          min-height: clamp(50px, 7vh, 56px);
-          font-size: clamp(1.22rem, 5.4vw, 1.38rem);
+          font-size: clamp(1.05rem, 4.8vw, 1.26rem);
         }
         .quick-amounts button {
-          min-height: 40px;
-          padding: 8px 14px;
+          padding: 7px 12px;
         }
         .calculator-panel-fixed {
-          padding-top: 10px;
+          --calc-key-h: clamp(40px, 5.9dvh, 48px);
+          padding-top: 8px;
         }
       }
       @media (max-height: 760px) {
@@ -2067,13 +2085,15 @@
         .add-note {
           min-height: 110px;
         }
+        .calculator-panel-fixed {
+          --calc-key-h: clamp(38px, 5.7dvh, 46px);
+          --calc-readout-h: 38px;
+          --calc-quick-h: 34px;
+        }
         .calculator-grid button {
-          min-height: 50px;
-          font-size: 1.28rem;
+          font-size: 1.12rem;
         }
         .calculator-readout {
-          min-height: 40px;
-        }
         .calculator-readout-value {
           font-size: 1.28rem;
         }
@@ -2081,26 +2101,27 @@
 
       @media (max-height: 680px) {
         .calculator-panel-fixed {
-          max-height: min(50vh, 350px);
-          padding-top: 8px;
+          --calc-key-h: clamp(34px, 5.35dvh, 40px);
+          --calc-readout-h: 34px;
+          --calc-quick-h: 32px;
+          padding-top: 6px;
+          padding-bottom: calc(18px + env(safe-area-inset-bottom));
         }
         .calculator-grid button {
-          min-height: 46px;
-          font-size: 1.18rem;
+          font-size: 1rem;
         }
         .calculator-readout {
-          min-height: 38px;
+          padding-block: 6px;
         }
         .calculator-readout-value {
-          font-size: 1.18rem;
+          font-size: 1.06rem;
         }
         .quick-amounts button {
-          min-height: 36px;
-          padding: 7px 12px;
-          font-size: 0.9rem;
+          padding: 6px 10px;
+          font-size: 0.86rem;
         }
         #add-modal-body.calculator-visible {
-          padding-bottom: calc(min(50vh, 350px) + 24px + env(safe-area-inset-bottom));
+          padding-bottom: calc(var(--calc-panel-reserve, min(60dvh, 410px)) + 20px + env(safe-area-inset-bottom));
         }
       }
       .project-picker {
@@ -3942,6 +3963,8 @@
           archived: false,
           showWidget: true,
           autoDebit: false,
+          autoDebitAccount: "",
+          nonBusinessDayDebit: "original",
           carryOver: false,
         };
       }
@@ -7665,6 +7688,63 @@
         return formatLocalDate(current).replace(/-/g, "/");
       }
 
+      function accountCreditMembers(acc) {
+        const setting = ensureAccountSetting(acc);
+        return [...new Set([acc].concat(setting.sharedLimitAccounts || []))]
+          .filter(Boolean)
+          .filter((item) => userAccounts.includes(item));
+      }
+
+      function accountCreditUsage(acc) {
+        const balances = computeAccountBalances(todayString());
+        const members = accountCreditMembers(acc);
+        const used = members.reduce(
+          (sum, item) => sum + Math.abs(Math.min(0, balances[item] || 0)),
+          0,
+        );
+        const limit = Math.max(0, Number(ensureAccountSetting(acc).creditLimit || 0));
+        return {
+          limit,
+          used,
+          remaining: limit ? Math.max(0, limit - used) : 0,
+          ratio: limit ? Math.min(100, Math.max(0, (used / limit) * 100)) : 0,
+          members,
+        };
+      }
+
+      function creditLimitSummaryCard(acc, currency) {
+        const usage = accountCreditUsage(acc);
+        const memberText =
+          usage.members.length > 1 ? `共用 ${usage.members.length} 張卡` : "單一卡片";
+        return `
+          <div class="credit-limit-card">
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <div class="text-sm font-bold text-gray-400">信用額度</div>
+                <div class="text-xl font-extrabold text-gray-900">${formatPrivateMoney(usage.limit || 0, currency)}</div>
+              </div>
+              <button type="button" class="px-3 py-2 rounded-xl bg-gray-100 font-bold text-sm" onclick="openAccountNumberEditor('creditLimit')">手動設定</button>
+            </div>
+            <div class="credit-limit-meter" style="--used:${usage.ratio}%"><i></i></div>
+            <div class="credit-limit-grid">
+              <div><span>已使用</span><strong class="text-red-500">${formatPrivateMoney(usage.used, currency)}</strong></div>
+              <div><span>可用</span><strong>${formatPrivateMoney(usage.remaining, currency)}</strong></div>
+              <div><span>共用</span><strong>${escapeHTML(memberText)}</strong></div>
+            </div>
+          </div>
+        `;
+      }
+
+      function nonBusinessDayDebitLabel(mode) {
+        return (
+          {
+            original: "依原日期",
+            previous: "提前至前一工作日",
+            next: "順延至下一工作日",
+          }[mode || "original"] || "依原日期"
+        );
+      }
+
       function renderAccountInfoTab(acc) {
         const balances = computeAccountBalances(todayString());
         const currency = getAccountCurrency(acc);
@@ -7741,8 +7821,16 @@
             ),
             accountInfoButton(
               "自動扣繳",
-              setting.autoDebit ? "開啟" : "無",
-              'toggleAccountSetting("autoDebit")',
+              setting.autoDebitAccount
+                ? displayLabel(setting.autoDebitAccount)
+                : t("uncategorized"),
+              "openAutoDebitAccountPicker()",
+            ),
+            accountInfoButton(
+              "－ 遇非工作日扣繳",
+              nonBusinessDayDebitLabel(setting.nonBusinessDayDebit),
+              "openNonBusinessDayDebitPicker()",
+              true,
             ),
             accountInfoButton(
               "紅利回饋",
@@ -7785,6 +7873,7 @@
                     <div class="account-detail-total ${balances[acc] < 0 ? "text-red-500" : ""}">${formatPrivateMoney(balances[acc] || 0, currency).replace(currency, "")}</div>
                     <div class="mt-3 text-sm text-gray-300">請在這裡填寫備註事項</div>
                 </div>
+                ${setting.isCredit ? creditLimitSummaryCard(acc, currency) : ""}
                 <div class="space-y-1">${rows.join("")}</div>
             `;
       }
@@ -8071,26 +8160,32 @@
         const acc = activeAccountDetail.account;
         const setting = ensureAccountSetting(acc);
         const isInitial = kind === "initial";
+        const isCreditLimit = kind === "creditLimit";
         const value = isInitial
           ? accountInitials[acc] || 0
           : setting.creditLimit || 0;
         const title = isInitial ? t("initialPrefix") : "信用額度";
+        const currency = currencyCodeFromSymbol(getAccountCurrency(acc));
         openAccountSettingModal(
           title,
-          `<input id="account-setting-input" type="number" inputmode="decimal" class="account-setting-input" value="${value}">`,
+          `<p class="account-setting-help">${isCreditLimit ? "手動設定這張信用卡的總額度。若有共用額度，會一起計算已使用與可用額度。" : "調整此帳戶建立時的初始金額。"}</p><div class="account-setting-input flex items-center justify-between gap-3"><span class="text-gray-400">${currency}</span><input id="account-setting-input" type="number" inputmode="decimal" value="${value}" class="min-w-0 flex-1 text-right outline-none bg-transparent font-extrabold"></div>`,
           () => {
             const next = parseFloat(
               document.getElementById("account-setting-input")?.value || "0",
             );
             if (!Number.isFinite(next)) return;
             if (isInitial) accountInitials[acc] = next;
-            else setting.creditLimit = next;
+            else setting.creditLimit = Math.max(0, next);
             saveAccountMeta();
             closeAccountSettingModal();
             updateBalances();
             renderAccountDetail();
           },
           true,
+        );
+        setTimeout(
+          () => document.getElementById("account-setting-input")?.focus(),
+          80,
         );
       }
       function openAccountCurrencyPicker() {
@@ -8215,13 +8310,14 @@
         const acc = activeAccountDetail.account;
         const setting = ensureAccountSetting(acc);
         const current = new Set(setting.sharedLimitAccounts || []);
-        const choices = userAccounts.filter(
-          (item) =>
-            item !== acc && (accountGroupMap[item] || "").includes("信用卡"),
-        );
+        const choices = userAccounts.filter((item) => {
+          if (item === acc) return false;
+          const other = ensureAccountSetting(item);
+          return other.isCredit || (accountGroupMap[item] || "").includes("信用卡");
+        });
         openAccountSettingModal(
           "額度共用",
-          `<div class="flex justify-between text-gray-400 mb-3"><span>總共 ${choices.length} 項</span><button onclick="selectAllSharedLimit()">全部選取</button></div>${choices.map((item) => `<button class="account-setting-option ${current.has(item) ? "active" : ""}" data-shared-account="${escapeHTML(item)}" onclick="this.classList.toggle('active')"><span class="font-bold">${escapeHTML(displayLabel(item))}</span><span>✓</span></button>`).join("")}`,
+          `<div class="flex justify-between text-gray-400 mb-3"><span>總共 ${choices.length} 項</span><button onclick="selectAllSharedLimit()">全部選取</button></div>${choices.map((item) => `<button class="account-setting-option ${current.has(item) ? "active" : ""}" data-shared-account="${escapeHTML(item)}" onclick="this.classList.toggle('active')"><span class="font-bold">${escapeHTML(displayLabel(item))}</span><span>${current.has(item) ? "✓" : ""}</span></button>`).join("") || '<div class="text-center text-gray-400 py-8">尚無其他信用卡帳戶</div>'}`,
           () => {
             setting.sharedLimitAccounts = [
               ...document.querySelectorAll(
@@ -8242,6 +8338,65 @@
           )
           .forEach((el) => el.classList.add("active"));
       }
+
+      function openAutoDebitAccountPicker() {
+        const acc = activeAccountDetail.account;
+        const setting = ensureAccountSetting(acc);
+        const current = setting.autoDebitAccount || "";
+        const choices = [""].concat(userAccounts.filter((item) => item !== acc));
+        openAccountSettingModal(
+          "自動扣繳",
+          choices
+            .map(
+              (item) =>
+                `<button class="account-setting-option ${item === current ? "active" : ""}" onclick="setAutoDebitAccountFromPicker(decodeURIComponent('${encodeURIComponent(item)}'))"><span class="font-bold">${item ? escapeHTML(displayLabel(item)) : "無"}</span><span>${item === current ? "✓" : "›"}</span></button>`,
+            )
+            .join(""),
+        );
+      }
+
+      function setAutoDebitAccountFromPicker(value) {
+        const setting = ensureAccountSetting(activeAccountDetail.account);
+        setting.autoDebitAccount = value;
+        setting.autoDebit = !!value;
+        persistAccountSettings();
+        closeAccountSettingModal();
+        renderAccountDetail();
+      }
+
+      function openNonBusinessDayDebitPicker() {
+        const setting = ensureAccountSetting(activeAccountDetail.account);
+        const choices = [
+          ["original", "依原日期"],
+          ["previous", "提前至前一工作日"],
+          ["next", "順延至下一工作日"],
+        ];
+        openAccountSettingModal(
+          "遇非工作日扣繳",
+          choices
+            .map(
+              ([value, label]) =>
+                `<button class="account-setting-option ${setting.nonBusinessDayDebit === value ? "active" : ""}" onclick="setNonBusinessDayDebitMode('${value}')"><span class="font-bold">${label}</span><span>${setting.nonBusinessDayDebit === value ? "✓" : "›"}</span></button>`,
+            )
+            .join(""),
+        );
+      }
+
+      function setNonBusinessDayDebitMode(value) {
+        const setting = ensureAccountSetting(activeAccountDetail.account);
+        setting.nonBusinessDayDebit = value || "original";
+        persistAccountSettings();
+        closeAccountSettingModal();
+        renderAccountDetail();
+      }
+
+      function openCreditOffsetTip() {
+        openAccountSettingModal(
+          "小提示",
+          `<div class="text-center py-3"><div class="mx-auto mb-4 w-20 h-20 rounded-full bg-gray-100 grid place-items-center text-4xl font-black">i</div><p class="account-setting-help text-left">針對收入、回饋、折扣、退款等類型的進項交易，會自動折抵最新一期的帳單，並出現在繳款記錄內。</p><button type="button" class="w-full rounded-2xl bg-gray-200 py-3 font-extrabold" onclick="closeAccountSettingModal()">我知道了</button></div>`,
+        );
+      }
+
       function toggleAccountSetting(key) {
         const acc = activeAccountDetail.account;
         const setting = ensureAccountSetting(acc);
@@ -8251,6 +8406,7 @@
         persistAccountSettings();
         renderAccountDetail();
         updateBalances();
+        if (key === "carryOver" && setting[key]) openCreditOffsetTip();
       }
 
       window.openAccountDetail = openAccountDetail;
@@ -8280,6 +8436,11 @@
       window.setPrimaryAccountFromPicker = setPrimaryAccountFromPicker;
       window.openSharedLimitPicker = openSharedLimitPicker;
       window.selectAllSharedLimit = selectAllSharedLimit;
+      window.openAutoDebitAccountPicker = openAutoDebitAccountPicker;
+      window.setAutoDebitAccountFromPicker = setAutoDebitAccountFromPicker;
+      window.openNonBusinessDayDebitPicker = openNonBusinessDayDebitPicker;
+      window.setNonBusinessDayDebitMode = setNonBusinessDayDebitMode;
+      window.openCreditOffsetTip = openCreditOffsetTip;
       window.toggleAccountSetting = toggleAccountSetting;
       window.renameAccountGroup = renameAccountGroup;
       window.deleteAccountGroup = deleteAccountGroup;
@@ -10178,14 +10339,14 @@
           .map((cat) => {
             const isActive = cat.name === currentSubCatName;
             const activeClass = isActive
-              ? "border-gray-900 bg-gray-50 shadow-sm"
+              ? "border-sky-200 bg-sky-50 shadow-[0_0_0_4px_rgba(90,184,214,0.14)]"
               : "border-transparent bg-white hover:bg-gray-50";
             const safeIcon = cat.icon || "📝";
             const iconHtml = safeIcon.startsWith("data:image")
               ? `<img src="${safeIcon}" class="w-7 h-7 object-cover rounded-full mb-1 border border-gray-200 shadow-sm">`
               : `<div class="text-2xl mb-1">${escapeHTML(safeIcon)}</div>`;
             const safeName = encodeURIComponent(cat.name);
-            const selectButton = `<button type="button" onclick="selectSubCat(decodeURIComponent('${safeName}'), decodeURIComponent('${encodeURIComponent(safeIcon)}'))" class="sub-category-select relative flex flex-col items-center justify-center min-h-[82px] p-3 rounded-2xl border-2 transition ${isActive ? "is-selected" : ""} ${activeClass}">${iconHtml}<span class="text-[11px] font-semibold ${isActive ? "text-gray-900" : "text-gray-600"}">${escapeHTML(displayLabel(cat.name))}</span></button>`;
+            const selectButton = `<button type="button" onclick="selectSubCat(decodeURIComponent('${safeName}'), decodeURIComponent('${encodeURIComponent(safeIcon)}'))" class="sub-category-select relative flex flex-col items-center justify-center min-h-[82px] p-3 rounded-2xl border-2 transition ${isActive ? "is-selected" : ""} ${activeClass}">${iconHtml}<span class="text-[11px] font-semibold ${isActive ? "text-slate-700" : "text-gray-600"}">${escapeHTML(displayLabel(cat.name))}</span></button>`;
             if (!isCustomSubCategory(currentType, currentMainCat, cat.name))
               return selectButton;
             return `<div class="category-tile-wrap">${selectButton}<button type="button" class="category-manage-button" aria-label="管理類別" onclick="event.stopPropagation(); openCustomCategoryEditor('sub', decodeURIComponent('${safeName}'))">⋯</button></div>`;
@@ -11156,7 +11317,7 @@
         showToast(t("toastExported"));
       }
 
-      const APP_VERSION = "20260626-02";
+      const APP_VERSION = "20260628-05";
 
       function registerServiceWorker() {
         if (!("serviceWorker" in navigator) || location.protocol === "file:")
