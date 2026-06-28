@@ -209,6 +209,34 @@
         color: var(--accent);
         background: #f3f4f6;
       }
+      .notion-icon-svg {
+        width: 1.65em;
+        height: 1.65em;
+        display: inline-block;
+        color: #242a31;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 1.85;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        vertical-align: middle;
+      }
+      .nav-icon-svg {
+        width: 1.45rem;
+        height: 1.45rem;
+        color: currentColor;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 1.9;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        margin-bottom: 0.2rem;
+      }
+      .record-detail-muted .notion-icon-svg {
+        width: 1.1rem;
+        height: 1.1rem;
+        margin-right: 0.35rem;
+      }
       .nav-fab {
         width: 68px;
         height: 68px;
@@ -2277,7 +2305,7 @@
                   class="w-10 h-10 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center text-lg cursor-pointer"
                   aria-label="開啟日期選擇器"
                 >
-                  📅
+                  <svg class="notion-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v4"/><path d="M17 3v4"/><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/></svg>
                   <input
                     type="date"
                     id="dashboard-date-input"
@@ -2495,7 +2523,7 @@
           <div class="space-y-4">
             <div class="add-compose-grid">
               <label class="photo-tile" aria-label="上傳或拍攝照片">
-                📷
+                <svg class="notion-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l1.4-2h7.2L17 7h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h2z"/><circle cx="12" cy="13" r="3.5"/></svg>
                 <input type="file" id="photo" accept="image/*" class="hidden" />
               </label>
               <div class="space-y-3 min-w-0">
@@ -2571,7 +2599,7 @@
                     class="add-summary-tile"
                   >
                     <span class="add-summary-label" data-i18n="toAccount"
-                      >➡️ 轉入帳戶</span
+                      >轉入帳戶</span
                     >
                     <span
                       id="selected-to-account-summary"
@@ -2837,7 +2865,7 @@
             onclick="exportData()"
             class="surface w-full text-left p-4 mb-3 hover:bg-gray-50 transition flex items-center justify-between"
           >
-            <span data-i18n="exportCsv">📥 匯出 CSV 報表</span
+            <span data-i18n="exportCsv">匯出 CSV 報表</span
             ><span class="text-gray-300">›</span>
           </button>
 
@@ -3064,7 +3092,7 @@
             onclick="clearAllData()"
             class="w-full text-left p-4 border border-red-100 text-red-500 rounded-2xl hover:bg-red-50 shadow-sm transition flex items-center justify-between"
           >
-            <span data-i18n="resetData">🗑️ 重置所有系統資料</span
+            <span data-i18n="resetData">重置所有系統資料</span
             ><span class="text-red-200">›</span>
           </button>
         </section>
@@ -3460,14 +3488,14 @@
                 class="account-detail-action text-xl"
                 aria-label="Info"
               >
-                ▤
+                <svg class="notion-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14"/><path d="M5 12h14"/><path d="M5 18h10"/><circle cx="18" cy="18" r="1.5"/></svg>
               </button>
               <button
                 onclick="openAccountMoreMenu()"
                 class="account-detail-action text-xl"
                 aria-label="More"
               >
-                ☰
+                <svg class="notion-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14"/><path d="M5 12h14"/><path d="M5 17h14"/></svg>
               </button>
             </div>
           </div>
@@ -3504,7 +3532,7 @@
           <div
             class="mx-auto -mt-14 mb-5 w-24 h-24 rounded-full bg-[#eaf7fb] border-4 border-white grid place-items-center text-4xl"
           >
-            ☰
+            <svg class="notion-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14"/><path d="M5 12h14"/><path d="M5 17h14"/></svg>
           </div>
           <h2
             class="text-center text-2xl font-bold mb-5"
@@ -3521,7 +3549,7 @@
               class="account-more-option"
             >
               <span class="flex items-center gap-3"
-                ><span class="account-more-icon">⚖</span
+                ><span class="account-more-icon"><svg class="notion-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16"/><path d="M5 8h14"/><path d="M7 8l-3 6h6L7 8z"/><path d="M17 8l-3 6h6l-3-6z"/></svg></span
                 ><span data-i18n="adjustBalance">調整餘額</span></span
               ><span>›</span>
             </button>
@@ -3533,7 +3561,7 @@
               class="account-more-option"
             >
               <span class="flex items-center gap-3"
-                ><span class="account-more-icon">✓</span
+                ><span class="account-more-icon"><svg class="notion-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4L19 6"/></svg></span
                 ><span data-i18n="reconciliationMode">對帳模式</span></span
               ><span>›</span>
             </button>
@@ -3551,7 +3579,7 @@
               class="account-more-option"
             >
               <span class="flex items-center gap-3"
-                ><span class="account-more-icon">↻</span
+                ><span class="account-more-icon"><svg class="notion-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 1-13.6 5.7"/><path d="M4 12A8 8 0 0 1 17.6 6.3"/><path d="M17 3v4h4"/><path d="M7 21v-4H3"/></svg></span
                 ><span data-i18n="recalculateBalance">重新計算餘額</span></span
               ><span>›</span>
             </button>
@@ -3563,7 +3591,7 @@
               class="account-more-option danger"
             >
               <span class="flex items-center gap-3"
-                ><span class="account-more-icon">×</span
+                ><span class="account-more-icon"><svg class="notion-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6L6 18"/></svg></span
                 ><span data-i18n="deleteAccount">刪除帳戶</span></span
               ><span>›</span>
             </button>
@@ -3677,7 +3705,7 @@
               onclick="closeMonthlyReportModal()"
               class="w-10 h-10 rounded-full border border-gray-100 bg-gray-50 text-gray-500 text-xl"
             >
-              ☰
+              <svg class="notion-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14"/><path d="M5 12h14"/><path d="M5 17h14"/></svg>
             </button>
           </div>
           <div
@@ -3735,16 +3763,14 @@
           onclick="switchPage('dashboard')"
           class="nav-btn p-2 text-xs font-semibold flex flex-col items-center justify-center"
         >
-          <span class="text-lg mb-1">📊</span
-          ><span data-i18n="navDashboard">總覽</span>
+          <svg class="nav-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V9"/><path d="M10 19V5"/><path d="M16 19v-7"/><path d="M3 19h18"/></svg><span data-i18n="navDashboard">總覽</span>
         </button>
         <button
           data-page="projects"
           onclick="switchPage('projects')"
           class="nav-btn p-2 text-xs font-semibold flex flex-col items-center justify-center"
         >
-          <span class="text-lg mb-1">🐖</span
-          ><span data-i18n="navProjects">專案</span>
+          <svg class="nav-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 18V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v11"/><path d="M8 9h8"/><path d="M8 13h6"/><path d="M7 21h10"/></svg><span data-i18n="navProjects">專案</span>
         </button>
         <button
           data-page="record"
@@ -3759,16 +3785,14 @@
           onclick="openMonthlyReportModal()"
           class="nav-btn p-2 text-xs font-semibold flex flex-col items-center justify-center"
         >
-          <span class="text-lg mb-1">📈</span
-          ><span data-i18n="navMonthly">月報</span>
+          <svg class="nav-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16"/><path d="M6 16l4-4 3 3 5-7"/><path d="M18 8v5h-5"/></svg><span data-i18n="navMonthly">月報</span>
         </button>
         <button
           data-page="more"
           onclick="switchPage('more')"
           class="nav-btn p-2 text-xs font-semibold flex flex-col items-center justify-center"
         >
-          <span class="text-lg mb-1">⚙️</span
-          ><span data-i18n="navMore">設定</span>
+          <svg class="nav-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v3"/><path d="M12 18v3"/><path d="M3 12h3"/><path d="M18 12h3"/><path d="M5.6 5.6l2.1 2.1"/><path d="M16.3 16.3l2.1 2.1"/><path d="M18.4 5.6l-2.1 2.1"/><path d="M7.7 16.3l-2.1 2.1"/></svg><span data-i18n="navMore">設定</span>
         </button>
       </nav>
     </div>
@@ -4729,8 +4753,8 @@
           notePlaceholder: "備註",
           paymentMethod: "付款方式",
           subAccountLabel: "子帳戶",
-          transferFrom: "📤 轉出帳戶",
-          toAccount: "➡️ 轉入帳戶",
+          transferFrom: "轉出帳戶",
+          toAccount: "轉入帳戶",
           toSubAccountLabel: "轉入子帳戶",
           accountPickerTitle: "選擇帳戶",
           accountPickerToTitle: "選擇轉入帳戶",
@@ -4777,7 +4801,7 @@
           ],
           settingsKicker: "Settings",
           settingsTitle: "系統設定",
-          exportCsv: "📥 匯出 CSV 報表",
+          exportCsv: "匯出 CSV 報表",
           cloudSyncTitle: "雲端同步",
           cloudSyncHint: "登入後可在手機與電腦同步資料",
           cloudSignedOut: "尚未登入",
@@ -4813,7 +4837,7 @@
           accountGroupsHint:
             "建立現金、信用卡、交通卡等大分類，並在底下新增子帳戶",
           addButton: "新增",
-          resetData: "🗑️ 重置所有系統資料",
+          resetData: "重置所有系統資料",
           navRecord: "記帳",
           navDashboard: "總覽",
           navAdd: "新增",
@@ -5068,8 +5092,8 @@
           notePlaceholder: "メモ",
           paymentMethod: "支払い方法",
           subAccountLabel: "子口座",
-          transferFrom: "📤 振替元口座",
-          toAccount: "➡️ 振替先口座",
+          transferFrom: "振替元口座",
+          toAccount: "振替先口座",
           toSubAccountLabel: "振替先の子口座",
           accountPickerTitle: "口座を選択",
           accountPickerToTitle: "振替先口座を選択",
@@ -5118,7 +5142,7 @@
           ],
           settingsKicker: "設定",
           settingsTitle: "設定",
-          exportCsv: "📥 CSV レポートを書き出す",
+          exportCsv: "CSV レポートを書き出す",
           cloudSyncTitle: "クラウド同期",
           cloudSyncHint: "ログインするとスマホとPCでデータを同期できます",
           cloudSignedOut: "未ログイン",
@@ -5162,7 +5186,7 @@
           accountGroupsHint:
             "現金、カード、交通カードなどの分類を作り、その下に子口座を追加できます",
           addButton: "追加",
-          resetData: "🗑️ すべてのデータをリセット",
+          resetData: "すべてのデータをリセット",
           navRecord: "記帳",
           navDashboard: "総覧",
           navAdd: "追加",
@@ -5390,11 +5414,22 @@
         return typeof value === "function" ? value(...args) : value;
       }
 
+      function stripLeadingEmojiLabel(value) {
+        const text = String(value ?? "");
+        return (
+          text
+            .replace(/^[\s\p{Extended_Pictographic}\p{Emoji_Presentation}\uFE0F\u200D]+/gu, "")
+            .trim() || text
+        );
+      }
+
       function displayLabel(value) {
         const labels = labelTranslations || {};
-        return currentLang === "ja"
-          ? (labels.ja && labels.ja[value]) || value
-          : value;
+        const label =
+          currentLang === "ja"
+            ? (labels.ja && labels.ja[value]) || value
+            : value;
+        return stripLeadingEmojiLabel(label);
       }
 
       function internalLabel(value) {
@@ -5713,7 +5748,7 @@
         const ratio = budget > 0 ? Math.min(Math.max(spent / budget, 0), 1) : 0;
         container.innerHTML = `
                 <button type="button" onclick="openBudgetProjectRecords('${preferred.id}')" class="daily-project-card w-full text-left tap-target">
-                    <span class="daily-project-icon">🐖</span>
+                    <span class="daily-project-icon">${categoryIconHtml("💰")}</span>
                     <span class="min-w-0">
                         <span class="block text-lg font-semibold truncate">${escapeHTML(preferred.name)}</span>
                         <span class="block text-xs text-gray-500 mt-1">${t("projectRemaining")} <strong class="text-gray-800">${formatPrivateJPY(Math.max(remaining, 0), "¥")}</strong></span>
@@ -5752,7 +5787,7 @@
             const safeIcon = item.subCatIcon || "📝";
             const iconHtml = safeIcon.startsWith("data:image")
               ? `<img src="${safeIcon}" class="w-9 h-9 rounded-full object-cover">`
-              : `<span class="text-xl">${escapeHTML(safeIcon)}</span>`;
+              : `<span class="text-xl">${categoryIconHtml(safeIcon)}</span>`;
             return `
                     <button onclick="openRecordDetail(${index})" class="w-full text-left flex items-center justify-between gap-3 p-3 rounded-2xl hover:bg-gray-50 transition">
                         <span class="flex items-center gap-3 min-w-0">
@@ -5842,7 +5877,7 @@
         const safeIcon = item.subCatIcon || "📝";
         const iconHtml = safeIcon.startsWith("data:image")
           ? `<img src="${safeIcon}" class="w-20 h-20 rounded-full object-cover">`
-          : `<span class="text-5xl">${escapeHTML(safeIcon)}</span>`;
+          : `<span class="text-5xl">${categoryIconHtml(safeIcon)}</span>`;
         const detailTime = item.time || "--:--";
         const detailNote = item.note
           ? `
@@ -5871,12 +5906,12 @@
                         <div class="text-2xl font-bold shrink-0">${sign}${formatPrivateMoney(item.price, item.currency)}</div>
                     </div>
                     <div class="record-detail-divider border-t pt-4 grid grid-cols-2 gap-3 text-sm">
-                        <div class="record-detail-muted">💳 ${escapeHTML(displayLabel(item.account || t("uncategorized")))}</div>
-                        <div class="record-detail-muted">🏷 ${project ? escapeHTML(project.name) : "-"}</div>
-                        <div class="record-detail-muted">📅 ${escapeHTML(formatEntryDateLabel(item.date))}</div>
-                        <div class="record-detail-muted">🕒 ${escapeHTML(detailTime)}</div>
-                        <div class="record-detail-muted">🗂 ${escapeHTML(displayLabel(item.subCatName || item.mainCat || t("uncategorized")))}</div>
-                        <div class="record-detail-muted">🏪 ${escapeHTML(displayLabel(item.merchant || "---"))}</div>
+                        <div class="record-detail-muted">${notionIconSvg("💳")} ${escapeHTML(displayLabel(item.account || t("uncategorized")))}</div>
+                        <div class="record-detail-muted">${notionIconSvg("🏷")} ${project ? escapeHTML(project.name) : "-"}</div>
+                        <div class="record-detail-muted">${notionIconSvg("📅")} ${escapeHTML(formatEntryDateLabel(item.date))}</div>
+                        <div class="record-detail-muted">${notionIconSvg("🕒")} ${escapeHTML(detailTime)}</div>
+                        <div class="record-detail-muted">${notionIconSvg("🗂")} ${escapeHTML(displayLabel(item.subCatName || item.mainCat || t("uncategorized")))}</div>
+                        <div class="record-detail-muted">${notionIconSvg("🏪")} ${escapeHTML(displayLabel(item.merchant || "---"))}</div>
                     </div>
                     ${detailNote}
                 </div>
@@ -10250,11 +10285,81 @@
         renderTypes();
       }
 
+      function iconNameFromLegacyIcon(icon) {
+        const raw = String(icon || "");
+        const has = (...items) => items.some((item) => raw.includes(item));
+        if (!raw || raw === "?" || raw.includes("•••")) return "more";
+        if (has("🍞", "🍔", "🍕", "🍩", "🍜", "🍣", "🍖", "🍰", "🍽", "🥛")) return "utensils";
+        if (has("🥤", "🍺", "☕")) return "cup";
+        if (has("🍌", "水果")) return "leaf";
+        if (has("⛽", "🅿", "🚆", "🚇", "🚗", "🚕", "🚌", "🛵", "🚲", "✈", "⛴", "🚊", "🚏")) return "transport";
+        if (has("🍿", "🎡", "🖼", "🎮", "🎤", "🎧", "🧩", "🪩")) return "spark";
+        if (has("👕", "👜", "💄", "🧻", "🎁", "🛒")) return "shopping";
+        if (has("📱", "💻")) return "phone";
+        if (has("💇", "🏋", "🛡", "⭐", "👤", "👥", "❤️", "🧘")) return "user";
+        if (has("🏥", "💊", "🦷", "🩺")) return "medical";
+        if (has("🏠", "🛋", "🧺", "🛠", "🏨", "🏡")) return "home";
+        if (has("🧸", "🐾", "👨‍👩‍👧")) return "family";
+        if (has("💧", "⚡", "🔥", "🌐", "📞", "🧴")) return "utility";
+        if (has("📚", "🎓", "✏", "📝", "📖", "📐", "🖊", "🧠")) return "book";
+        if (has("🎟", "📈")) return "chart";
+        if (has("💸", "💰", "💵", "💴")) return "money";
+        if (has("🏦")) return "bank";
+        if (has("🤝")) return "handshake";
+        if (has("🔄", "↔")) return "transfer";
+        if (has("⚙", "▭")) return "settings";
+        if (has("🏷")) return "tag";
+        if (has("📅")) return "calendar";
+        if (has("🕒", "🕘")) return "clock";
+        if (has("🗂")) return "folder";
+        if (has("🏪")) return "store";
+        if (has("📥")) return "download";
+        if (has("🗑")) return "trash";
+        if (has("💳", "🪪")) return "card";
+        return "circle";
+      }
+
+      function notionIconSvg(icon, className = "notion-icon-svg") {
+        const name = iconNameFromLegacyIcon(icon);
+        const paths = {
+          more: '<circle cx="6" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="18" cy="12" r="1.2"/>',
+          utensils: '<path d="M7 3v8"/><path d="M4.5 3v4.5a2.5 2.5 0 0 0 5 0V3"/><path d="M7 11v10"/><path d="M16 3v18"/><path d="M16 3c2.2 1.6 3.4 4.4 3 7.2-.2 1.5-1.2 2.8-3 3.4"/>',
+          cup: '<path d="M5 8h11v6a5 5 0 0 1-5 5H10a5 5 0 0 1-5-5V8z"/><path d="M16 10h2a2 2 0 0 1 0 4h-2"/><path d="M8 4c.8.8.8 1.6 0 2.4"/><path d="M12 4c.8.8.8 1.6 0 2.4"/>',
+          leaf: '<path d="M5 18C8 9 14 5 20 5c0 6-4 12-13 15"/><path d="M7 17c3-3 6-5 10-7"/>',
+          transport: '<path d="M5 16V7a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v9"/><path d="M4 16h16"/><circle cx="8" cy="18" r="1.4"/><circle cx="16" cy="18" r="1.4"/><path d="M8 8h8"/>',
+          spark: '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15z"/>',
+          shopping: '<path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8a3 3 0 0 1 6 0"/><path d="M9 13h6"/>',
+          phone: '<rect x="8" y="3" width="8" height="18" rx="2"/><path d="M11 18h2"/>',
+          user: '<circle cx="12" cy="8" r="3.2"/><path d="M5 20a7 7 0 0 1 14 0"/>',
+          medical: '<path d="M12 5v14"/><path d="M5 12h14"/><rect x="4" y="4" width="16" height="16" rx="4"/>',
+          home: '<path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/><path d="M10 20v-6h4v6"/>',
+          family: '<circle cx="9" cy="8" r="2.5"/><circle cx="16" cy="9" r="2"/><path d="M4 20a5 5 0 0 1 10 0"/><path d="M13 20a4 4 0 0 1 7 0"/>',
+          utility: '<path d="M13 2L5 14h6l-1 8 8-12h-6l1-8z"/>',
+          book: '<path d="M5 4h10a4 4 0 0 1 4 4v12H9a4 4 0 0 0-4-4V4z"/><path d="M5 4v12"/><path d="M9 8h6"/><path d="M9 12h5"/>',
+          chart: '<path d="M4 19h16"/><path d="M6 16l4-4 3 3 5-7"/><path d="M18 8v5h-5"/>',
+          money: '<rect x="4" y="6" width="16" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M7 9h.01"/><path d="M17 15h.01"/>',
+          bank: '<path d="M4 9l8-5 8 5"/><path d="M6 10h12"/><path d="M7 10v7"/><path d="M12 10v7"/><path d="M17 10v7"/><path d="M5 19h14"/>',
+          handshake: '<path d="M8 12l3-3 3 3"/><path d="M3 12l4-4 4 4-4 4-4-4z"/><path d="M13 12l4-4 4 4-4 4-4-4z"/><path d="M9 15l2 2a2 2 0 0 0 3 0l2-2"/>',
+          transfer: '<path d="M7 7h12l-3-3"/><path d="M17 17H5l3 3"/><path d="M19 7l-3 3"/><path d="M5 17l3-3"/>',
+          settings: '<circle cx="12" cy="12" r="3"/><path d="M12 3v3"/><path d="M12 18v3"/><path d="M3 12h3"/><path d="M18 12h3"/><path d="M5.6 5.6l2.1 2.1"/><path d="M16.3 16.3l2.1 2.1"/><path d="M18.4 5.6l-2.1 2.1"/><path d="M7.7 16.3l-2.1 2.1"/>',
+          card: '<rect x="3.5" y="6" width="17" height="12" rx="2"/><path d="M3.5 10h17"/><path d="M7 14h4"/><path d="M15 14h2"/>',
+          tag: '<path d="M20 13l-7 7-9-9V4h7l9 9z"/><circle cx="8.5" cy="8.5" r="1.4"/>',
+          calendar: '<path d="M7 3v4"/><path d="M17 3v4"/><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/>',
+          clock: '<circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/>',
+          folder: '<path d="M4 6h6l2 2h8v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6z"/>',
+          store: '<path d="M5 10h14l-1-5H6l-1 5z"/><path d="M6 10v10h12V10"/><path d="M9 20v-5h6v5"/><path d="M4 10h16"/>',
+          download: '<path d="M12 3v11"/><path d="M8 10l4 4 4-4"/><path d="M5 19h14"/>',
+          trash: '<path d="M5 7h14"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M8 7l1 13h6l1-13"/><path d="M9 7V4h6v3"/>',
+          circle: '<circle cx="12" cy="12" r="7"/><path d="M12 8v4l3 2"/>',
+        };
+        return `<svg class="${className}" viewBox="0 0 24 24" aria-hidden="true">${paths[name] || paths.circle}</svg>`;
+      }
+
       function categoryIconHtml(icon) {
-        if (!icon) return "<span>•••</span>";
+        if (!icon) return notionIconSvg("•••");
         if (icon.startsWith?.("data:image"))
           return `<img src="${icon}" class="w-8 h-8 rounded-full object-cover">`;
-        return `<span>${escapeHTML(icon)}</span>`;
+        return notionIconSvg(icon);
       }
       function getMainCategoryMeta(name) {
         return mainCategoryMeta[name] || { icon: "•••", color: "#f3f4f6" };
@@ -11317,7 +11422,7 @@
         showToast(t("toastExported"));
       }
 
-      const APP_VERSION = "20260628-05";
+      const APP_VERSION = "20260628-09";
 
       function registerServiceWorker() {
         if (!("serviceWorker" in navigator) || location.protocol === "file:")
