@@ -1,4 +1,4 @@
-const CACHE_NAME = 'minekakeibo-v20260628-09';
+const CACHE_NAME = 'minekakeibo-v20260629-04';
 const APP_SHELL = [
   './',
   './index.html',
@@ -6,7 +6,23 @@ const APP_SHELL = [
   './icons/favicon-32.png',
   './icons/apple-touch-icon.png',
   './icons/icon-192.png',
-  './icons/icon-512.png'
+  './icons/icon-512.png',
+  './assets/category-icons/food.png',
+  './assets/category-icons/breakfast.png',
+  './assets/category-icons/lunch.png',
+  './assets/category-icons/dinner.png',
+  './assets/category-icons/snack.png',
+  './assets/category-icons/drink.png',
+  './assets/category-icons/alcohol.png',
+  './assets/category-icons/fruit.png',
+  './assets/category-icons/lottery.png',
+  './assets/category-icons/withdraw.png',
+  './assets/category-icons/deposit.png',
+  './assets/category-icons/receive.png',
+  './assets/category-icons/investment.png',
+  './assets/category-icons/interest.png',
+  './assets/category-icons/salary.png',
+  './assets/category-icons/repayment.png'
 ];
 
 self.addEventListener('install', event => {
