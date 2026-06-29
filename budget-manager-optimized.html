@@ -1450,9 +1450,7 @@
         position: relative;
         border-color: #9bd9f0;
         background: #f7fcff;
-        box-shadow:
-          0 0 0 3px rgba(90, 184, 214, 0.14),
-          0 8px 22px rgba(90, 184, 214, 0.12);
+        box-shadow: none;
       }
       .add-summary-tile.is-selected::after,
       .add-long-field.is-selected::after,
@@ -1665,9 +1663,7 @@
       .sub-category-select.is-selected > img {
         border-color: #9bd9f0 !important;
         background: #f7fcff;
-        box-shadow:
-          0 0 0 4px rgba(90, 184, 214, 0.16),
-          0 8px 20px rgba(90, 184, 214, 0.13);
+        box-shadow: none;
       }
       #category-buttons button.is-selected,
       .subcategory-icon-shell {
@@ -1693,10 +1689,8 @@
       }
       .sub-category-select.is-selected .subcategory-icon-shell {
         background: #eef8fc;
-        box-shadow:
-          0 0 0 4px rgba(90, 184, 214, 0.16),
-          0 8px 20px rgba(90, 184, 214, 0.13);
-        transform: translateY(-1px);
+        box-shadow: none;
+        transform: none;
       }
       .sub-category-select.is-selected {
         color: #243746 !important;
@@ -1729,9 +1723,7 @@
       .main-category-btn.active .main-category-icon {
         border-color: #9bd9f0;
         background: #f7fcff;
-        box-shadow:
-          0 0 0 4px rgba(90, 184, 214, 0.16),
-          0 8px 20px rgba(90, 184, 214, 0.13);
+        box-shadow: none;
       }
       .main-category-btn.active::after {
         content: none;
@@ -1757,7 +1749,7 @@
       .main-category-btn.active .main-category-icon {
         border-color: var(--fun-blue);
         background: #ffffff !important;
-        box-shadow: 0 0 0 5px rgba(90, 184, 214, 0.14);
+        box-shadow: none;
       }
       .category-tile-wrap {
         position: relative;
@@ -10391,75 +10383,190 @@
       }
 
       const categoryIconAssets = {
-        "icon:food": "./assets/category-icons/food.png",
-        "icon:breakfast": "./assets/category-icons/breakfast.png",
-        "icon:lunch": "./assets/category-icons/lunch.png",
-        "icon:dinner": "./assets/category-icons/dinner.png",
-        "icon:snack": "./assets/category-icons/snack.png",
-        "icon:drink": "./assets/category-icons/drink.png",
-        "icon:alcohol": "./assets/category-icons/alcohol.png",
-        "icon:fruit": "./assets/category-icons/fruit.png",
-        "icon:lottery": "./assets/category-icons/lottery.png",
-        "icon:withdraw": "./assets/category-icons/withdraw.png",
-        "icon:deposit": "./assets/category-icons/deposit.png",
-        "icon:receive": "./assets/category-icons/receive.png",
-        "icon:investment": "./assets/category-icons/investment.png",
-        "icon:interest": "./assets/category-icons/interest.png",
-        "icon:salary": "./assets/category-icons/salary.png",
-        "icon:repayment": "./assets/category-icons/repayment.png",
+        "icon:alcohol": "./assets/phosphor/wine.svg",
+        "icon:breakfast": "./assets/phosphor/bread.svg",
+        "icon:deposit": "./assets/phosphor/arrow-circle-up.svg",
+        "icon:dinner": "./assets/phosphor/pizza.svg",
+        "icon:drink": "./assets/phosphor/martini.svg",
+        "icon:food": "./assets/phosphor/fork-knife.svg",
+        "icon:fruit": "./assets/phosphor/orange.svg",
+        "icon:interest": "./assets/phosphor/percent.svg",
+        "icon:investment": "./assets/phosphor/trend-up.svg",
+        "icon:lottery": "./assets/phosphor/ticket.svg",
+        "icon:lunch": "./assets/phosphor/hamburger.svg",
+        "icon:receive": "./assets/phosphor/hand-coins.svg",
+        "icon:repayment": "./assets/phosphor/arrows-clockwise.svg",
+        "icon:salary": "./assets/phosphor/money.svg",
+        "icon:snack": "./assets/phosphor/cookie.svg",
+        "icon:withdraw": "./assets/phosphor/arrow-circle-down.svg",
+        "ph:airplane": "./assets/phosphor/airplane.svg",
+        "ph:alcohol": "./assets/phosphor/wine.svg",
+        "ph:bag": "./assets/phosphor/handbag.svg",
+        "ph:bank": "./assets/phosphor/bank.svg",
+        "ph:bicycle": "./assets/phosphor/bicycle.svg",
+        "ph:boat": "./assets/phosphor/boat.svg",
+        "ph:book": "./assets/phosphor/books.svg",
+        "ph:breakfast": "./assets/phosphor/bread.svg",
+        "ph:bus": "./assets/phosphor/bus.svg",
+        "ph:calendar": "./assets/phosphor/calendar.svg",
+        "ph:car": "./assets/phosphor/car.svg",
+        "ph:card": "./assets/phosphor/credit-card.svg",
+        "ph:chart": "./assets/phosphor/chart-line-up.svg",
+        "ph:circle": "./assets/phosphor/circle.svg",
+        "ph:clock": "./assets/phosphor/clock.svg",
+        "ph:coins": "./assets/phosphor/coins.svg",
+        "ph:cosmetics": "./assets/phosphor/paint-brush.svg",
+        "ph:cup": "./assets/phosphor/coffee.svg",
+        "ph:dental": "./assets/phosphor/tooth.svg",
+        "ph:deposit": "./assets/phosphor/arrow-circle-up.svg",
+        "ph:dinner": "./assets/phosphor/pizza.svg",
+        "ph:download": "./assets/phosphor/download-simple.svg",
+        "ph:drink": "./assets/phosphor/martini.svg",
+        "ph:electric": "./assets/phosphor/lightning.svg",
+        "ph:entertainment": "./assets/phosphor/microphone-stage.svg",
+        "ph:family": "./assets/phosphor/users-three.svg",
+        "ph:fire": "./assets/phosphor/flame.svg",
+        "ph:folder": "./assets/phosphor/folder.svg",
+        "ph:fruit": "./assets/phosphor/orange.svg",
+        "ph:game": "./assets/phosphor/game-controller.svg",
+        "ph:gas": "./assets/phosphor/gas-pump.svg",
+        "ph:gift": "./assets/phosphor/gift.svg",
+        "ph:handshake": "./assets/phosphor/handshake.svg",
+        "ph:home": "./assets/phosphor/house.svg",
+        "ph:interest": "./assets/phosphor/percent.svg",
+        "ph:investment": "./assets/phosphor/trend-up.svg",
+        "ph:laptop": "./assets/phosphor/laptop.svg",
+        "ph:leaf": "./assets/phosphor/leaf.svg",
+        "ph:lottery": "./assets/phosphor/ticket.svg",
+        "ph:lunch": "./assets/phosphor/hamburger.svg",
+        "ph:medical": "./assets/phosphor/first-aid-kit.svg",
+        "ph:medicine": "./assets/phosphor/pill.svg",
+        "ph:money": "./assets/phosphor/money.svg",
+        "ph:more": "./assets/phosphor/dots-three.svg",
+        "ph:motorcycle": "./assets/phosphor/motorcycle.svg",
+        "ph:movie": "./assets/phosphor/film-strip.svg",
+        "ph:music": "./assets/phosphor/music-notes.svg",
+        "ph:parking": "./assets/phosphor/park.svg",
+        "ph:pencil": "./assets/phosphor/pencil-simple.svg",
+        "ph:phone": "./assets/phosphor/device-mobile.svg",
+        "ph:receive": "./assets/phosphor/hand-coins.svg",
+        "ph:repayment": "./assets/phosphor/arrows-clockwise.svg",
+        "ph:salary": "./assets/phosphor/money.svg",
+        "ph:settings": "./assets/phosphor/gear.svg",
+        "ph:shirt": "./assets/phosphor/t-shirt.svg",
+        "ph:shopping": "./assets/phosphor/shopping-cart.svg",
+        "ph:snack": "./assets/phosphor/cookie.svg",
+        "ph:spark": "./assets/phosphor/sparkle.svg",
+        "ph:store": "./assets/phosphor/storefront.svg",
+        "ph:student": "./assets/phosphor/student.svg",
+        "ph:subway": "./assets/phosphor/train-simple.svg",
+        "ph:tag": "./assets/phosphor/tag.svg",
+        "ph:train": "./assets/phosphor/train.svg",
+        "ph:transfer": "./assets/phosphor/arrows-left-right.svg",
+        "ph:transport": "./assets/phosphor/train.svg",
+        "ph:trash": "./assets/phosphor/trash.svg",
+        "ph:user": "./assets/phosphor/user.svg",
+        "ph:utensils": "./assets/phosphor/fork-knife.svg",
+        "ph:utility": "./assets/phosphor/lightning.svg",
+        "ph:wallet": "./assets/phosphor/wallet.svg",
+        "ph:water": "./assets/phosphor/drop.svg",
+        "ph:wifi": "./assets/phosphor/wifi-high.svg",
+        "ph:withdraw": "./assets/phosphor/arrow-circle-down.svg",
       };
 
       function iconNameFromLegacyIcon(icon) {
         const raw = String(icon || "");
         const has = (...items) => items.some((item) => raw.includes(item));
         if (!raw || raw === "?" || raw.includes("•••")) return "more";
-        if (raw.includes("icon:breakfast") || raw.includes("早餐")) return "breakfast";
-        if (raw.includes("icon:lunch") || raw.includes("中餐") || raw.includes("午餐")) return "lunch";
-        if (raw.includes("icon:dinner") || raw.includes("晚餐")) return "dinner";
-        if (raw.includes("icon:snack") || raw.includes("點心")) return "snack";
-        if (raw.includes("icon:drink") || raw.includes("飲料")) return "drink";
-        if (raw.includes("icon:alcohol") || raw.includes("酒類")) return "alcohol";
-        if (raw.includes("icon:fruit") || raw.includes("水果")) return "fruit";
-        if (raw.includes("icon:lottery") || raw.includes("彩券")) return "lottery";
-        if (raw.includes("icon:withdraw") || raw.includes("提款")) return "withdraw";
-        if (raw.includes("icon:deposit") || raw.includes("存款")) return "deposit";
-        if (raw.includes("icon:receive") || raw.includes("收款")) return "receive";
-        if (raw.includes("icon:investment") || raw.includes("投資")) return "investment";
-        if (raw.includes("icon:interest") || raw.includes("利息")) return "interest";
-        if (raw.includes("icon:salary") || raw.includes("薪水") || raw.includes("薪資")) return "salary";
-        if (raw.includes("icon:repayment") || raw.includes("還款")) return "repayment";
-        if (raw.includes("icon:food") || raw.includes("飲食")) return "utensils";
-        if (has("🍞")) return "breakfast";
-        if (has("🍔", "🍜", "🍣", "🍖")) return "lunch";
-        if (has("🍕")) return "dinner";
-        if (has("🍩", "🍰")) return "snack";
-        if (has("🍞", "🍔", "🍕", "🍩", "🍜", "🍣", "🍖", "🍰", "🍽", "🥛")) return "utensils";
-        if (has("🥤", "🍺", "☕")) return "cup";
-        if (has("🍌", "水果")) return "leaf";
-        if (has("⛽", "🅿", "🚆", "🚇", "🚗", "🚕", "🚌", "🛵", "🚲", "✈", "⛴", "🚊", "🚏")) return "transport";
-        if (has("🍿", "🎡", "🖼", "🎮", "🎤", "🎧", "🧩", "🪩")) return "spark";
-        if (has("👕", "👜", "💄", "🧻", "🎁", "🛒")) return "shopping";
-        if (has("📱", "💻")) return "phone";
-        if (has("💇", "🏋", "🛡", "⭐", "👤", "👥", "❤️", "🧘")) return "user";
-        if (has("🏥", "💊", "🦷", "🩺")) return "medical";
-        if (has("🏠", "🛋", "🧺", "🛠", "🏨", "🏡")) return "home";
-        if (has("🧸", "🐾", "👨‍👩‍👧")) return "family";
-        if (has("💧", "⚡", "🔥", "🌐", "📞", "🧴")) return "utility";
-        if (has("📚", "🎓", "✏", "📝", "📖", "📐", "🖊", "🧠")) return "book";
-        if (has("🎟", "📈")) return "chart";
-        if (has("💸", "💰", "💵", "💴")) return "money";
-        if (has("🏦")) return "bank";
-        if (has("🤝")) return "handshake";
-        if (has("🔄", "↔")) return "transfer";
-        if (has("⚙", "▭")) return "settings";
-        if (has("🏷")) return "tag";
-        if (has("📅")) return "calendar";
-        if (has("🕒", "🕘")) return "clock";
-        if (has("🗂")) return "folder";
-        if (has("🏪")) return "store";
-        if (has("📥")) return "download";
-        if (has("🗑")) return "trash";
-        if (has("💳", "🪪")) return "card";
+
+        const tokenMap = {
+          "icon:food": "utensils",
+          "icon:breakfast": "breakfast",
+          "icon:lunch": "lunch",
+          "icon:dinner": "dinner",
+          "icon:snack": "snack",
+          "icon:drink": "drink",
+          "icon:alcohol": "alcohol",
+          "icon:fruit": "fruit",
+          "icon:lottery": "lottery",
+          "icon:withdraw": "withdraw",
+          "icon:deposit": "deposit",
+          "icon:receive": "receive",
+          "icon:investment": "investment",
+          "icon:interest": "interest",
+          "icon:salary": "salary",
+          "icon:repayment": "repayment",
+        };
+        for (const [token, name] of Object.entries(tokenMap)) {
+          if (raw.includes(token)) return name;
+        }
+
+        if (has("飲食", "餐", "外食", "食費", "🍽")) return "utensils";
+        if (has("早餐", "🍞")) return "breakfast";
+        if (has("中餐", "午餐", "🍔", "🍜", "🍣", "🍖")) return "lunch";
+        if (has("晚餐", "🍕")) return "dinner";
+        if (has("點心", "甜點", "🍩", "🍰", "🍪")) return "snack";
+        if (has("飲料", "咖啡", "牛奶", "🥤", "☕", "🥛")) return "cup";
+        if (has("酒", "🍺", "🍷")) return "alcohol";
+        if (has("水果", "🍌", "🍊", "🍒")) return "fruit";
+        if (has("彩券", "票券", "🎟")) return "lottery";
+
+        if (has("交通", "🚆", "🚇", "🚊", "🚏")) return "transport";
+        if (has("加油", "⛽")) return "gas";
+        if (has("停車", "🅿")) return "parking";
+        if (has("火車", "電車")) return "train";
+        if (has("巴士", "公車", "🚌")) return "bus";
+        if (has("汽車", "🚗", "🚕")) return "car";
+        if (has("機車", "🛵")) return "motorcycle";
+        if (has("單車", "自行車", "🚲")) return "bicycle";
+        if (has("飛機", "✈")) return "airplane";
+        if (has("船", "⛴")) return "boat";
+
+        if (has("娛樂", "🍿", "🎡", "🖼", "🎤", "🎧", "🧩", "🪩")) return "entertainment";
+        if (has("電影")) return "movie";
+        if (has("遊戲", "🎮")) return "game";
+        if (has("音樂")) return "music";
+
+        if (has("購物", "市場", "買菜", "日常用品", "🛒")) return "shopping";
+        if (has("服飾", "衣", "👕")) return "shirt";
+        if (has("鞋", "包", "👜")) return "bag";
+        if (has("保養", "美妝", "💄")) return "cosmetics";
+        if (has("禮物", "🎁")) return "gift";
+        if (has("Mobile", "手機", "📱")) return "phone";
+        if (has("3C", "電腦", "💻")) return "laptop";
+
+        if (has("個人", "👤", "👥", "❤️", "🧘")) return "user";
+        if (has("醫療", "病院", "🏥", "💊", "🦷", "🩺")) return "medical";
+        if (has("藥")) return "medicine";
+        if (has("牙")) return "dental";
+        if (has("家居", "房租", "住宿", "🏠", "🛋", "🧺", "🛠", "🏨", "🏡")) return "home";
+        if (has("家庭", "寵物", "親子", "🧸", "🐾", "👨‍👩‍👧")) return "family";
+        if (has("生活", "水費", "電費", "瓦斯", "網路", "電話", "清潔", "💧", "⚡", "🔥", "🌐", "📞", "🧴")) return "utility";
+        if (has("水費")) return "water";
+        if (has("電費")) return "electric";
+        if (has("學習", "書", "課程", "📚", "🎓", "✏", "📝", "📖", "📐", "🖊", "🧠")) return "book";
+
+        if (has("提款")) return "withdraw";
+        if (has("存款")) return "deposit";
+        if (has("收款")) return "receive";
+        if (has("投資", "📈")) return "investment";
+        if (has("利息", "%")) return "interest";
+        if (has("薪水", "薪資")) return "salary";
+        if (has("還款")) return "repayment";
+        if (has("金額", "錢", "💸", "💰", "💵", "💴")) return "money";
+        if (has("銀行", "🏦")) return "bank";
+        if (has("錢包")) return "wallet";
+        if (has("信用卡", "卡", "💳", "🪪")) return "card";
+        if (has("社交", "🤝")) return "handshake";
+        if (has("轉帳", "🔄", "↔")) return "transfer";
+        if (has("設定", "⚙", "▭")) return "settings";
+        if (has("標籤", "🏷")) return "tag";
+        if (has("日期", "📅")) return "calendar";
+        if (has("時間", "🕒", "🕘")) return "clock";
+        if (has("資料夾", "🗂")) return "folder";
+        if (has("商家", "🏪")) return "store";
+        if (has("匯出", "下載", "📥")) return "download";
+        if (has("刪除", "🗑")) return "trash";
         return "circle";
       }
 
@@ -10516,7 +10623,8 @@
 
       function categoryIconHtml(icon) {
         if (!icon) return notionIconSvg("•••");
-        const assetSrc = categoryIconAssets[String(icon)] || "";
+        const iconKey = String(icon);
+        const assetSrc = categoryIconAssets[iconKey] || categoryIconAssets[`ph:${iconNameFromLegacyIcon(iconKey)}`] || "";
         if (assetSrc)
           return `<img src="${assetSrc}" class="notion-icon-img" alt="" loading="lazy" onerror="this.replaceWith(document.createRange().createContextualFragment(notionIconSvg('${escapeHTML(String(icon))}')).firstElementChild)">`;
         if (icon.startsWith?.("data:image"))
@@ -11582,7 +11690,7 @@
         showToast(t("toastExported"));
       }
 
-      const APP_VERSION = "20260629-05";
+      const APP_VERSION = "20260630-01";
 
       function registerServiceWorker() {
         if (!("serviceWorker" in navigator) || location.protocol === "file:")
