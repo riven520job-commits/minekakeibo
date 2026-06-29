@@ -47,6 +47,12 @@
         --fun-green: #9fd37a;
         --fun-rose: #e47d84;
         --fun-lavender: #b7a6e8;
+        --icon-xs: 1rem;
+        --icon-sm: 1.18rem;
+        --icon-md: 1.45rem;
+        --icon-lg: 1.75rem;
+        --icon-tile: clamp(52px, 13.5vw, 58px);
+        --icon-list: 48px;
       }
       html,
       body {
@@ -201,6 +207,8 @@
         border-radius: 14px;
         min-width: 56px;
         min-height: 50px;
+        display: grid;
+        place-items: center;
         transition:
           color 160ms ease,
           background 160ms ease;
@@ -210,8 +218,8 @@
         background: #f3f4f6;
       }
       .notion-icon-svg {
-        width: 1.65em;
-        height: 1.65em;
+        width: var(--icon-md);
+        height: var(--icon-md);
         display: inline-block;
         color: #242a31;
         stroke: currentColor;
@@ -222,16 +230,16 @@
         vertical-align: middle;
       }
       .notion-icon-img {
-        width: 1.8em;
-        height: 1.8em;
+        width: var(--icon-lg);
+        height: var(--icon-lg);
         display: inline-block;
         object-fit: contain;
         vertical-align: middle;
         filter: grayscale(1) contrast(1.05);
       }
       .nav-icon-svg {
-        width: 1.45rem;
-        height: 1.45rem;
+        width: var(--icon-md);
+        height: var(--icon-md);
         color: currentColor;
         stroke: currentColor;
         fill: none;
@@ -536,8 +544,13 @@
         height: clamp(2.8rem, 12.5vw, 3.2rem);
       }
       .asset-action-icon {
-        width: 1.45rem;
-        height: 1.45rem;
+        width: var(--icon-md);
+        height: var(--icon-md);
+      }
+      .asset-top-action .notion-icon-svg,
+      .asset-top-action .amount-eye-icon {
+        width: var(--icon-md);
+        height: var(--icon-md);
       }
       .asset-top-action:active {
         box-shadow: 0 3px 8px rgba(31, 41, 51, 0.08) inset;
@@ -767,14 +780,28 @@
         border-top: 1px solid var(--line);
       }
       .account-transaction-icon {
-        width: 48px;
-        height: 48px;
+        width: var(--icon-list);
+        height: var(--icon-list);
         border-radius: 9999px;
         background: var(--soft);
         display: grid;
         place-items: center;
         font-size: 1.2rem;
         overflow: hidden;
+      }
+      .account-transaction-icon .notion-icon-svg,
+      .top-record-icon .notion-icon-svg,
+      .monthly-list-icon .notion-icon-svg,
+      .record-detail-icon .notion-icon-svg {
+        width: var(--icon-md);
+        height: var(--icon-md);
+      }
+      .account-transaction-icon .notion-icon-img,
+      .top-record-icon .notion-icon-img,
+      .monthly-list-icon .notion-icon-img,
+      .record-detail-icon .notion-icon-img {
+        width: var(--icon-lg);
+        height: var(--icon-lg);
       }
       .account-info-row {
         display: grid;
@@ -1249,8 +1276,8 @@
         padding: 12px 0;
       }
       .top-record-icon {
-        width: 50px;
-        height: 50px;
+        width: var(--icon-list);
+        height: var(--icon-list);
         border-radius: 50%;
         display: grid;
         place-items: center;
@@ -1619,8 +1646,8 @@
       }
       #category-buttons button > div,
       #category-buttons button > img {
-        width: 58px;
-        height: 58px;
+        width: var(--icon-tile);
+        height: var(--icon-tile);
         border-radius: 9999px;
         display: grid;
         place-items: center;
@@ -1644,8 +1671,8 @@
       }
       #category-buttons button.is-selected,
       .subcategory-icon-shell {
-        width: 42px;
-        height: 42px;
+        width: var(--icon-tile);
+        height: var(--icon-tile);
         display: grid;
         place-items: center;
         border-radius: 9999px;
@@ -1657,12 +1684,12 @@
           transform 160ms ease;
       }
       .subcategory-icon-shell .notion-icon-img {
-        width: 1.75rem;
-        height: 1.75rem;
+        width: var(--icon-lg);
+        height: var(--icon-lg);
       }
       .subcategory-icon-shell .notion-icon-svg {
-        width: 1.55rem;
-        height: 1.55rem;
+        width: var(--icon-md);
+        height: var(--icon-md);
       }
       .sub-category-select.is-selected .subcategory-icon-shell {
         background: #eef8fc;
@@ -1714,8 +1741,8 @@
         -webkit-tap-highlight-color: transparent;
       }
       .main-category-icon {
-        width: 58px;
-        height: 58px;
+        width: var(--icon-tile);
+        height: var(--icon-tile);
         border-radius: 9999px;
         display: grid;
         place-items: center;
@@ -1762,6 +1789,25 @@
       }
       .category-manage-button:active {
         transform: scale(0.94);
+      }
+
+      .main-category-icon .notion-icon-svg,
+      #category-buttons button > div .notion-icon-svg {
+        width: var(--icon-md);
+        height: var(--icon-md);
+      }
+      .main-category-icon .notion-icon-img,
+      #category-buttons button > div .notion-icon-img {
+        width: var(--icon-lg);
+        height: var(--icon-lg);
+      }
+      .icon-choice .notion-icon-svg,
+      .icon-choice .notion-icon-img {
+        width: var(--icon-lg);
+        height: var(--icon-lg);
+      }
+      .nav-btn span[data-i18n] {
+        display: none;
       }
       .category-back-icon {
         opacity: 0.58;
@@ -2230,8 +2276,8 @@
         padding: 18px;
       }
       .amount-eye-icon {
-        width: clamp(1.25rem, 5vw, 1.55rem);
-        height: clamp(1.25rem, 5vw, 1.55rem);
+        width: var(--icon-md);
+        height: var(--icon-md);
         display: block;
         stroke-width: 1.8;
       }
@@ -7699,9 +7745,7 @@
                   effect < 0 ? "text-red-500" : "text-green-600";
                 const safeIcon =
                   item.subCatIcon || (item.type === "轉帳" ? "↔" : "▣");
-                const iconHtml = safeIcon.startsWith("data:image")
-                  ? `<img src="${safeIcon}" class="w-full h-full object-cover">`
-                  : escapeHTML(safeIcon);
+                const iconHtml = categoryIconHtml(safeIcon);
                 const project = projectById(item.projectId);
                 return `
                     <button onclick="openRecordDetail(${index})" class="account-transaction-row w-full text-left">
@@ -9386,9 +9430,7 @@
               .map(({ item, index }) => {
                 const sign = recordSign(item);
                 const safeIcon = item.subCatIcon || "📝";
-                const iconHtml = safeIcon.startsWith("data:image")
-                  ? `<img src="${safeIcon}" class="w-9 h-9 rounded-full object-cover">`
-                  : `<span class="text-xl">${escapeHTML(safeIcon)}</span>`;
+                const iconHtml = categoryIconHtml(safeIcon);
                 const tone =
                   sign === "-"
                     ? "text-red-500"
@@ -11540,7 +11582,7 @@
         showToast(t("toastExported"));
       }
 
-      const APP_VERSION = "20260629-04";
+      const APP_VERSION = "20260629-05";
 
       function registerServiceWorker() {
         if (!("serviceWorker" in navigator) || location.protocol === "file:")
