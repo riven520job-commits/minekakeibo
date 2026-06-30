@@ -1293,10 +1293,10 @@
         background: var(--panel);
       }
       .calculator-grid button {
-        min-height: var(--calc-key-h, clamp(42px, 6.1dvh, 50px));
+        min-height: var(--calc-key-h, clamp(48px, 6.6dvh, 56px));
         border-right: 1px solid var(--line);
         border-bottom: 1px solid var(--line);
-        font-size: clamp(1.22rem, 5.4vw, 1.42rem);
+        font-size: clamp(1.08rem, 4.6vw, 1.32rem);
         font-weight: 850;
         background: var(--panel);
         color: var(--ink);
@@ -1353,7 +1353,7 @@
         -webkit-overflow-scrolling: touch;
       }
       .quick-amounts button {
-        min-height: var(--calc-quick-h, 36px);
+        min-height: var(--calc-quick-h, 40px);
         white-space: nowrap;
         border: 1px solid var(--line);
         background: var(--panel);
@@ -1361,7 +1361,7 @@
         padding: 8px 15px;
         font-weight: 850;
         color: var(--ink);
-        box-shadow: 0 2px 8px rgba(31, 41, 51, 0.04);
+        box-shadow: none;
         touch-action: manipulation;
         cursor: pointer;
         user-select: none;
@@ -1488,6 +1488,77 @@
       .add-summary-input::placeholder {
         color: var(--muted);
         font-weight: 600;
+      }
+
+      .add-input-tile {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 10px;
+        min-height: 58px;
+      }
+      .add-input-tile input {
+        width: 100%;
+        min-width: 0;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        color: var(--ink);
+        font-size: 1rem;
+        font-weight: 700;
+        text-align: right;
+      }
+      .add-input-tile input::placeholder {
+        color: var(--muted);
+        font-weight: 600;
+      }
+      .favorite-toggle {
+        width: 36px;
+        height: 36px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #f7f7f5;
+        color: #8b8f97;
+        font-size: 1rem;
+        font-weight: 800;
+        display: inline-grid;
+        place-items: center;
+        touch-action: manipulation;
+      }
+      .favorite-toggle.is-active {
+        border-color: #9bd9f0;
+        background: #edf8fc;
+        color: #2f7f95;
+      }
+      .merchant-favorite-row,
+      .suggestion-strip {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding: 2px 0 8px;
+        -webkit-overflow-scrolling: touch;
+      }
+      .merchant-favorite-row.hidden,
+      .suggestion-strip.hidden {
+        display: none;
+      }
+      .merchant-favorite-row button,
+      .suggestion-strip button {
+        flex: 0 0 auto;
+        min-height: 38px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #fff;
+        color: var(--ink);
+        padding: 8px 13px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        touch-action: manipulation;
+      }
+      .merchant-favorite-row button:active,
+      .suggestion-strip button:active {
+        background: #f5fbff;
+        border-color: #9bd9f0;
       }
       .add-field-tile .notion-input {
         min-height: 58px;
@@ -2160,7 +2231,7 @@
         color: #d6525b;
       }
       .calculator-panel-fixed {
-        --calc-key-h: clamp(42px, 6.1dvh, 50px);
+        --calc-key-h: clamp(48px, 6.6dvh, 56px);
         --calc-readout-h: 40px;
         --calc-quick-h: 36px;
         position: fixed;
@@ -2175,7 +2246,7 @@
         transform: translateX(-50%);
         background: rgba(243, 244, 246, 0.98);
         margin: 0;
-        padding: 8px 12px calc(24px + env(safe-area-inset-bottom));
+        padding: 10px 12px calc(38px + env(safe-area-inset-bottom));
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         border-top: 1px solid var(--line);
@@ -2190,7 +2261,7 @@
           padding: 7px 12px;
         }
         .calculator-panel-fixed {
-          --calc-key-h: clamp(40px, 5.9dvh, 48px);
+          --calc-key-h: clamp(42px, 5.6dvh, 48px);
           padding-top: 8px;
         }
       }
@@ -2210,7 +2281,7 @@
           min-height: 110px;
         }
         .calculator-panel-fixed {
-          --calc-key-h: clamp(38px, 5.7dvh, 46px);
+          --calc-key-h: clamp(40px, 5.3dvh, 46px);
           --calc-readout-h: 38px;
           --calc-quick-h: 34px;
         }
@@ -2218,21 +2289,24 @@
           font-size: 1.12rem;
         }
         .calculator-readout {
+          padding-block: 6px;
+        }
         .calculator-readout-value {
-          font-size: 1.28rem;
+          font-size: 1.22rem;
         }
       }
 
       @media (max-height: 680px) {
         .calculator-panel-fixed {
-          --calc-key-h: clamp(34px, 5.35dvh, 40px);
+          --calc-key-h: clamp(36px, 5dvh, 40px);
           --calc-readout-h: 34px;
           --calc-quick-h: 32px;
           padding-top: 6px;
-          padding-bottom: calc(18px + env(safe-area-inset-bottom));
+          padding-bottom: calc(32px + env(safe-area-inset-bottom));
         }
         .calculator-grid button {
-          font-size: 1rem;
+          font-size: 0.96rem;
+          min-height: 38px;
         }
         .calculator-readout {
           padding-block: 6px;
@@ -2647,16 +2721,15 @@
                   <input
                     type="text"
                     id="name"
-                    placeholder="名稱"
-                    data-i18n-placeholder="merchantNamePlaceholder"
+                    placeholder="商品名稱"
+                    data-i18n-placeholder="itemNamePlaceholder"
                     class="text-right"
                     oninput="this.dataset.autoFilled = 'false'"
                   />
                   <span
                     class="w-9 h-9 rounded-full bg-gray-100 grid place-items-center text-gray-500"
-                    aria-label="標記為常用商家"
-                    role="button"
-                    >☆</span
+                    aria-hidden="true"
+                    >品</span
                   >
                 </label>
               </div>
@@ -2720,12 +2793,23 @@
               </div>
 
               <div class="add-field-tile">
-                <label class="add-summary-tile">
-                  <span
-                    class="add-summary-value text-gray-400"
-                    data-i18n="merchantNameLabel"
-                    >商家</span
+                <label class="add-summary-tile add-input-tile">
+                  <input
+                    type="text"
+                    id="merchant"
+                    placeholder="商家名稱"
+                    data-i18n-placeholder="merchantNamePlaceholder"
+                    oninput="renderMerchantFavorites()"
+                  />
+                  <button
+                    type="button"
+                    id="merchant-favorite-toggle"
+                    class="favorite-toggle"
+                    onclick="event.preventDefault(); toggleMerchantFavorite()"
+                    aria-label="加入常用商家"
                   >
+                    ☆
+                  </button>
                 </label>
               </div>
 
@@ -2792,6 +2876,8 @@
               </div>
             </div>
 
+            <div id="merchant-favorite-row" class="merchant-favorite-row hidden"></div>
+
             <div id="project-picker" class="project-picker hidden">
               <div class="project-picker-panel">
                 <div class="flex items-center justify-between gap-3 mb-4">
@@ -2840,22 +2926,22 @@
                 >
               </div>
               <div class="quick-amounts no-scrollbar">
-                <button type="button" onclick="calculatorQuick(538)">
+                <button type="button" onpointerdown="event.preventDefault(); calculatorQuick(538)">
                   538
                 </button>
-                <button type="button" onclick="calculatorQuick(1299)">
+                <button type="button" onpointerdown="event.preventDefault(); calculatorQuick(1299)">
                   1,299
                 </button>
-                <button type="button" onclick="calculatorQuick(587)">
+                <button type="button" onpointerdown="event.preventDefault(); calculatorQuick(587)">
                   587
                 </button>
-                <button type="button" onclick="calculatorQuick(2026)">
+                <button type="button" onpointerdown="event.preventDefault(); calculatorQuick(2026)">
                   2,026
                 </button>
-                <button type="button" onclick="calculatorQuick(799)">
+                <button type="button" onpointerdown="event.preventDefault(); calculatorQuick(799)">
                   799
                 </button>
-                <button type="button" onclick="calculatorQuick(868)">
+                <button type="button" onpointerdown="event.preventDefault(); calculatorQuick(868)">
                   868
                 </button>
               </div>
@@ -2864,28 +2950,28 @@
                 class="min-h-[1rem] text-right text-xs text-gray-400"
               ></div>
               <div class="calculator-grid" aria-label="calculator">
-                <button type="button" onclick="calculatorPress('÷')">÷</button>
-                <button type="button" onclick="calculatorPress('×')">×</button>
-                <button type="button" onclick="calculatorPress('−')">−</button>
-                <button type="button" onclick="calculatorPress('+')">+</button>
-                <button type="button" onclick="calculatorPress('7')">7</button>
-                <button type="button" onclick="calculatorPress('8')">8</button>
-                <button type="button" onclick="calculatorPress('9')">9</button>
-                <button type="button" onclick="calculatorPress('⌫')">⌫</button>
-                <button type="button" onclick="calculatorPress('4')">4</button>
-                <button type="button" onclick="calculatorPress('5')">5</button>
-                <button type="button" onclick="calculatorPress('6')">6</button>
-                <button type="button" onclick="calculatorPress('C')">C</button>
-                <button type="button" onclick="calculatorPress('1')">1</button>
-                <button type="button" onclick="calculatorPress('2')">2</button>
-                <button type="button" onclick="calculatorPress('3')">3</button>
-                <button type="button" onclick="calculatorPress('↵')">↵</button>
-                <button type="button" onclick="calculatorPress('.')">.</button>
-                <button type="button" onclick="calculatorPress('0')">0</button>
-                <button type="button" onclick="calculatorPress('00')">
+                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('÷')">÷</button>
+                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('×')">×</button>
+                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('−')">−</button>
+                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('+')">+</button>
+                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('7')">7</button>
+                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('8')">8</button>
+                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('9')">9</button>
+                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('⌫')">⌫</button>
+                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('4')">4</button>
+                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('5')">5</button>
+                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('6')">6</button>
+                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('C')">C</button>
+                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('1')">1</button>
+                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('2')">2</button>
+                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('3')">3</button>
+                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('↵')">↵</button>
+                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('.')">.</button>
+                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('0')">0</button>
+                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('00')">
                   00
                 </button>
-                <button type="button" onclick="calculatorPress('✓')">✓</button>
+                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('✓')">✓</button>
               </div>
             </div>
             <button
@@ -3907,11 +3993,17 @@
         date: item.date || new Date().toISOString().split("T")[0],
         price: item.price || 0,
         currency: item.currency || "¥",
+        merchant: item.merchant || "",
         installmentId: item.installmentId || "",
         installmentIndex: item.installmentIndex || null,
         installmentCount: item.installmentCount || null,
       }));
       localStorage.setItem("myBudget", JSON.stringify(data));
+
+      let merchantFavorites = JSON.parse(localStorage.getItem("myMerchantFavoritesV1")) || [];
+      function persistMerchantFavorites() {
+        localStorage.setItem("myMerchantFavoritesV1", JSON.stringify(merchantFavorites));
+      }
 
       let userAccounts = JSON.parse(localStorage.getItem("myAccounts")) || [
         "💵 現金",
@@ -4116,19 +4208,19 @@
             { name: "Mobile", icon: "📱" },
             { name: "買菜", icon: "🛒" },
             { name: "咖啡", icon: "☕" },
-            { name: "牛奶", icon: "🥛" },
-            { name: "外食", icon: "🍜" },
-            { name: "壽司", icon: "🍣" },
-            { name: "烤肉", icon: "🍖" },
-            { name: "甜點", icon: "🍰" },
+            { name: "牛奶", icon: "custom:牛奶" },
+            { name: "外食", icon: "custom:外食" },
+            { name: "壽司", icon: "custom:壽司" },
+            { name: "烤肉", icon: "custom:烤肉" },
+            { name: "甜點", icon: "custom:甜點" },
           ],
           交通: [
             { name: "加油費", icon: "⛽" },
             { name: "停車費", icon: "🅿️" },
             { name: "火車", icon: "🚆" },
-            { name: "捷運", icon: "🚇" },
+            { name: "捷運", icon: "custom:捷運" },
             { name: "汽車", icon: "🚗" },
-            { name: "計程車", icon: "🚕" },
+            { name: "計程車", icon: "custom:計程車" },
             { name: "公車", icon: "🚌" },
             { name: "摩托車", icon: "🛵" },
             { name: "腳踏車", icon: "🚲" },
@@ -4137,66 +4229,66 @@
             { name: "三重切符", icon: "🚊" },
           ],
           娛樂: [
-            { name: "電影", icon: "🍿" },
-            { name: "遊樂園", icon: "🎡" },
-            { name: "展覽", icon: "🖼️" },
+            { name: "電影", icon: "custom:電影" },
+            { name: "遊樂園", icon: "custom:遊樂園" },
+            { name: "展覽", icon: "custom:展覽" },
             { name: "遊戲", icon: "🎮" },
             { name: "唱歌", icon: "🎤" },
-            { name: "音樂", icon: "🎧" },
+            { name: "音樂", icon: "custom:音樂" },
             { name: "消遣", icon: "🧩" },
-            { name: "夜店", icon: "🪩" },
+            { name: "夜店", icon: "custom:夜店" },
           ],
           購物: [
             { name: "服飾", icon: "👕" },
-            { name: "鞋包", icon: "👜" },
+            { name: "鞋包", icon: "custom:鞋包" },
             { name: "3C", icon: "📱" },
             { name: "保養", icon: "💄" },
             { name: "美妝保養", icon: "💄" },
             { name: "市場", icon: "🛒" },
-            { name: "日常用品", icon: "🧻" },
+            { name: "日常用品", icon: "custom:日常用品" },
             { name: "禮物", icon: "🎁" },
           ],
           個人: [
-            { name: "美容", icon: "💇" },
-            { name: "健身", icon: "🏋️" },
-            { name: "訂閱", icon: "📱" },
-            { name: "保險", icon: "🛡️" },
-            { name: "紅利回饋", icon: "⭐" },
+            { name: "美容", icon: "custom:美容" },
+            { name: "健身", icon: "custom:健身" },
+            { name: "訂閱", icon: "custom:訂閱" },
+            { name: "保險", icon: "custom:保險" },
+            { name: "紅利回饋", icon: "custom:紅利回饋" },
           ],
           醫療: [
-            { name: "看診", icon: "🏥" },
-            { name: "買藥", icon: "💊" },
-            { name: "牙醫", icon: "🦷" },
-            { name: "健康檢查", icon: "🩺" },
+            { name: "看診", icon: "custom:看診" },
+            { name: "買藥", icon: "custom:買藥" },
+            { name: "牙醫", icon: "custom:牙醫" },
+            { name: "健康檢查", icon: "custom:健康檢查" },
           ],
           家居: [
-            { name: "房租", icon: "🏠" },
-            { name: "家具", icon: "🛋️" },
-            { name: "家電", icon: "🧺" },
-            { name: "修繕", icon: "🛠️" },
-            { name: "飯店", icon: "🏨" },
-            { name: "民宿", icon: "🏡" },
+            { name: "房租", icon: "custom:房租" },
+            { name: "家具", icon: "custom:家具" },
+            { name: "家電", icon: "custom:家電" },
+            { name: "修繕", icon: "custom:修繕" },
+            { name: "飯店", icon: "custom:飯店" },
+            { name: "民宿", icon: "custom:民宿" },
           ],
           家庭: [
             { name: "育兒", icon: "🧸" },
-            { name: "寵物", icon: "🐾" },
+            { name: "寵物", icon: "custom:寵物" },
             { name: "家人", icon: "👨‍👩‍👧" },
-            { name: "聚餐", icon: "🍽️" },
+            { name: "聚餐", icon: "custom:聚餐" },
           ],
           生活: [
-            { name: "水電", icon: "💧" },
-            { name: "電費", icon: "⚡" },
-            { name: "瓦斯", icon: "🔥" },
-            { name: "網路", icon: "🌐" },
-            { name: "電信", icon: "📞" },
-            { name: "清潔", icon: "🧴" },
-            { name: "日用品", icon: "🧻" },
+            { name: "水電", icon: "custom:水電" },
+            { name: "電費", icon: "custom:電費" },
+            { name: "瓦斯", icon: "custom:瓦斯" },
+            { name: "網路", icon: "custom:網路" },
+            { name: "電信", icon: "custom:電信" },
+            { name: "清潔", icon: "custom:清潔" },
+            { name: "日用品", icon: "custom:日用品" },
           ],
           學習: [
-            { name: "書籍", icon: "📚" },
-            { name: "課程", icon: "🎓" },
-            { name: "文具", icon: "✏️" },
-            { name: "考試", icon: "📝" },
+            { name: "書籍", icon: "custom:書籍" },
+            { name: "課程", icon: "custom:課程" },
+            { name: "文具", icon: "custom:文具" },
+            { name: "考試", icon: "custom:考試" },
           ],
           其他: [
             { name: "彩券", icon: "icon:lottery" },
@@ -4228,7 +4320,7 @@
         應收帳款: {
           應收: [
             { name: "借出款", icon: "🤝" },
-            { name: "代墊款", icon: "👥" },
+            { name: "代墊款", icon: "custom:代墊款" },
           ],
         },
         應付帳款: {
@@ -4254,7 +4346,7 @@
         醫療: { icon: "🏥", color: "#f3f4f6" },
         家居: { icon: "🏠", color: "#f3f4f6" },
         家庭: { icon: "👨‍👩‍👧", color: "#f3f4f6" },
-        生活: { icon: "🧴", color: "#f3f4f6" },
+        生活: { icon: "custom:生活", color: "#f3f4f6" },
         學習: { icon: "📚", color: "#f3f4f6" },
         其他: { icon: "•••", color: "#f3f4f6" },
         薪資: { icon: "icon:salary", color: "#f3f4f6" },
@@ -4842,6 +4934,7 @@
           namePlaceholder: "商家名稱 / 項目名稱 (選填)",
           merchantNameLabel: "商家",
           merchantNamePlaceholder: "商家名稱",
+          itemNamePlaceholder: "商品名稱",
           notePlaceholder: "備註",
           paymentMethod: "付款方式",
           subAccountLabel: "子帳戶",
@@ -4999,7 +5092,7 @@
           toastProjectAdded: "預算專案已新增",
           toastProjectUpdated: "預算專案已修改",
           toastProjectDeleted: "預算專案已刪除",
-          toastProjectInUse: "此專案已有紀錄，無法刪除",
+          toastProjectInUse: "此專案已有紀錄，刪除後會保留紀錄並移除專案標籤",
           toastEnterAmount: "請輸入金額",
           toastSameAccount: "轉出與轉入不可為同一個帳戶",
           toastInstallmentExpenseOnly: "分期功能僅適用於支出紀錄",
@@ -5051,7 +5144,7 @@
             "請修改幣值代碼：JPY / TWD / KRW / USD / EUR",
           promptEditProjectStart: "請修改開始日期 YYYY-MM-DD（可留空）：",
           promptEditProjectEnd: "請修改結束日期 YYYY-MM-DD（可留空）：",
-          promptDeleteProject: (name) => `確定刪除預算專案「${name}」嗎？`,
+          promptDeleteProject: (name) => `確定刪除預算專案「${name}」嗎？\n相關紀錄會保留，但會移除專案標籤。`,
           confirmDelete: "確定刪除此筆紀錄？",
           confirmDuplicateRecord: "確定複製此筆紀錄到目前選取日期？",
           promptEditRecordName: "請修改項目名稱：",
@@ -5181,6 +5274,7 @@
           namePlaceholder: "店舗名 / 項目名 (任意)",
           merchantNameLabel: "店舗",
           merchantNamePlaceholder: "店舗名",
+          itemNamePlaceholder: "品名",
           notePlaceholder: "メモ",
           paymentMethod: "支払い方法",
           subAccountLabel: "子口座",
@@ -5351,7 +5445,7 @@
           toastProjectAdded: "予算プロジェクトを追加しました",
           toastProjectUpdated: "予算プロジェクトを更新しました",
           toastProjectDeleted: "予算プロジェクトを削除しました",
-          toastProjectInUse: "このプロジェクトには履歴があるため削除できません",
+          toastProjectInUse: "履歴は残し、プロジェクト指定だけ解除して削除します",
           toastEnterAmount: "金額を入力してください",
           toastSameAccount: "振替元と振替先は同じ口座にできません",
           toastInstallmentExpenseOnly: "分割払いは支出記録のみ利用できます",
@@ -5409,7 +5503,7 @@
           promptEditProjectEnd:
             "終了日 YYYY-MM-DD を編集してください（空欄可）：",
           promptDeleteProject: (name) =>
-            `予算プロジェクト「${name}」を削除しますか？`,
+            `予算プロジェクト「${name}」を削除しますか？\n関連記録は残り、プロジェクト指定だけ解除されます。`,
           confirmDelete: "この記録を削除しますか？",
           confirmDuplicateRecord: "この記録を現在選択中の日付へ複製しますか？",
           promptEditRecordName: "項目名を編集してください：",
@@ -6565,6 +6659,8 @@
         document.getElementById("date").value = item.date || todayString();
         document.getElementById("record-time").value = item.time || "";
         document.getElementById("note").value = item.note || "";
+        const merchantInput = document.getElementById("merchant");
+        if (merchantInput) merchantInput.value = item.merchant || "";
         document.getElementById("currency").value =
           item.currency || getAccountCurrency(item.account) || "¥";
         document.getElementById("price").value = item.price || "";
@@ -6574,6 +6670,7 @@
         nameInput.value = displayLabel(item.name || item.subCatName || "");
         nameInput.dataset.rawValue = item.name || item.subCatName || "";
         nameInput.dataset.autoFilled = "false";
+        renderMerchantFavorites();
         const installmentEnabled = document.getElementById(
           "installment-enabled",
         );
@@ -9505,9 +9602,10 @@
                 </div>
                 <div class="h-2 bg-gray-100 rounded-full overflow-hidden"><div class="h-full ${over ? "bg-red-500" : "bg-gray-900"}" style="width:${Math.round(ratio * 100)}%"></div></div>
               </button>
-              <div class="grid grid-cols-2 gap-2 mt-3">
+              <div class="grid grid-cols-3 gap-2 mt-3">
                 <button type="button" onclick="openBudgetProjectRecords('${project.id}', '${activeProjectOverviewMonth}')" class="p-3 rounded-xl bg-gray-50 text-xs font-bold">${t("projectRecordsButton")}</button>
                 <button type="button" onclick="editBudgetProject('${project.id}')" class="p-3 rounded-xl bg-gray-50 text-xs font-bold">${t("change")}</button>
+                <button type="button" onclick="deleteBudgetProject('${project.id}')" class="p-3 rounded-xl bg-red-50 text-xs font-bold text-red-500">${t("delete")}</button>
               </div>
             </article>
           `;
@@ -9834,18 +9932,26 @@
       function deleteBudgetProject(projectId) {
         const project = projectById(projectId);
         if (!project) return;
-        if (
-          data.some(
-            (item) =>
-              item.projectId === projectId ||
-              projectNamesMatch(item.projectName, project.name),
-          )
-        ) {
-          showToast(t("toastProjectInUse"));
-          return;
-        }
+        const relatedRecords = data.filter(
+          (item) =>
+            item.projectId === projectId ||
+            projectNamesMatch(item.projectName, project.name),
+        );
+        if (relatedRecords.length) showToast(t("toastProjectInUse"));
         if (!confirm(t("promptDeleteProject", project.name))) return;
+        data.forEach((item) => {
+          if (
+            item.projectId === projectId ||
+            projectNamesMatch(item.projectName, project.name)
+          ) {
+            item.projectId = "";
+            item.projectName = "";
+          }
+        });
         budgetProjects = budgetProjects.filter((item) => item.id !== projectId);
+        const selectedProjectInput = document.getElementById("selected-project-id");
+        if (selectedProjectInput?.value === projectId) selectedProjectInput.value = "";
+        localStorage.setItem("myBudget", JSON.stringify(data));
         localStorage.setItem(
           "myBudgetProjects",
           JSON.stringify(budgetProjects),
@@ -9854,6 +9960,10 @@
         renderProjectOverviewPage();
         renderBudgetProjectSettings();
         renderProjectButtons();
+        renderProjectSummary();
+        renderDailyLedger();
+        renderMonthReport();
+        updateBalances();
         showToast(t("toastProjectDeleted"));
       }
 
@@ -10076,6 +10186,46 @@
           .join("");
       }
 
+
+      function currentMerchantValue() {
+        return String(document.getElementById("merchant")?.value || "").trim();
+      }
+
+      function renderMerchantFavorites() {
+        const row = document.getElementById("merchant-favorite-row");
+        const toggle = document.getElementById("merchant-favorite-toggle");
+        if (!row) return;
+        const value = currentMerchantValue();
+        if (toggle) {
+          toggle.classList.toggle("is-active", !!value && merchantFavorites.includes(value));
+          toggle.textContent = !!value && merchantFavorites.includes(value) ? "★" : "☆";
+        }
+        const list = merchantFavorites.slice(0, 12);
+        row.classList.toggle("hidden", list.length === 0);
+        row.innerHTML = list
+          .map((name) => `<button type="button" onpointerdown="event.preventDefault(); selectMerchantFavorite(decodeURIComponent('${encodeURIComponent(name)}'))">${escapeHTML(name)}</button>`)
+          .join("");
+      }
+
+      function toggleMerchantFavorite() {
+        const value = currentMerchantValue();
+        if (!value) {
+          showToast("請先輸入商家名稱");
+          return;
+        }
+        if (merchantFavorites.includes(value))
+          merchantFavorites = merchantFavorites.filter((item) => item !== value);
+        else merchantFavorites = [value, ...merchantFavorites.filter((item) => item !== value)].slice(0, 24);
+        persistMerchantFavorites();
+        renderMerchantFavorites();
+      }
+
+      function selectMerchantFavorite(name) {
+        const input = document.getElementById("merchant");
+        if (input) input.value = name;
+        renderMerchantFavorites();
+      }
+
       function renderCalculator() {
         const input = document.getElementById("price");
         const expressionEl = document.getElementById("calculator-expression");
@@ -10223,6 +10373,11 @@
         renderCalculator();
       }
 
+      window.toggleMerchantFavorite = toggleMerchantFavorite;
+      window.selectMerchantFavorite = selectMerchantFavorite;
+      window.renderMerchantFavorites = renderMerchantFavorites;
+      window.showSuggestedCategories = showSuggestedCategories;
+      window.applySuggestedCategory = applySuggestedCategory;
       window.showCalculator = showCalculator;
       window.hideCalculator = hideCalculator;
       window.openProjectPicker = openProjectPicker;
@@ -10357,6 +10512,7 @@
       }
 
       function selectType(typeName) {
+        categorySuggestionMode = false;
         document.getElementById("selected-type").value = typeName;
         const toContainer = document.getElementById("to-account-container");
         const labelFrom = document.getElementById("label-account-from");
@@ -10383,6 +10539,51 @@
       }
 
       const categoryIconAssets = {
+        "custom:代墊款": "./assets/custom-icons/advance-payment.png",
+        "custom:保險": "./assets/custom-icons/insurance.png",
+        "custom:修繕": "./assets/custom-icons/repair.png",
+        "custom:健康檢查": "./assets/custom-icons/health-check.png",
+        "custom:健身": "./assets/custom-icons/fitness.png",
+        "custom:壽司": "./assets/custom-icons/sushi.png",
+        "custom:外食": "./assets/custom-icons/eat-out.png",
+        "custom:夜店": "./assets/custom-icons/night-club.png",
+        "custom:家具": "./assets/custom-icons/furniture.png",
+        "custom:家電": "./assets/custom-icons/appliance.png",
+        "custom:寵物": "./assets/custom-icons/pet.png",
+        "custom:展覽": "./assets/custom-icons/exhibition.png",
+        "custom:房租": "./assets/custom-icons/rent.png",
+        "custom:捷運": "./assets/custom-icons/metro.png",
+        "custom:文具": "./assets/custom-icons/stationery.png",
+        "custom:日常用品": "./assets/custom-icons/daily-necessities.png",
+        "custom:日用品": "./assets/custom-icons/daily-goods.png",
+        "custom:書籍": "./assets/custom-icons/books.png",
+        "custom:民宿": "./assets/custom-icons/guesthouse.png",
+        "custom:水費": "./assets/custom-icons/water-bill.png",
+        "custom:水電": "./assets/custom-icons/water-bill.png",
+        "custom:清潔": "./assets/custom-icons/cleaning.png",
+        "custom:烤肉": "./assets/custom-icons/bbq.png",
+        "custom:牙醫": "./assets/custom-icons/dentist.png",
+        "custom:牛奶": "./assets/custom-icons/milk.png",
+        "custom:瓦斯": "./assets/custom-icons/gas-bill.png",
+        "custom:甜點": "./assets/custom-icons/dessert.png",
+        "custom:生活": "./assets/custom-icons/life.png",
+        "custom:看診": "./assets/custom-icons/clinic.png",
+        "custom:紅利回饋": "./assets/custom-icons/rebate.png",
+        "custom:網路": "./assets/custom-icons/internet.png",
+        "custom:美容": "./assets/custom-icons/beauty.png",
+        "custom:考試": "./assets/custom-icons/exam.png",
+        "custom:聚餐": "./assets/custom-icons/dining-party.png",
+        "custom:訂閱": "./assets/custom-icons/subscription.png",
+        "custom:計程車": "./assets/custom-icons/taxi.png",
+        "custom:課程": "./assets/custom-icons/course.png",
+        "custom:買藥": "./assets/custom-icons/medicine.png",
+        "custom:遊樂園": "./assets/custom-icons/theme-park.png",
+        "custom:電信": "./assets/custom-icons/telecom.png",
+        "custom:電影": "./assets/custom-icons/movie.png",
+        "custom:電費": "./assets/custom-icons/electricity.png",
+        "custom:鞋包": "./assets/custom-icons/shoes-bags.png",
+        "custom:音樂": "./assets/custom-icons/music.png",
+        "custom:飯店": "./assets/custom-icons/hotel.png",
         "icon:alcohol": "./assets/phosphor/wine.svg",
         "icon:breakfast": "./assets/phosphor/bread.svg",
         "icon:deposit": "./assets/phosphor/arrow-circle-up.svg",
@@ -10649,18 +10850,66 @@
         openCustomMainCategoryModal(asSub);
         editCustomCategory(mode, name);
       }
+      let categorySuggestionMode = false;
+
       function renderTypes() {
         categoryDepth = "main";
         const container = document.getElementById("type-buttons");
         const currentType = document.getElementById("selected-type").value;
-        container.innerHTML = Object.keys(defaultCategories)
+        const suggestionButton = `<button type="button" onclick="showSuggestedCategories()" class="whitespace-nowrap py-2 text-sm font-semibold transition ${categorySuggestionMode ? "text-gray-900 border-b-2 border-gray-900" : "text-gray-400"}">建議</button>`;
+        container.innerHTML = suggestionButton + Object.keys(defaultCategories)
           .map((typeName) => {
-            const isActive = typeName === currentType;
-            return `<button onclick="selectType('${typeName}')" class="whitespace-nowrap py-2 text-sm font-semibold transition ${isActive ? "text-gray-900 border-b-2 border-gray-900" : "text-gray-400"}">${escapeHTML(displayLabel(typeName))}</button>`;
+            const isActive = !categorySuggestionMode && typeName === currentType;
+            return `<button type="button" onclick="selectType('${typeName}')" class="whitespace-nowrap py-2 text-sm font-semibold transition ${isActive ? "text-gray-900 border-b-2 border-gray-900" : "text-gray-400"}">${escapeHTML(displayLabel(typeName))}</button>`;
           })
           .join("");
-        renderMainCats();
+        if (categorySuggestionMode) renderSuggestedCategories();
+        else renderMainCats();
       }
+      function showSuggestedCategories() {
+        categorySuggestionMode = true;
+        document.getElementById("selected-type").value = "支出";
+        renderTypes();
+      }
+
+      function suggestedCategoryItems() {
+        const recent = data
+          .filter((item) => item.type === "支出")
+          .slice(0, 80)
+          .reduce((acc, item) => {
+            const key = item.subCatName || item.name || "";
+            if (!key) return acc;
+            acc[key] = (acc[key] || 0) + 1;
+            return acc;
+          }, {});
+        const all = Object.entries(defaultCategories["支出"] || {}).flatMap(([mainCat, cats]) =>
+          cats.map((cat) => ({ ...cat, mainCat, score: recent[cat.name] || 0 }))
+        );
+        const priority = ["晚餐", "中餐", "早餐", "飲料", "外食", "交通", "計程車", "日常用品", "電費", "訂閱"];
+        return all
+          .sort((a, b) => (b.score - a.score) || (priority.indexOf(a.name) === -1 ? 99 : priority.indexOf(a.name)) - (priority.indexOf(b.name) === -1 ? 99 : priority.indexOf(b.name)))
+          .slice(0, 10);
+      }
+
+      function renderSuggestedCategories() {
+        const container = document.getElementById("category-buttons");
+        const items = suggestedCategoryItems();
+        container.className = "grid mb-6";
+        container.innerHTML = items.map((cat) => {
+          const safeMain = encodeURIComponent(cat.mainCat);
+          const safeName = encodeURIComponent(cat.name);
+          const safeIcon = encodeURIComponent(cat.icon || "•••");
+          return `<button type="button" onclick="applySuggestedCategory(decodeURIComponent('${safeMain}'), decodeURIComponent('${safeName}'), decodeURIComponent('${safeIcon}'))" class="sub-category-select flex flex-col items-center justify-center min-h-[82px] p-3 rounded-2xl border-2 border-transparent bg-white hover:bg-gray-50 transition"><div class="subcategory-icon-shell mb-1">${categoryIconHtml(cat.icon)}</div><span class="text-[11px] font-semibold text-gray-600">${escapeHTML(displayLabel(cat.name))}</span></button>`;
+        }).join("");
+      }
+
+      function applySuggestedCategory(mainCat, name, icon) {
+        categorySuggestionMode = false;
+        document.getElementById("selected-main-cat").value = mainCat;
+        selectSubCat(name, icon);
+        renderTypes();
+      }
+
       function renderMainCats() {
         const container = document.getElementById("main-cat-buttons");
         if (container) container.innerHTML = "";
@@ -10714,7 +10963,7 @@
           .map((cat) => {
             const isActive = cat.name === currentSubCatName;
             const activeClass = isActive
-              ? "border-sky-200 bg-sky-50 shadow-[0_0_0_4px_rgba(90,184,214,0.14)]"
+              ? "border-sky-200 bg-sky-50"
               : "border-transparent bg-white hover:bg-gray-50";
             const safeIcon = cat.icon || "📝";
             const iconHtml = `<div class="subcategory-icon-shell mb-1">${categoryIconHtml(safeIcon)}</div>`;
@@ -11256,6 +11505,7 @@
         const date = document.getElementById("date").value;
         const recordTime = document.getElementById("record-time")?.value || "";
         const note = document.getElementById("note")?.value || "";
+        const merchant = document.getElementById("merchant")?.value.trim() || "";
         const nameInput = document.getElementById("name");
         const name =
           nameInput.dataset.autoFilled === "true"
@@ -11333,6 +11583,7 @@
           time: recordTime,
           note,
           name,
+          merchant,
           price,
           currency,
           projectId,
@@ -11387,6 +11638,9 @@
           calculatorExpression = "";
           document.getElementById("price").value = "";
           document.getElementById("note").value = "";
+          const merchantInputAfterEdit = document.getElementById("merchant");
+          if (merchantInputAfterEdit) merchantInputAfterEdit.value = "";
+          renderMerchantFavorites();
           document.getElementById("record-time").value = "";
           renderCalculator();
           hideCalculator();
@@ -11434,6 +11688,9 @@
         calculatorExpression = "";
         document.getElementById("price").value = "";
         document.getElementById("note").value = "";
+        const merchantInputAfterSave = document.getElementById("merchant");
+        if (merchantInputAfterSave) merchantInputAfterSave.value = "";
+        renderMerchantFavorites();
         document.getElementById("record-time").value = "";
         renderCalculator();
         hideCalculator();
@@ -11690,7 +11947,7 @@
         showToast(t("toastExported"));
       }
 
-      const APP_VERSION = "20260630-01";
+      const APP_VERSION = "20260701-02";
 
       function registerServiceWorker() {
         if (!("serviceWorker" in navigator) || location.protocol === "file:")
