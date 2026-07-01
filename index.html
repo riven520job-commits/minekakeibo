@@ -1561,7 +1561,7 @@
         border-color: #9bd9f0;
       }
 
-      .voice-entry-panel {
+      .receipt-ocr-panel {
         border: 1px solid var(--line);
         border-radius: 18px;
         background: #fff;
@@ -1569,7 +1569,7 @@
         display: grid;
         gap: 8px;
       }
-      .voice-entry-button {
+      .receipt-ocr-button {
         width: 100%;
         min-height: 48px;
         border-radius: 16px;
@@ -1584,12 +1584,12 @@
         gap: 8px;
         touch-action: manipulation;
       }
-      .voice-entry-button.listening {
+      .receipt-ocr-button.processing {
         border-color: #9bd9f0;
         background: #edf8fc;
         color: #2f7f95;
       }
-      .voice-entry-status {
+      .receipt-ocr-status {
         min-height: 18px;
         color: var(--muted);
         font-size: 0.76rem;
@@ -2720,13 +2720,21 @@
           />
 
           <div class="space-y-4">
-            <div class="voice-entry-panel">
-              <button type="button" id="voice-entry-button" class="voice-entry-button" onclick="startVoiceAddRecord()">
-                <span aria-hidden="true"><svg class="notion-icon-svg w-5 h-5" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/><path d="M9 21h6"/></svg></span>
-                <span data-voice-label data-i18n="voiceAddButton">語音新增</span>
+            <input
+              type="file"
+              id="receipt-ocr-upload"
+              accept="image/*"
+              capture="environment"
+              class="hidden"
+              onchange="handleReceiptOcrUpload(event)"
+            />
+            <div class="receipt-ocr-panel">
+              <button type="button" id="receipt-ocr-button" class="receipt-ocr-button" onclick="triggerReceiptOcrUpload()">
+                <span aria-hidden="true"><svg class="notion-icon-svg w-5 h-5" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10a2 2 0 0 1 2 2v16l-3-1.6-2 1.1-2-1.1-2 1.1-2-1.1L5 21V5a2 2 0 0 1 2-2z"/><path d="M8 8h8"/><path d="M8 12h8"/><path d="M8 16h5"/></svg></span>
+                <span data-receipt-label data-i18n="receiptOcrButton">發票辨識</span>
               </button>
-              <div id="voice-entry-status" class="voice-entry-status" data-i18n="voiceAddHint">
-                例：昨天晚餐 PayPay 500 日幣 省錢大作戰
+              <div id="receipt-ocr-status" class="receipt-ocr-status" data-i18n="receiptOcrHint">
+                上傳或拍攝發票後，會自動帶入日期、商家、品名與金額
               </div>
             </div>
             <div class="add-compose-grid">
@@ -3430,13 +3438,13 @@
                 新增紀錄
               </h2>
               <button
-                id="voice-entry-header-button"
+                id="receipt-ocr-header-button"
                 type="button"
-                onclick="startVoiceAddRecord()"
+                onclick="triggerReceiptOcrUpload()"
                 class="w-10 h-10 rounded-full bg-gray-50 border border-gray-100 text-lg font-black"
-                aria-label="Voice input"
+                aria-label="Receipt OCR"
               >
-                <svg class="notion-icon-svg w-5 h-5" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/><path d="M9 21h6"/></svg>
+                <svg class="notion-icon-svg w-5 h-5" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10a2 2 0 0 1 2 2v16l-3-1.6-2 1.1-2-1.1-2 1.1-2-1.1L5 21V5a2 2 0 0 1 2-2z"/><path d="M8 8h8"/><path d="M8 12h8"/><path d="M8 16h5"/></svg>
               </button>
             </div>
             <button
@@ -4087,7 +4095,7 @@
       let budgetProjects =
         JSON.parse(localStorage.getItem("myBudgetProjects")) || [];
       let activeProjectOverviewMonth = monthKey(new Date());
-      let voiceRecognizer = null;
+      let receiptOcrBusy = false;
       const defaultAccountGroups = [
         "💵 現金",
         "💳 信用卡",
@@ -4992,13 +5000,14 @@
           merchantNameLabel: "商家",
           merchantNamePlaceholder: "商家名稱",
           itemNamePlaceholder: "商品名稱",
-          voiceAddButton: "語音新增",
-          voiceListening: "聆聽中",
-          voiceAddHint: "例：昨天晚餐 PayPay 500 日幣 省錢大作戰",
-          voiceListeningHint: "正在聆聽，請說出日期、品名、金額、付款方式或專案",
-          voiceUnsupported: "此瀏覽器不支援語音輸入，請用 Safari/Chrome 試試",
-          voiceFailed: "沒有辨識到內容，請再試一次",
-          voiceParsedPrefix: "已帶入：",
+          receiptOcrButton: "發票辨識",
+          receiptOcrProcessing: "辨識中",
+          receiptOcrHint: "上傳或拍攝發票後，會自動帶入日期、商家、品名與金額",
+          receiptOcrLoading: "正在載入 OCR 引擎，第一次可能需要幾秒",
+          receiptOcrReading: "正在辨識發票文字",
+          receiptOcrFailed: "辨識失敗，請換一張較清楚的照片",
+          receiptOcrParsedPrefix: "已帶入：",
+          receiptOcrNoFile: "請先選擇發票圖片",
           notePlaceholder: "備註",
           paymentMethod: "付款方式",
           subAccountLabel: "子帳戶",
@@ -5339,13 +5348,14 @@
           merchantNameLabel: "店舗",
           merchantNamePlaceholder: "店舗名",
           itemNamePlaceholder: "品名",
-          voiceAddButton: "音声で追加",
-          voiceListening: "聞き取り中",
-          voiceAddHint: "例：昨日 晩ごはん PayPay 500円 節約大作戦",
-          voiceListeningHint: "日付、品名、金額、支払い方法、プロジェクトを話してください",
-          voiceUnsupported: "このブラウザは音声入力に対応していません。Safari/Chromeでお試しください",
-          voiceFailed: "聞き取れませんでした。もう一度お試しください",
-          voiceParsedPrefix: "入力しました：",
+          receiptOcrButton: "レシート読取",
+          receiptOcrProcessing: "読取中",
+          receiptOcrHint: "レシート画像を選ぶと、日付、店舗、品名、金額を自動入力します",
+          receiptOcrLoading: "OCRエンジンを読み込んでいます。初回は数秒かかります",
+          receiptOcrReading: "レシート文字を読み取っています",
+          receiptOcrFailed: "読み取れませんでした。より鮮明な写真でお試しください",
+          receiptOcrParsedPrefix: "入力しました：",
+          receiptOcrNoFile: "レシート画像を選択してください",
           notePlaceholder: "メモ",
           paymentMethod: "支払い方法",
           subAccountLabel: "子口座",
@@ -6114,7 +6124,7 @@
         renderProjectButtons();
         toggleInstallmentFields();
         hideCalculator();
-        updateVoiceEntryStatus(t("voiceAddHint"));
+        updateReceiptOcrStatus(t("receiptOcrHint"));
         document.getElementById("date").value =
           selectedEntryDate || todayString();
         renderAddDateField();
@@ -10468,106 +10478,129 @@
       window.syncAddDateFromInput = syncAddDateFromInput;
 
 
-      function voiceRecognitionApi() {
-        return window.SpeechRecognition || window.webkitSpeechRecognition || null;
-      }
-
-      function voiceLanguage() {
-        return currentLang === "jp" ? "ja-JP" : "zh-TW";
-      }
-
-      function updateVoiceEntryStatus(message, listening = false) {
-        const status = document.getElementById("voice-entry-status");
-        const button = document.getElementById("voice-entry-button");
+      function updateReceiptOcrStatus(message, processing = false) {
+        const status = document.getElementById("receipt-ocr-status");
+        const button = document.getElementById("receipt-ocr-button");
         if (status) status.textContent = message || "";
         if (button) {
-          button.classList.toggle("listening", listening);
-          const label = button.querySelector("[data-voice-label]");
-          if (label) label.textContent = listening ? t("voiceListening") : t("voiceAddButton");
+          button.classList.toggle("processing", processing);
+          const label = button.querySelector("[data-receipt-label]");
+          if (label) label.textContent = processing ? t("receiptOcrProcessing") : t("receiptOcrButton");
         }
       }
 
-      function normalizeVoiceText(text) {
+      function triggerReceiptOcrUpload() {
+        document.getElementById("receipt-ocr-upload")?.click();
+      }
+
+      function normalizeReceiptText(text) {
         return String(text || "")
-          .replace(/[，、。,.]/g, " ")
+          .replace(/[０-９]/g, (char) => String.fromCharCode(char.charCodeAt(0) - 65248))
+          .replace(/[，、]/g, " ")
+          .replace(/[|｜]/g, " ")
           .replace(/\s+/g, " ")
           .trim();
       }
 
-      function parseVoiceDate(text) {
-        const now = new Date();
-        const date = new Date(now);
-        if (/(前天|おととい|一昨日)/.test(text)) date.setDate(date.getDate() - 2);
-        else if (/(昨天|昨日|きのう)/.test(text)) date.setDate(date.getDate() - 1);
-        else if (/(明天|明日|あした)/.test(text)) date.setDate(date.getDate() + 1);
-        const isoMatch = text.match(/(20\d{2})[\/\-.年](\d{1,2})[\/\-.月](\d{1,2})/);
-        if (isoMatch) return `${isoMatch[1]}-${String(isoMatch[2]).padStart(2, "0")}-${String(isoMatch[3]).padStart(2, "0")}`;
-        const mdMatch = text.match(/(\d{1,2})[\/月](\d{1,2})日?/);
-        if (mdMatch) {
-          const year = now.getFullYear();
-          return `${year}-${String(mdMatch[1]).padStart(2, "0")}-${String(mdMatch[2]).padStart(2, "0")}`;
-        }
-        return date.toISOString().split("T")[0];
+      function receiptTextLines(text) {
+        return String(text || "")
+          .split(/\r?\n/)
+          .map((line) => normalizeReceiptText(line))
+          .filter(Boolean);
       }
 
-      function parseVoiceAmount(text) {
+      function parseReceiptDate(text) {
+        const now = new Date();
         const normalized = String(text || "").replace(/[０-９]/g, (char) =>
           String.fromCharCode(char.charCodeAt(0) - 65248),
         );
-        const currencyAmount = normalized.match(/(?:¥|￥|日幣|日币|円|圓|台幣|臺幣|韓幣|원|美金|美元|ドル|歐元|ユーロ|TWD|KRW|USD|EUR)\s*([0-9][0-9,，.]*)|([0-9][0-9,，.]*)\s*(?:日幣|日币|円|圓|台幣|臺幣|韓幣|원|美金|美元|ドル|歐元|ユーロ|TWD|KRW|USD|EUR)/i);
-        if (currencyAmount) return (currencyAmount[1] || currencyAmount[2]).replace(/[，,]/g, "");
-        const withoutDates = normalized
-          .replace(/20\d{2}[\/\-.年]\d{1,2}[\/\-.月]\d{1,2}日?/g, " ")
-          .replace(/\d{1,2}[\/月]\d{1,2}日?/g, " ")
-          .replace(/\d{1,2}:\d{2}/g, " ");
-        const numbers = [...withoutDates.matchAll(/[0-9][0-9,，.]*/g)]
-          .map((match) => match[0].replace(/[，,]/g, ""))
-          .filter((value) => value && Number(value) > 0);
-        return numbers.length ? numbers[numbers.length - 1] : "";
+        const isoMatch = normalized.match(/(20\d{2})[\/\-.年](\d{1,2})[\/\-.月](\d{1,2})日?/);
+        if (isoMatch) return `${isoMatch[1]}-${String(isoMatch[2]).padStart(2, "0")}-${String(isoMatch[3]).padStart(2, "0")}`;
+        const slashMatch = normalized.match(/(\d{4})(\d{2})(\d{2})/);
+        if (slashMatch) return `${slashMatch[1]}-${slashMatch[2]}-${slashMatch[3]}`;
+        const mdMatch = normalized.match(/(\d{1,2})[\/月](\d{1,2})日?/);
+        if (mdMatch) return `${now.getFullYear()}-${String(mdMatch[1]).padStart(2, "0")}-${String(mdMatch[2]).padStart(2, "0")}`;
+        return selectedEntryDate || now.toISOString().split("T")[0];
       }
 
-      function parseVoiceCurrency(text) {
-        if (/(台幣|臺幣|新台幣|TWD|NT)/i.test(text)) return "NT$";
-        if (/(韓幣|韓元|KRW|원)/i.test(text)) return "₩";
-        if (/(美金|美元|USD|ドル)/i.test(text)) return "$";
-        if (/(歐元|欧元|EUR|ユーロ)/i.test(text)) return "€";
+      function receiptNumberCandidates(text) {
+        const normalized = String(text || "")
+          .replace(/[０-９]/g, (char) => String.fromCharCode(char.charCodeAt(0) - 65248))
+          .replace(/(\d),(\d)/g, "$1$2");
+        return [...normalized.matchAll(/(?:¥|￥)?\s*([0-9]{2,7})(?:\s*円)?/g)]
+          .map((match) => Number(match[1]))
+          .filter((value) => Number.isFinite(value) && value > 0 && value < 10000000);
+      }
+
+      function parseReceiptAmount(rawText) {
+        const lines = receiptTextLines(rawText);
+        const strongKeywords = /(合計|総計|總計|總額|总计|小計|お買上|お支払|支払|請求|領収|税込|税込合計|TOTAL|Total|total|AMOUNT|Amount)/i;
+        const weakKeywords = /(金額|現計|カード|クレジット|PayPay|PAYPAY|電子マネー|釣銭なし)/i;
+        const scored = [];
+        lines.forEach((line, index) => {
+          receiptNumberCandidates(line).forEach((value) => {
+            let score = value;
+            if (strongKeywords.test(line)) score += 10000000;
+            if (weakKeywords.test(line)) score += 1000000;
+            if (/お預|預り|預かり|釣|お釣|CHANGE/i.test(line)) score -= 2000000;
+            score += Math.max(0, index);
+            scored.push({ value, score });
+          });
+        });
+        if (scored.length) {
+          scored.sort((a, b) => b.score - a.score);
+          return String(scored[0].value);
+        }
+        const values = receiptNumberCandidates(rawText);
+        return values.length ? String(Math.max(...values)) : "";
+      }
+
+      function parseReceiptCurrency(text) {
+        if (/(TWD|NT\$|台幣|臺幣|新台幣)/i.test(text)) return "NT$";
+        if (/(KRW|韓幣|韓元|원)/i.test(text)) return "₩";
+        if (/(USD|US\$|美元|美金)/i.test(text)) return "$";
+        if (/(EUR|歐元|欧元|ユーロ)/i.test(text)) return "€";
         return "¥";
       }
 
-      function parseVoiceType(text) {
-        if (/(收入|入金|收款|薪水|給料|返金|退款)/.test(text)) return "收入";
-        if (/(轉帳|轉賬|振替|移轉)/.test(text)) return "轉帳";
-        return "支出";
+      function parseReceiptAccount(text) {
+        const normalized = String(text || "").toLowerCase();
+        const exact = userAccounts.find((acc) =>
+          normalized.includes(String(displayLabel(acc)).toLowerCase()) ||
+          normalized.includes(String(acc).toLowerCase()),
+        );
+        if (exact) return exact;
+        if (/paypay/i.test(normalized)) return userAccounts.find((acc) => /paypay/i.test(acc)) || "";
+        if (/(現金|cash|現計)/i.test(text)) return userAccounts.find((acc) => /現金|cash/i.test(acc)) || "";
+        if (/(カード|credit|visa|master|jcb|クレジット)/i.test(text)) return userAccounts.find((acc) => /カード|信用|credit|visa|master|jcb/i.test(acc)) || "";
+        return document.getElementById("selected-account")?.value || "";
       }
 
-      function allCategoryCandidates(type) {
+      function allReceiptCategoryCandidates(type) {
         return Object.entries(defaultCategories[type] || {}).flatMap(([mainCat, cats]) => [
           ...cats.map((cat) => ({ ...cat, mainCat })),
           ...((customCategories[type] || {})[mainCat] || []).map((cat) => ({ ...cat, mainCat })),
         ]);
       }
 
-      function findVoiceCategory(type, text) {
-        const normalized = text.toLowerCase();
-        const candidates = allCategoryCandidates(type);
+      function parseReceiptCategory(text) {
+        const normalized = String(text || "").toLowerCase();
+        const candidates = allReceiptCategoryCandidates("支出");
         const aliases = {
-          "晚餐": ["晚餐", "晚飯", "夕食", "夜ご飯", "ディナー"],
+          "晚餐": ["晚餐", "晚飯", "夕食", "ディナー", "弁当", "惣菜"],
           "中餐": ["中餐", "午餐", "午飯", "ランチ", "昼食"],
           "早餐": ["早餐", "朝食", "モーニング"],
-          "飲料": ["飲料", "飲み物", "ドリンク", "咖啡", "コーヒー"],
-          "外食": ["外食", "餐廳", "レストラン"],
-          "計程車": ["計程車", "タクシー", "taxi"],
-          "捷運": ["捷運", "地下鉄", "メトロ"],
-          "電費": ["電費", "電気"],
-          "水費": ["水費", "水道"],
-          "房租": ["房租", "家賃"],
-          "訂閱": ["訂閱", "サブスク"],
+          "飲料": ["飲料", "飲み物", "ドリンク", "咖啡", "コーヒー", "茶", "milk", "ミルク"],
+          "外食": ["外食", "餐廳", "レストラン", "食堂"],
+          "生活": ["生活", "日用品", "雑貨", "ドラッグ", "薬局"],
+          "買菜": ["スーパー", "市場", "食品", "食材", "野菜"],
+          "電信": ["通信", "携帯", "mobile", "docomo", "au", "softbank"],
         };
-        const byAlias = Object.entries(aliases).find(([, words]) =>
-          words.some((word) => normalized.includes(word.toLowerCase())),
+        const hit = Object.entries(aliases).find(([, words]) =>
+          words.some((word) => normalized.includes(String(word).toLowerCase())),
         );
-        if (byAlias) {
-          const found = candidates.find((cat) => cat.name === byAlias[0]);
+        if (hit) {
+          const found = candidates.find((cat) => cat.name === hit[0]);
           if (found) return found;
         }
         return candidates.find((cat) =>
@@ -10576,78 +10609,72 @@
         ) || candidates[0] || null;
       }
 
-      function findVoiceAccount(text) {
-        const normalized = text.toLowerCase();
-        return userAccounts.find((acc) =>
-          normalized.includes(String(displayLabel(acc)).toLowerCase()) ||
-          normalized.includes(String(acc).toLowerCase()),
-        ) || userAccounts.find((acc) => /paypay/i.test(acc)) || "";
+      function parseReceiptMerchant(rawText) {
+        const skip = /(領収|領收|明細|合計|小計|税込|税|TEL|電話|〒|登録番号|レジ|No\.|NO\.|担当|釣|お預|支払|カード|クレジット|PayPay|現金|日付|日時)/i;
+        const line = receiptTextLines(rawText).find((item) =>
+          item.length >= 2 && item.length <= 32 && !skip.test(item) && !/[0-9]{4}[\/\-.年]/.test(item),
+        );
+        return line || "";
       }
 
-      function findVoiceProject(text) {
-        const normalized = text.toLowerCase();
-        return budgetProjects.find((project) =>
-          normalized.includes(String(project.name).toLowerCase()) ||
-          normalized.includes(String(displayLabel(project.name)).toLowerCase()),
-        ) || preferredBudgetProject() || null;
+      function parseReceiptItemName(rawText, category, merchant) {
+        const skip = /(領収|領收|明細|合計|小計|税込|税|TEL|電話|〒|登録番号|レジ|No\.|NO\.|担当|釣|お預|支払|カード|クレジット|PayPay|現金|日付|日時)/i;
+        const line = receiptTextLines(rawText).find((item) =>
+          item !== merchant && item.length >= 2 && item.length <= 28 && !skip.test(item) && !/[0-9]{4}[\/\-.年]/.test(item),
+        );
+        return line || (category ? displayLabel(category.name) : "");
       }
 
-      function cleanVoiceItemName(text, amount, category, account, project) {
-        let result = normalizeVoiceText(text)
-          .replace(/20\d{2}[\/\-.年]\d{1,2}[\/\-.月]\d{1,2}日?/g, " ")
-          .replace(/\d{1,2}[\/月]\d{1,2}日?/g, " ")
-          .replace(/\d{1,2}:\d{2}/g, " ");
-        [
-          "今天", "今日", "昨日", "昨天", "前天", "明天", "支出", "收入", "轉帳",
-          "日幣", "日币", "円", "圓", "台幣", "臺幣", "韓幣", "美金", "美元", "歐元",
-          amount, category?.name, displayLabel(category?.name || ""), account, displayLabel(account || ""), project?.name,
-        ].filter(Boolean).forEach((token) => {
-          result = result.replaceAll(String(token), " ");
+      async function ensureTesseractLoaded() {
+        if (window.Tesseract) return window.Tesseract;
+        updateReceiptOcrStatus(t("receiptOcrLoading"), true);
+        await new Promise((resolve, reject) => {
+          const script = document.createElement("script");
+          script.src = "https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";
+          script.async = true;
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
         });
-        result = result.replace(/\s+/g, " ").trim();
-        return result || (category ? displayLabel(category.name) : "");
+        return window.Tesseract;
       }
 
-      function applyVoiceRecordText(rawText) {
-        const text = normalizeVoiceText(rawText);
+      function applyReceiptOcrText(rawText) {
+        const text = normalizeReceiptText(rawText);
         if (!text) return false;
-        const type = parseVoiceType(text);
-        const amount = parseVoiceAmount(text);
-        const currency = parseVoiceCurrency(text);
-        const date = parseVoiceDate(text);
-        const category = findVoiceCategory(type, text);
-        const account = findVoiceAccount(text);
-        const project = type === "支出" ? findVoiceProject(text) : null;
+        const amount = parseReceiptAmount(rawText);
+        const currency = parseReceiptCurrency(rawText);
+        const date = parseReceiptDate(rawText);
+        const account = parseReceiptAccount(rawText);
+        const category = parseReceiptCategory(rawText);
+        const merchant = parseReceiptMerchant(rawText);
+        const itemName = parseReceiptItemName(rawText, category, merchant);
 
-        selectType(type);
+        selectType("支出");
         if (category) {
           document.getElementById("selected-main-cat").value = category.mainCat;
           selectSubCat(category.name, category.icon || "•••");
         }
+        const currencyInput = document.getElementById("currency");
+        if (currencyInput) currencyInput.value = currency;
         if (amount) {
           calculatorExpression = "";
           const priceInput = document.getElementById("price");
           if (priceInput) priceInput.value = amount;
           renderCalculator();
         }
-        const currencyInput = document.getElementById("currency");
-        if (currencyInput) currencyInput.value = currency;
         if (account) {
           document.getElementById("selected-account").value = account;
-          document.getElementById("selected-account-group").value = accountGroupMap[account] || document.getElementById("selected-account-group").value;
-          if (currencyInput) currencyInput.value = getAccountCurrency(account) || currency;
-        }
-        if (project) {
-          document.getElementById("selected-project-id").value = project.id;
-          renderProjectButtons();
-        } else {
-          renderProjectSummary();
+          document.getElementById("selected-account-group").value =
+            accountGroupMap[account] || document.getElementById("selected-account-group").value;
+          if (currencyInput && getAccountCurrency(account)) currencyInput.value = getAccountCurrency(account);
         }
         const dateInput = document.getElementById("date");
         if (dateInput) dateInput.value = date;
         selectedEntryDate = date;
         renderAddDateField();
-        const itemName = cleanVoiceItemName(text, amount, category, account, project);
+        const merchantInput = document.getElementById("merchant");
+        if (merchantInput && merchant) merchantInput.value = merchant;
         const nameInput = document.getElementById("name");
         if (nameInput && itemName) {
           nameInput.value = itemName;
@@ -10656,51 +10683,45 @@
         }
         renderAccounts();
         renderProjectSummary();
-        updateVoiceEntryStatus(`${t("voiceParsedPrefix")} ${text}`);
+        renderMerchantFavorites();
+        updateReceiptOcrStatus(`${t("receiptOcrParsedPrefix")} ${merchant || itemName || text.slice(0, 24)}`);
         return true;
       }
 
-      function startVoiceAddRecord() {
-        const Recognition = voiceRecognitionApi();
-        if (!Recognition) {
-          showToast(t("voiceUnsupported"));
-          updateVoiceEntryStatus(t("voiceUnsupported"));
+      async function handleReceiptOcrUpload(event) {
+        const input = event?.target;
+        const file = input?.files?.[0];
+        if (!file) {
+          showToast(t("receiptOcrNoFile"));
           return;
         }
+        if (receiptOcrBusy) return;
+        receiptOcrBusy = true;
         try {
-          if (voiceRecognizer) voiceRecognizer.stop();
-          voiceRecognizer = new Recognition();
-          voiceRecognizer.lang = voiceLanguage();
-          voiceRecognizer.interimResults = false;
-          voiceRecognizer.maxAlternatives = 1;
-          voiceRecognizer.onstart = () => updateVoiceEntryStatus(t("voiceListeningHint"), true);
-          voiceRecognizer.onerror = () => {
-            updateVoiceEntryStatus(t("voiceFailed"));
-            showToast(t("voiceFailed"));
-          };
-          voiceRecognizer.onend = () => {
-            const button = document.getElementById("voice-entry-button");
-            button?.classList.remove("listening");
-            const label = button?.querySelector("[data-voice-label]");
-            if (label) label.textContent = t("voiceAddButton");
-          };
-          voiceRecognizer.onresult = (event) => {
-            const transcript = event.results?.[0]?.[0]?.transcript || "";
-            if (!applyVoiceRecordText(transcript)) {
-              updateVoiceEntryStatus(t("voiceFailed"));
-              showToast(t("voiceFailed"));
-            }
-          };
-          voiceRecognizer.start();
+          const Tesseract = await ensureTesseractLoaded();
+          updateReceiptOcrStatus(t("receiptOcrReading"), true);
+          const result = await Tesseract.recognize(file, "jpn+eng+chi_tra", {
+            logger: (message) => {
+              if (message?.status === "recognizing text" && Number.isFinite(message.progress)) {
+                updateReceiptOcrStatus(`${t("receiptOcrReading")} ${Math.round(message.progress * 100)}%`, true);
+              }
+            },
+          });
+          if (!applyReceiptOcrText(result?.data?.text || "")) throw new Error("empty OCR result");
         } catch (error) {
           console.error(error);
-          updateVoiceEntryStatus(t("voiceFailed"));
-          showToast(t("voiceFailed"));
+          updateReceiptOcrStatus(t("receiptOcrFailed"));
+          showToast(t("receiptOcrFailed"));
+        } finally {
+          receiptOcrBusy = false;
+          updateReceiptOcrStatus(document.getElementById("receipt-ocr-status")?.textContent || t("receiptOcrHint"), false);
+          if (input) input.value = "";
         }
       }
 
-      window.startVoiceAddRecord = startVoiceAddRecord;
-      window.applyVoiceRecordText = applyVoiceRecordText;
+      window.triggerReceiptOcrUpload = triggerReceiptOcrUpload;
+      window.handleReceiptOcrUpload = handleReceiptOcrUpload;
+      window.applyReceiptOcrText = applyReceiptOcrText;
 
       let lastTouchEnd = 0;
       document.addEventListener(
@@ -12254,7 +12275,7 @@
         showToast(t("toastExported"));
       }
 
-      const APP_VERSION = "20260702-02";
+      const APP_VERSION = "20260702-03";
 
       function registerServiceWorker() {
         if (!("serviceWorker" in navigator) || location.protocol === "file:")
