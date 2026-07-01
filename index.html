@@ -1560,6 +1560,42 @@
         background: #f5fbff;
         border-color: #9bd9f0;
       }
+
+      .voice-entry-panel {
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: #fff;
+        padding: 12px;
+        display: grid;
+        gap: 8px;
+      }
+      .voice-entry-button {
+        width: 100%;
+        min-height: 48px;
+        border-radius: 16px;
+        background: #f7f7f5;
+        border: 1px solid var(--line);
+        color: var(--ink);
+        font-size: 0.94rem;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        touch-action: manipulation;
+      }
+      .voice-entry-button.listening {
+        border-color: #9bd9f0;
+        background: #edf8fc;
+        color: #2f7f95;
+      }
+      .voice-entry-status {
+        min-height: 18px;
+        color: var(--muted);
+        font-size: 0.76rem;
+        line-height: 1.45;
+        word-break: break-word;
+      }
       .add-field-tile .notion-input {
         min-height: 58px;
       }
@@ -2684,6 +2720,15 @@
           />
 
           <div class="space-y-4">
+            <div class="voice-entry-panel">
+              <button type="button" id="voice-entry-button" class="voice-entry-button" onclick="startVoiceAddRecord()">
+                <span aria-hidden="true"><svg class="notion-icon-svg w-5 h-5" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/><path d="M9 21h6"/></svg></span>
+                <span data-voice-label data-i18n="voiceAddButton">語音新增</span>
+              </button>
+              <div id="voice-entry-status" class="voice-entry-status" data-i18n="voiceAddHint">
+                例：昨天晚餐 PayPay 500 日幣 省錢大作戰
+              </div>
+            </div>
             <div class="add-compose-grid">
               <label class="photo-tile" aria-label="上傳或拍攝照片">
                 <svg class="notion-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l1.4-2h7.2L17 7h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h2z"/><circle cx="12" cy="13" r="3.5"/></svg>
@@ -3376,13 +3421,24 @@
             >
               ×
             </button>
-            <h2
-              id="add-modal-title"
-              class="text-2xl font-bold tracking-tight"
-              data-i18n="addTitle"
-            >
-              新增紀錄
-            </h2>
+            <div class="flex items-center gap-2 min-w-0">
+              <h2
+                id="add-modal-title"
+                class="text-2xl font-bold tracking-tight truncate"
+                data-i18n="addTitle"
+              >
+                新增紀錄
+              </h2>
+              <button
+                id="voice-entry-header-button"
+                type="button"
+                onclick="startVoiceAddRecord()"
+                class="w-10 h-10 rounded-full bg-gray-50 border border-gray-100 text-lg font-black"
+                aria-label="Voice input"
+              >
+                <svg class="notion-icon-svg w-5 h-5" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/><path d="M9 21h6"/></svg>
+              </button>
+            </div>
             <button
               onclick="addExpense()"
               class="add-modal-action add-modal-check"
@@ -4031,6 +4087,7 @@
       let budgetProjects =
         JSON.parse(localStorage.getItem("myBudgetProjects")) || [];
       let activeProjectOverviewMonth = monthKey(new Date());
+      let voiceRecognizer = null;
       const defaultAccountGroups = [
         "💵 現金",
         "💳 信用卡",
@@ -4935,6 +4992,13 @@
           merchantNameLabel: "商家",
           merchantNamePlaceholder: "商家名稱",
           itemNamePlaceholder: "商品名稱",
+          voiceAddButton: "語音新增",
+          voiceListening: "聆聽中",
+          voiceAddHint: "例：昨天晚餐 PayPay 500 日幣 省錢大作戰",
+          voiceListeningHint: "正在聆聽，請說出日期、品名、金額、付款方式或專案",
+          voiceUnsupported: "此瀏覽器不支援語音輸入，請用 Safari/Chrome 試試",
+          voiceFailed: "沒有辨識到內容，請再試一次",
+          voiceParsedPrefix: "已帶入：",
           notePlaceholder: "備註",
           paymentMethod: "付款方式",
           subAccountLabel: "子帳戶",
@@ -5275,6 +5339,13 @@
           merchantNameLabel: "店舗",
           merchantNamePlaceholder: "店舗名",
           itemNamePlaceholder: "品名",
+          voiceAddButton: "音声で追加",
+          voiceListening: "聞き取り中",
+          voiceAddHint: "例：昨日 晩ごはん PayPay 500円 節約大作戦",
+          voiceListeningHint: "日付、品名、金額、支払い方法、プロジェクトを話してください",
+          voiceUnsupported: "このブラウザは音声入力に対応していません。Safari/Chromeでお試しください",
+          voiceFailed: "聞き取れませんでした。もう一度お試しください",
+          voiceParsedPrefix: "入力しました：",
           notePlaceholder: "メモ",
           paymentMethod: "支払い方法",
           subAccountLabel: "子口座",
@@ -6043,6 +6114,7 @@
         renderProjectButtons();
         toggleInstallmentFields();
         hideCalculator();
+        updateVoiceEntryStatus(t("voiceAddHint"));
         document.getElementById("date").value =
           selectedEntryDate || todayString();
         renderAddDateField();
@@ -10395,6 +10467,241 @@
       window.openAddDatePicker = openAddDatePicker;
       window.syncAddDateFromInput = syncAddDateFromInput;
 
+
+      function voiceRecognitionApi() {
+        return window.SpeechRecognition || window.webkitSpeechRecognition || null;
+      }
+
+      function voiceLanguage() {
+        return currentLang === "jp" ? "ja-JP" : "zh-TW";
+      }
+
+      function updateVoiceEntryStatus(message, listening = false) {
+        const status = document.getElementById("voice-entry-status");
+        const button = document.getElementById("voice-entry-button");
+        if (status) status.textContent = message || "";
+        if (button) {
+          button.classList.toggle("listening", listening);
+          const label = button.querySelector("[data-voice-label]");
+          if (label) label.textContent = listening ? t("voiceListening") : t("voiceAddButton");
+        }
+      }
+
+      function normalizeVoiceText(text) {
+        return String(text || "")
+          .replace(/[，、。,.]/g, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+      }
+
+      function parseVoiceDate(text) {
+        const now = new Date();
+        const date = new Date(now);
+        if (/(前天|おととい|一昨日)/.test(text)) date.setDate(date.getDate() - 2);
+        else if (/(昨天|昨日|きのう)/.test(text)) date.setDate(date.getDate() - 1);
+        else if (/(明天|明日|あした)/.test(text)) date.setDate(date.getDate() + 1);
+        const isoMatch = text.match(/(20\d{2})[\/\-.年](\d{1,2})[\/\-.月](\d{1,2})/);
+        if (isoMatch) return `${isoMatch[1]}-${String(isoMatch[2]).padStart(2, "0")}-${String(isoMatch[3]).padStart(2, "0")}`;
+        const mdMatch = text.match(/(\d{1,2})[\/月](\d{1,2})日?/);
+        if (mdMatch) {
+          const year = now.getFullYear();
+          return `${year}-${String(mdMatch[1]).padStart(2, "0")}-${String(mdMatch[2]).padStart(2, "0")}`;
+        }
+        return date.toISOString().split("T")[0];
+      }
+
+      function parseVoiceAmount(text) {
+        const normalized = String(text || "").replace(/[０-９]/g, (char) =>
+          String.fromCharCode(char.charCodeAt(0) - 65248),
+        );
+        const currencyAmount = normalized.match(/(?:¥|￥|日幣|日币|円|圓|台幣|臺幣|韓幣|원|美金|美元|ドル|歐元|ユーロ|TWD|KRW|USD|EUR)\s*([0-9][0-9,，.]*)|([0-9][0-9,，.]*)\s*(?:日幣|日币|円|圓|台幣|臺幣|韓幣|원|美金|美元|ドル|歐元|ユーロ|TWD|KRW|USD|EUR)/i);
+        if (currencyAmount) return (currencyAmount[1] || currencyAmount[2]).replace(/[，,]/g, "");
+        const withoutDates = normalized
+          .replace(/20\d{2}[\/\-.年]\d{1,2}[\/\-.月]\d{1,2}日?/g, " ")
+          .replace(/\d{1,2}[\/月]\d{1,2}日?/g, " ")
+          .replace(/\d{1,2}:\d{2}/g, " ");
+        const numbers = [...withoutDates.matchAll(/[0-9][0-9,，.]*/g)]
+          .map((match) => match[0].replace(/[，,]/g, ""))
+          .filter((value) => value && Number(value) > 0);
+        return numbers.length ? numbers[numbers.length - 1] : "";
+      }
+
+      function parseVoiceCurrency(text) {
+        if (/(台幣|臺幣|新台幣|TWD|NT)/i.test(text)) return "NT$";
+        if (/(韓幣|韓元|KRW|원)/i.test(text)) return "₩";
+        if (/(美金|美元|USD|ドル)/i.test(text)) return "$";
+        if (/(歐元|欧元|EUR|ユーロ)/i.test(text)) return "€";
+        return "¥";
+      }
+
+      function parseVoiceType(text) {
+        if (/(收入|入金|收款|薪水|給料|返金|退款)/.test(text)) return "收入";
+        if (/(轉帳|轉賬|振替|移轉)/.test(text)) return "轉帳";
+        return "支出";
+      }
+
+      function allCategoryCandidates(type) {
+        return Object.entries(defaultCategories[type] || {}).flatMap(([mainCat, cats]) => [
+          ...cats.map((cat) => ({ ...cat, mainCat })),
+          ...((customCategories[type] || {})[mainCat] || []).map((cat) => ({ ...cat, mainCat })),
+        ]);
+      }
+
+      function findVoiceCategory(type, text) {
+        const normalized = text.toLowerCase();
+        const candidates = allCategoryCandidates(type);
+        const aliases = {
+          "晚餐": ["晚餐", "晚飯", "夕食", "夜ご飯", "ディナー"],
+          "中餐": ["中餐", "午餐", "午飯", "ランチ", "昼食"],
+          "早餐": ["早餐", "朝食", "モーニング"],
+          "飲料": ["飲料", "飲み物", "ドリンク", "咖啡", "コーヒー"],
+          "外食": ["外食", "餐廳", "レストラン"],
+          "計程車": ["計程車", "タクシー", "taxi"],
+          "捷運": ["捷運", "地下鉄", "メトロ"],
+          "電費": ["電費", "電気"],
+          "水費": ["水費", "水道"],
+          "房租": ["房租", "家賃"],
+          "訂閱": ["訂閱", "サブスク"],
+        };
+        const byAlias = Object.entries(aliases).find(([, words]) =>
+          words.some((word) => normalized.includes(word.toLowerCase())),
+        );
+        if (byAlias) {
+          const found = candidates.find((cat) => cat.name === byAlias[0]);
+          if (found) return found;
+        }
+        return candidates.find((cat) =>
+          normalized.includes(String(displayLabel(cat.name)).toLowerCase()) ||
+          normalized.includes(String(cat.name).toLowerCase()),
+        ) || candidates[0] || null;
+      }
+
+      function findVoiceAccount(text) {
+        const normalized = text.toLowerCase();
+        return userAccounts.find((acc) =>
+          normalized.includes(String(displayLabel(acc)).toLowerCase()) ||
+          normalized.includes(String(acc).toLowerCase()),
+        ) || userAccounts.find((acc) => /paypay/i.test(acc)) || "";
+      }
+
+      function findVoiceProject(text) {
+        const normalized = text.toLowerCase();
+        return budgetProjects.find((project) =>
+          normalized.includes(String(project.name).toLowerCase()) ||
+          normalized.includes(String(displayLabel(project.name)).toLowerCase()),
+        ) || preferredBudgetProject() || null;
+      }
+
+      function cleanVoiceItemName(text, amount, category, account, project) {
+        let result = normalizeVoiceText(text)
+          .replace(/20\d{2}[\/\-.年]\d{1,2}[\/\-.月]\d{1,2}日?/g, " ")
+          .replace(/\d{1,2}[\/月]\d{1,2}日?/g, " ")
+          .replace(/\d{1,2}:\d{2}/g, " ");
+        [
+          "今天", "今日", "昨日", "昨天", "前天", "明天", "支出", "收入", "轉帳",
+          "日幣", "日币", "円", "圓", "台幣", "臺幣", "韓幣", "美金", "美元", "歐元",
+          amount, category?.name, displayLabel(category?.name || ""), account, displayLabel(account || ""), project?.name,
+        ].filter(Boolean).forEach((token) => {
+          result = result.replaceAll(String(token), " ");
+        });
+        result = result.replace(/\s+/g, " ").trim();
+        return result || (category ? displayLabel(category.name) : "");
+      }
+
+      function applyVoiceRecordText(rawText) {
+        const text = normalizeVoiceText(rawText);
+        if (!text) return false;
+        const type = parseVoiceType(text);
+        const amount = parseVoiceAmount(text);
+        const currency = parseVoiceCurrency(text);
+        const date = parseVoiceDate(text);
+        const category = findVoiceCategory(type, text);
+        const account = findVoiceAccount(text);
+        const project = type === "支出" ? findVoiceProject(text) : null;
+
+        selectType(type);
+        if (category) {
+          document.getElementById("selected-main-cat").value = category.mainCat;
+          selectSubCat(category.name, category.icon || "•••");
+        }
+        if (amount) {
+          calculatorExpression = "";
+          const priceInput = document.getElementById("price");
+          if (priceInput) priceInput.value = amount;
+          renderCalculator();
+        }
+        const currencyInput = document.getElementById("currency");
+        if (currencyInput) currencyInput.value = currency;
+        if (account) {
+          document.getElementById("selected-account").value = account;
+          document.getElementById("selected-account-group").value = accountGroupMap[account] || document.getElementById("selected-account-group").value;
+          if (currencyInput) currencyInput.value = getAccountCurrency(account) || currency;
+        }
+        if (project) {
+          document.getElementById("selected-project-id").value = project.id;
+          renderProjectButtons();
+        } else {
+          renderProjectSummary();
+        }
+        const dateInput = document.getElementById("date");
+        if (dateInput) dateInput.value = date;
+        selectedEntryDate = date;
+        renderAddDateField();
+        const itemName = cleanVoiceItemName(text, amount, category, account, project);
+        const nameInput = document.getElementById("name");
+        if (nameInput && itemName) {
+          nameInput.value = itemName;
+          nameInput.dataset.rawValue = itemName;
+          nameInput.dataset.autoFilled = "false";
+        }
+        renderAccounts();
+        renderProjectSummary();
+        updateVoiceEntryStatus(`${t("voiceParsedPrefix")} ${text}`);
+        return true;
+      }
+
+      function startVoiceAddRecord() {
+        const Recognition = voiceRecognitionApi();
+        if (!Recognition) {
+          showToast(t("voiceUnsupported"));
+          updateVoiceEntryStatus(t("voiceUnsupported"));
+          return;
+        }
+        try {
+          if (voiceRecognizer) voiceRecognizer.stop();
+          voiceRecognizer = new Recognition();
+          voiceRecognizer.lang = voiceLanguage();
+          voiceRecognizer.interimResults = false;
+          voiceRecognizer.maxAlternatives = 1;
+          voiceRecognizer.onstart = () => updateVoiceEntryStatus(t("voiceListeningHint"), true);
+          voiceRecognizer.onerror = () => {
+            updateVoiceEntryStatus(t("voiceFailed"));
+            showToast(t("voiceFailed"));
+          };
+          voiceRecognizer.onend = () => {
+            const button = document.getElementById("voice-entry-button");
+            button?.classList.remove("listening");
+            const label = button?.querySelector("[data-voice-label]");
+            if (label) label.textContent = t("voiceAddButton");
+          };
+          voiceRecognizer.onresult = (event) => {
+            const transcript = event.results?.[0]?.[0]?.transcript || "";
+            if (!applyVoiceRecordText(transcript)) {
+              updateVoiceEntryStatus(t("voiceFailed"));
+              showToast(t("voiceFailed"));
+            }
+          };
+          voiceRecognizer.start();
+        } catch (error) {
+          console.error(error);
+          updateVoiceEntryStatus(t("voiceFailed"));
+          showToast(t("voiceFailed"));
+        }
+      }
+
+      window.startVoiceAddRecord = startVoiceAddRecord;
+      window.applyVoiceRecordText = applyVoiceRecordText;
+
       let lastTouchEnd = 0;
       document.addEventListener(
         "touchend",
@@ -11947,7 +12254,7 @@
         showToast(t("toastExported"));
       }
 
-      const APP_VERSION = "20260701-02";
+      const APP_VERSION = "20260702-02";
 
       function registerServiceWorker() {
         if (!("serviceWorker" in navigator) || location.protocol === "file:")
