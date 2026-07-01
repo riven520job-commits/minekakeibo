@@ -1,0 +1,31 @@
+# MineKakeibo - Personal Finance Web App
+
+## Overview
+個人用家計簿・資產管理 Web App。支援多幣別記帳、資產負債管理、預算專案、CSV 匯出與雲端同步。
+
+## Features
+- Daily expense tracking
+- Multi-currency support: JPY / TWD / KRW / USD / EUR
+- Asset and liability overview
+- Budget project management
+- CSV export
+- Cloud sync
+- Spending analytics
+- Installment expense records
+
+## Tech Stack
+- Frontend:
+- Backend / Database:
+- Auth:
+- Hosting:
+- AI Coding Support:
+
+## Why I built it
+自己在日本生活時，需要同時管理日幣、台幣與日常支出，因此開發這個工具。
+
+## Screenshots
+
+## Future Improvements
+- OCR receipt input
+- AI spending summary
+- Monthly report generation
