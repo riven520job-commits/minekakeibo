@@ -1242,6 +1242,57 @@
         border-radius: 9999px;
         flex: 0 0 auto;
       }
+
+      .ai-savings-panel {
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: #fff;
+        padding: 14px;
+      }
+      .ai-savings-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .ai-savings-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 999px;
+        background: #f3f4f6;
+        color: #37352f;
+        padding: 6px 10px;
+        font-size: 0.72rem;
+        font-weight: 850;
+      }
+      .ai-savings-list {
+        display: grid;
+        gap: 10px;
+      }
+      .ai-savings-item {
+        border: 1px solid #ecebea;
+        border-radius: 14px;
+        background: #fbfbfa;
+        padding: 11px 12px;
+      }
+      .ai-savings-item strong {
+        display: block;
+        color: var(--ink);
+        font-size: 0.88rem;
+        margin-bottom: 4px;
+      }
+      .ai-savings-item span {
+        display: block;
+        color: var(--muted);
+        font-size: 0.78rem;
+        line-height: 1.45;
+      }
+      .ai-savings-impact {
+        color: #2563eb;
+        font-weight: 850;
+      }
       .donut-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -1293,10 +1344,10 @@
         background: var(--panel);
       }
       .calculator-grid button {
-        min-height: var(--calc-key-h, clamp(48px, 6.6dvh, 56px));
+        min-height: var(--calc-key-h, clamp(54px, 7.2dvh, 62px));
         border-right: 1px solid var(--line);
         border-bottom: 1px solid var(--line);
-        font-size: clamp(1.08rem, 4.6vw, 1.32rem);
+        font-size: clamp(1.12rem, 4.8vw, 1.42rem);
         font-weight: 850;
         background: var(--panel);
         color: var(--ink);
@@ -1569,6 +1620,11 @@
         display: grid;
         gap: 8px;
       }
+      .receipt-ocr-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
       .receipt-ocr-button {
         width: 100%;
         min-height: 48px;
@@ -1583,6 +1639,9 @@
         justify-content: center;
         gap: 8px;
         touch-action: manipulation;
+      }
+      .receipt-ocr-button.secondary {
+        background: #fff;
       }
       .receipt-ocr-button.processing {
         border-color: #9bd9f0;
@@ -2267,22 +2326,22 @@
         color: #d6525b;
       }
       .calculator-panel-fixed {
-        --calc-key-h: clamp(48px, 6.6dvh, 56px);
-        --calc-readout-h: 40px;
-        --calc-quick-h: 36px;
+        --calc-key-h: clamp(54px, 7.2dvh, 62px);
+        --calc-readout-h: 42px;
+        --calc-quick-h: 38px;
         position: fixed;
         left: 50%;
         right: auto;
         bottom: 0 !important;
         z-index: 140;
         width: min(100vw, 448px);
-        max-height: calc(100dvh - 76px);
+        max-height: calc(100dvh - 62px);
         box-sizing: border-box;
         overflow: visible;
         transform: translateX(-50%);
         background: rgba(243, 244, 246, 0.98);
         margin: 0;
-        padding: 10px 12px calc(38px + env(safe-area-inset-bottom));
+        padding: 8px 10px calc(30px + env(safe-area-inset-bottom));
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         border-top: 1px solid var(--line);
@@ -2297,7 +2356,7 @@
           padding: 7px 12px;
         }
         .calculator-panel-fixed {
-          --calc-key-h: clamp(42px, 5.6dvh, 48px);
+          --calc-key-h: clamp(50px, 6.8dvh, 58px);
           padding-top: 8px;
         }
       }
@@ -2317,12 +2376,12 @@
           min-height: 110px;
         }
         .calculator-panel-fixed {
-          --calc-key-h: clamp(40px, 5.3dvh, 46px);
+          --calc-key-h: clamp(46px, 6.1dvh, 52px);
           --calc-readout-h: 38px;
           --calc-quick-h: 34px;
         }
         .calculator-grid button {
-          font-size: 1.12rem;
+          font-size: 1.08rem;
         }
         .calculator-readout {
           padding-block: 6px;
@@ -2334,15 +2393,15 @@
 
       @media (max-height: 680px) {
         .calculator-panel-fixed {
-          --calc-key-h: clamp(36px, 5dvh, 40px);
-          --calc-readout-h: 34px;
-          --calc-quick-h: 32px;
-          padding-top: 6px;
-          padding-bottom: calc(32px + env(safe-area-inset-bottom));
+          --calc-key-h: clamp(42px, 5.7dvh, 48px);
+          --calc-readout-h: 32px;
+          --calc-quick-h: 30px;
+          padding-top: 5px;
+          padding-bottom: calc(22px + env(safe-area-inset-bottom));
         }
         .calculator-grid button {
-          font-size: 0.96rem;
-          min-height: 38px;
+          font-size: 0.98rem;
+          min-height: var(--calc-key-h);
         }
         .calculator-readout {
           padding-block: 6px;
@@ -2724,17 +2783,30 @@
               type="file"
               id="receipt-ocr-upload"
               accept="image/*"
+              class="hidden"
+              onchange="handleReceiptOcrUpload(event)"
+            />
+            <input
+              type="file"
+              id="receipt-ocr-camera"
+              accept="image/*"
               capture="environment"
               class="hidden"
               onchange="handleReceiptOcrUpload(event)"
             />
             <div class="receipt-ocr-panel">
-              <button type="button" id="receipt-ocr-button" class="receipt-ocr-button" onclick="triggerReceiptOcrUpload()">
-                <span aria-hidden="true"><svg class="notion-icon-svg w-5 h-5" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10a2 2 0 0 1 2 2v16l-3-1.6-2 1.1-2-1.1-2 1.1-2-1.1L5 21V5a2 2 0 0 1 2-2z"/><path d="M8 8h8"/><path d="M8 12h8"/><path d="M8 16h5"/></svg></span>
-                <span data-receipt-label data-i18n="receiptOcrButton">發票辨識</span>
-              </button>
+              <div class="receipt-ocr-actions">
+                <button type="button" id="receipt-ocr-button" class="receipt-ocr-button" onclick="triggerReceiptOcrUpload('upload')">
+                  <span aria-hidden="true"><svg class="notion-icon-svg w-5 h-5" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10a2 2 0 0 1 2 2v16l-3-1.6-2 1.1-2-1.1-2 1.1-2-1.1L5 21V5a2 2 0 0 1 2-2z"/><path d="M8 8h8"/><path d="M8 12h8"/><path d="M8 16h5"/></svg></span>
+                  <span data-receipt-label data-i18n="receiptOcrUploadButton">上傳發票</span>
+                </button>
+                <button type="button" class="receipt-ocr-button secondary" onclick="triggerReceiptOcrUpload('camera')">
+                  <span aria-hidden="true"><svg class="notion-icon-svg w-5 h-5" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l1.4-2h7.2L17 7h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h2z"/><circle cx="12" cy="13" r="3.5"/></svg></span>
+                  <span data-i18n="receiptOcrCameraButton">拍攝發票</span>
+                </button>
+              </div>
               <div id="receipt-ocr-status" class="receipt-ocr-status" data-i18n="receiptOcrHint">
-                上傳或拍攝發票後，會自動帶入日期、商家、品名與金額
+                可選擇相簿圖片或直接拍攝，辨識後自動帶入日期、商家、品名與金額
               </div>
             </div>
             <div class="add-compose-grid">
@@ -2979,22 +3051,22 @@
                 >
               </div>
               <div class="quick-amounts no-scrollbar">
-                <button type="button" onpointerdown="event.preventDefault(); calculatorQuick(538)">
+                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorQuick(538)">
                   538
                 </button>
-                <button type="button" onpointerdown="event.preventDefault(); calculatorQuick(1299)">
+                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorQuick(1299)">
                   1,299
                 </button>
-                <button type="button" onpointerdown="event.preventDefault(); calculatorQuick(587)">
+                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorQuick(587)">
                   587
                 </button>
-                <button type="button" onpointerdown="event.preventDefault(); calculatorQuick(2026)">
+                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorQuick(2026)">
                   2,026
                 </button>
-                <button type="button" onpointerdown="event.preventDefault(); calculatorQuick(799)">
+                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorQuick(799)">
                   799
                 </button>
-                <button type="button" onpointerdown="event.preventDefault(); calculatorQuick(868)">
+                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorQuick(868)">
                   868
                 </button>
               </div>
@@ -3003,28 +3075,28 @@
                 class="min-h-[1rem] text-right text-xs text-gray-400"
               ></div>
               <div class="calculator-grid" aria-label="calculator">
-                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('÷')">÷</button>
-                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('×')">×</button>
-                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('−')">−</button>
-                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('+')">+</button>
-                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('7')">7</button>
-                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('8')">8</button>
-                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('9')">9</button>
-                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('⌫')">⌫</button>
-                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('4')">4</button>
-                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('5')">5</button>
-                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('6')">6</button>
-                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('C')">C</button>
-                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('1')">1</button>
-                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('2')">2</button>
-                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('3')">3</button>
-                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('↵')">↵</button>
-                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('.')">.</button>
-                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('0')">0</button>
-                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('00')">
+                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('÷')">÷</button>
+                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('×')">×</button>
+                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('−')">−</button>
+                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('+')">+</button>
+                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('7')">7</button>
+                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('8')">8</button>
+                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('9')">9</button>
+                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('⌫')">⌫</button>
+                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('4')">4</button>
+                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('5')">5</button>
+                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('6')">6</button>
+                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('C')">C</button>
+                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('1')">1</button>
+                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('2')">2</button>
+                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('3')">3</button>
+                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('↵')">↵</button>
+                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('.')">.</button>
+                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('0')">0</button>
+                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('00')">
                   00
                 </button>
-                <button type="button" onpointerdown="event.preventDefault(); calculatorPress('✓')">✓</button>
+                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('✓')">✓</button>
               </div>
             </div>
             <button
@@ -3382,6 +3454,8 @@
 
             <div id="chart-insights" class="grid grid-cols-2 gap-3"></div>
 
+            <div id="ai-savings-insights" class="ai-savings-panel"></div>
+
             <div class="surface p-4">
               <p
                 class="text-xs text-gray-500 mb-2 font-medium"
@@ -3440,7 +3514,7 @@
               <button
                 id="receipt-ocr-header-button"
                 type="button"
-                onclick="triggerReceiptOcrUpload()"
+                onclick="triggerReceiptOcrUpload('upload')"
                 class="w-10 h-10 rounded-full bg-gray-50 border border-gray-100 text-lg font-black"
                 aria-label="Receipt OCR"
               >
@@ -4990,6 +5064,21 @@
           statsTopCategory: "最高分類",
           noChartData: "此期間還沒有支出紀錄",
           hiddenChartHint: "金額已隱藏，圖表暫停顯示",
+          aiSavingsTitle: "AI 省錢分析",
+          aiSavingsLocalBadge: "本機分析",
+          aiSavingsNoData: "目前資料還不夠，先累積幾筆收入與支出後，會自動產生建議。",
+          aiSavingsProjected: "依照目前節奏，本期支出可能落在",
+          aiSavingsTopCategory: "最高支出分類",
+          aiSavingsMerchant: "重複消費商家",
+          aiSavingsBudgetRisk: "預算風險",
+          aiSavingsIncomeRatio: "收支比例",
+          aiSavingsSuggestion: "建議",
+          aiSavingsReview: "可檢查是否有訂閱、分期或可延後消費。",
+          aiSavingsKeep: "目前支出節奏相對穩定，建議維持記錄並每週檢查一次分類。",
+          aiSavingsReduceCategory: (name, amount) => `本期 ${name} 已達 ${amount}，可先設定每週上限或改用現金預算。`,
+          aiSavingsMerchantTip: (name, count) => `${name} 出現 ${count} 次，適合檢查是否能用優惠券、點數或改成固定預算。`,
+          aiSavingsProjectTip: (name, percent) => `${name} 已使用 ${percent}% 預算，接下來新增紀錄時建議優先確認是否必要。`,
+          aiSavingsIncomeTip: (percent) => `支出約為收入的 ${percent}%，建議先保留 10% 到 20% 作為固定儲蓄。`,
           openStatsTitle: "查看統計圖表",
           openStatsHint: "點選開啟期間分析與分類排行",
           statsModalTitle: "支出分析",
@@ -5001,8 +5090,10 @@
           merchantNamePlaceholder: "商家名稱",
           itemNamePlaceholder: "商品名稱",
           receiptOcrButton: "發票辨識",
+          receiptOcrUploadButton: "上傳發票",
+          receiptOcrCameraButton: "拍攝發票",
           receiptOcrProcessing: "辨識中",
-          receiptOcrHint: "上傳或拍攝發票後，會自動帶入日期、商家、品名與金額",
+          receiptOcrHint: "可選擇相簿圖片或直接拍攝，辨識後自動帶入日期、商家、品名與金額",
           receiptOcrLoading: "正在載入 OCR 引擎，第一次可能需要幾秒",
           receiptOcrReading: "正在辨識發票文字",
           receiptOcrFailed: "辨識失敗，請換一張較清楚的照片",
@@ -5338,6 +5429,21 @@
           statsTopCategory: "最大カテゴリ",
           noChartData: "この期間の支出記録はまだありません",
           hiddenChartHint: "金額を隠しているため、グラフを一時停止しています",
+          aiSavingsTitle: "AI節約分析",
+          aiSavingsLocalBadge: "端末内分析",
+          aiSavingsNoData: "まだデータが少ないため、収入と支出を数件入力すると自動で提案します。",
+          aiSavingsProjected: "現在のペースでは、今期支出はおよそ",
+          aiSavingsTopCategory: "最大カテゴリ",
+          aiSavingsMerchant: "よく使う店舗",
+          aiSavingsBudgetRisk: "予算リスク",
+          aiSavingsIncomeRatio: "収支バランス",
+          aiSavingsSuggestion: "提案",
+          aiSavingsReview: "サブスク、分割払い、後回しにできる支出を確認してみましょう。",
+          aiSavingsKeep: "支出ペースは比較的安定しています。記録を続け、週1回カテゴリを見直すのがおすすめです。",
+          aiSavingsReduceCategory: (name, amount) => `今期の ${name} は ${amount} です。週ごとの上限や現金予算を設定すると管理しやすくなります。`,
+          aiSavingsMerchantTip: (name, count) => `${name} が ${count} 回出ています。クーポン、ポイント、固定予算化を確認しましょう。`,
+          aiSavingsProjectTip: (name, percent) => `${name} は予算の ${percent}% を使用済みです。次の記録時に必要性を確認しましょう。`,
+          aiSavingsIncomeTip: (percent) => `支出は収入の約 ${percent}% です。まず10〜20%を固定貯蓄に回すのがおすすめです。`,
           openStatsTitle: "統計グラフを見る",
           openStatsHint: "期間分析とカテゴリランキングを開きます",
           statsModalTitle: "支出分析",
@@ -5349,8 +5455,10 @@
           merchantNamePlaceholder: "店舗名",
           itemNamePlaceholder: "品名",
           receiptOcrButton: "レシート読取",
+          receiptOcrUploadButton: "画像を選択",
+          receiptOcrCameraButton: "撮影する",
           receiptOcrProcessing: "読取中",
-          receiptOcrHint: "レシート画像を選ぶと、日付、店舗、品名、金額を自動入力します",
+          receiptOcrHint: "写真ライブラリから選ぶか撮影すると、日付、店舗、品名、金額を自動入力します",
           receiptOcrLoading: "OCRエンジンを読み込んでいます。初回は数秒かかります",
           receiptOcrReading: "レシート文字を読み取っています",
           receiptOcrFailed: "読み取れませんでした。より鮮明な写真でお試しください",
@@ -7381,6 +7489,114 @@
         setTimeout(() => location.reload(), 800);
       }
 
+      function monthDaysForStatsRange(rangeConfig) {
+        const months = rangeConfig?.months || [];
+        if (!months.length) return 30;
+        return months.reduce((sum, month) => {
+          const [year, monthIndex] = month.split("-").map(Number);
+          if (!year || !monthIndex) return sum + 30;
+          return sum + new Date(year, monthIndex, 0).getDate();
+        }, 0);
+      }
+
+      function renderAiSavingsInsights(rangeConfig, currentTotal, previousTotal, topCategoryEntries) {
+        const container = document.getElementById("ai-savings-insights");
+        if (!container) return;
+        if (amountsHidden) {
+          container.innerHTML = `<div class="empty-state">${t("hiddenChartHint")}</div>`;
+          return;
+        }
+        const rangeMonths = new Set((rangeConfig?.months || []));
+        const rangeItems = data.filter((item) => rangeMonths.has(String(item.date || "").substring(0, 7)));
+        const expenses = rangeItems.filter((item) => item.type === "支出");
+        const incomes = rangeItems.filter((item) => item.type === "收入");
+        if (!expenses.length && !incomes.length) {
+          container.innerHTML = `
+            <div class="ai-savings-header">
+              <div>
+                <div class="text-sm font-black">${t("aiSavingsTitle")}</div>
+                <div class="text-xs text-gray-400 mt-1">${t("aiSavingsNoData")}</div>
+              </div>
+              <span class="ai-savings-badge">${t("aiSavingsLocalBadge")}</span>
+            </div>
+          `;
+          return;
+        }
+        const incomeTotal = incomes.reduce((sum, item) => sum + toJPY(item.price, item.currency || "¥"), 0);
+        const days = Math.max(1, monthDaysForStatsRange(rangeConfig));
+        const dailyAvg = currentTotal / days;
+        const projected = Math.round(dailyAvg * days);
+        const insights = [];
+        const topCategory = topCategoryEntries?.[0];
+        if (topCategory) {
+          insights.push({
+            title: t("aiSavingsTopCategory"),
+            body: t("aiSavingsReduceCategory", displayLabel(topCategory[0]), formatPrivateJPY(topCategory[1], "¥")),
+          });
+        }
+        const merchantCounts = {};
+        expenses.forEach((item) => {
+          const key = String(item.merchant || "").trim();
+          if (!key || key === "---") return;
+          merchantCounts[key] = (merchantCounts[key] || 0) + 1;
+        });
+        const topMerchant = Object.entries(merchantCounts).sort((a, b) => b[1] - a[1])[0];
+        if (topMerchant && topMerchant[1] >= 2) {
+          insights.push({
+            title: t("aiSavingsMerchant"),
+            body: t("aiSavingsMerchantTip", topMerchant[0], topMerchant[1]),
+          });
+        }
+        const riskyProject = budgetProjects
+          .map((project) => {
+            const budget = parseFloat(project.budget) || 0;
+            if (!budget) return null;
+            const spent = projectSpent(project);
+            return { project, percent: Math.round((spent / budget) * 100) };
+          })
+          .filter(Boolean)
+          .sort((a, b) => b.percent - a.percent)[0];
+        if (riskyProject && riskyProject.percent >= 70) {
+          insights.push({
+            title: t("aiSavingsBudgetRisk"),
+            body: t("aiSavingsProjectTip", riskyProject.project.name, riskyProject.percent),
+          });
+        }
+        if (incomeTotal > 0) {
+          const ratio = Math.round((currentTotal / incomeTotal) * 100);
+          insights.push({
+            title: t("aiSavingsIncomeRatio"),
+            body: t("aiSavingsIncomeTip", ratio),
+          });
+        }
+        if (previousTotal && currentTotal > previousTotal * 1.1) {
+          insights.push({
+            title: t("statsMonthlyChange"),
+            body: `${t("aiSavingsProjected")} ${formatPrivateJPY(projected, "¥")}。${t("aiSavingsReview")}`,
+          });
+        }
+        if (!insights.length) {
+          insights.push({ title: t("aiSavingsSuggestion"), body: t("aiSavingsKeep") });
+        }
+        container.innerHTML = `
+          <div class="ai-savings-header">
+            <div>
+              <div class="text-sm font-black">${t("aiSavingsTitle")}</div>
+              <div class="text-xs text-gray-400 mt-1">${t("aiSavingsProjected")} <span class="ai-savings-impact">${formatPrivateJPY(projected, "¥")}</span></div>
+            </div>
+            <span class="ai-savings-badge">${t("aiSavingsLocalBadge")}</span>
+          </div>
+          <div class="ai-savings-list">
+            ${insights.slice(0, 4).map((item) => `
+              <div class="ai-savings-item">
+                <strong>${escapeHTML(item.title)}</strong>
+                <span>${escapeHTML(item.body)}</span>
+              </div>
+            `).join("")}
+          </div>
+        `;
+      }
+
       // 渲染圖表邏輯
       function renderCharts() {
         if (typeof Chart === "undefined") return;
@@ -7403,6 +7619,8 @@
           });
           const hiddenMessage = `<div class="col-span-2 empty-state">${t("hiddenChartHint")}</div>`;
           if (insightContainer) insightContainer.innerHTML = hiddenMessage;
+          const aiSavingsContainer = document.getElementById("ai-savings-insights");
+          if (aiSavingsContainer) aiSavingsContainer.innerHTML = hiddenMessage;
           if (topCategoryList)
             topCategoryList.innerHTML = `<div class="empty-state">${t("hiddenChartHint")}</div>`;
           if (currencyBreakdown) currencyBreakdown.innerHTML = "";
@@ -7451,6 +7669,7 @@
           (a, b) => b[1] - a[1],
         );
         const topCategory = topCategoryEntries[0];
+        renderAiSavingsInsights(rangeConfig, currentTotal, previousTotal, topCategoryEntries);
         if (insightContainer) {
           const changeText = previousTotal
             ? `${change > 0 ? "+" : ""}${change}%`
@@ -10489,8 +10708,9 @@
         }
       }
 
-      function triggerReceiptOcrUpload() {
-        document.getElementById("receipt-ocr-upload")?.click();
+      function triggerReceiptOcrUpload(mode = "upload") {
+        const targetId = mode === "camera" ? "receipt-ocr-camera" : "receipt-ocr-upload";
+        document.getElementById(targetId)?.click();
       }
 
       function normalizeReceiptText(text) {
@@ -12275,7 +12495,7 @@
         showToast(t("toastExported"));
       }
 
-      const APP_VERSION = "20260702-03";
+      const APP_VERSION = "20260704-02";
 
       function registerServiceWorker() {
         if (!("serviceWorker" in navigator) || location.protocol === "file:")
