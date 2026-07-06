@@ -715,6 +715,42 @@
         padding: 11px 0 11px 22px;
         border-top: 1px solid var(--line);
       }
+      .account-overview-credit-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px 8px;
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: var(--text-2xs);
+        font-weight: 700;
+        line-height: 1.35;
+      }
+      .account-overview-credit-meta span {
+        display: inline-flex;
+        align-items: center;
+        max-width: 100%;
+        min-height: 22px;
+        border-radius: 999px;
+        background: #f7f8fa;
+        border: 1px solid var(--line);
+        padding: 3px 8px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .account-overview-side {
+        display: grid;
+        justify-items: end;
+        gap: 4px;
+        min-width: 96px;
+      }
+      .account-overview-due {
+        color: var(--muted);
+        font-size: var(--text-2xs);
+        font-weight: 750;
+        line-height: 1.25;
+        white-space: nowrap;
+      }
       .account-detail-shell {
         background: #fff;
         color: var(--ink);
@@ -7866,6 +7902,40 @@
         return currentBalances;
       }
 
+      function isCreditOverviewAccount(acc) {
+        const group = accountGroupMap[acc] || "";
+        const setting = ensureAccountSetting(acc);
+        return !!setting.isCredit || group.includes("信用卡") || /カード|信用|credit|visa|master|jcb/i.test(acc);
+      }
+
+      function creditOverviewMetaHtml(acc, currency) {
+        if (!isCreditOverviewAccount(acc)) return "";
+        const setting = ensureAccountSetting(acc);
+        const usage = accountCreditUsage(acc);
+        const autoDebit = setting.autoDebitAccount
+          ? displayLabel(setting.autoDebitAccount)
+          : t("uncategorized");
+        return `
+          <div class="account-overview-credit-meta">
+            <span>可用額度 ${formatPrivateMoney(usage.remaining || 0, currency)}</span>
+            <span>代繳帳款 ${escapeHTML(autoDebit)}</span>
+          </div>
+        `;
+      }
+
+      function creditOverviewDueHtml(acc) {
+        if (!isCreditOverviewAccount(acc)) return "";
+        const setting = ensureAccountSetting(acc);
+        const days = Number(setting.paymentDueDays || 0);
+        const current = new Date(`${monthKey(new Date())}-01`);
+        current.setMonth(current.getMonth() + 1);
+        current.setDate(
+          Math.max(1, Math.min(days || 27, monthLastDay(monthKey(current)))),
+        );
+        const dueLabel = formatLocalDate(current).replace(/-/g, "/");
+        return `<span class="account-overview-due">截止 ${escapeHTML(dueLabel)}</span>`;
+      }
+
       function updateBalances() {
         let currentBalances = computeAccountBalances(todayString());
 
@@ -7924,16 +7994,22 @@
                   .map((acc) => {
                     const isNegative = currentBalances[acc] < 0;
                     const accCurrency = getAccountCurrency(acc);
+                    const creditMetaHtml = creditOverviewMetaHtml(acc, accCurrency);
+                    const dueHtml = creditOverviewDueHtml(acc);
                     return `
                             <div onclick="openAccountDetail(decodeURIComponent('${encodeURIComponent(acc)}'))" class="account-overview-child cursor-pointer hover:bg-gray-50 transition group">
                                 <div class="min-w-0 pr-3">
                                     <span class="font-semibold text-sm block truncate">${escapeHTML(displayLabel(acc))}</span>
                                     <span class="text-[10px] text-gray-400">${t("initialPrefix")} ${formatPrivateMoney(accountInitials[acc], accCurrency)} · ${formatPrivateJPY(accountInitials[acc], accCurrency)}</span>
+                                    ${creditMetaHtml}
                                 </div>
-                                <div class="flex items-center gap-2 shrink-0">
+                                <div class="flex items-start gap-2 shrink-0">
                                     <button onclick="event.stopPropagation(); setAccountGroup(decodeURIComponent('${encodeURIComponent(acc)}'))" class="text-[10px] text-blue-600 bg-blue-50 px-2 py-1 rounded-lg opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition">${t("classify")}</button>
                                     <button onclick="event.stopPropagation(); deleteSubAccount(decodeURIComponent('${encodeURIComponent(acc)}'))" class="text-[10px] text-red-500 bg-red-50 px-2 py-1 rounded-lg opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition">${t("deleteSubAccount")}</button>
-                                    <span class="font-bold tracking-tight ${isNegative ? "text-red-500" : "text-gray-500"}">${formatPrivateMoney(currentBalances[acc], accCurrency)}</span>
+                                    <span class="account-overview-side">
+                                      <span class="font-bold tracking-tight ${isNegative ? "text-red-500" : "text-gray-500"}">${formatPrivateMoney(currentBalances[acc], accCurrency)}</span>
+                                      ${dueHtml}
+                                    </span>
                                 </div>
                             </div>
                         `;
@@ -12530,7 +12606,7 @@
         showToast(t("toastExported"));
       }
 
-      const APP_VERSION = "20260706-01";
+      const APP_VERSION = "20260707-01";
 
       function registerServiceWorker() {
         if (!("serviceWorker" in navigator) || location.protocol === "file:")
