@@ -1,4 +1,4 @@
-const CACHE_NAME = 'minekakeibo-v20260707-01';
+const CACHE_NAME = 'minekakeibo-v20260707-02';
 const APP_SHELL = [
   './',
   './index.html',

@@ -7905,7 +7905,7 @@
       function isCreditOverviewAccount(acc) {
         const group = accountGroupMap[acc] || "";
         const setting = ensureAccountSetting(acc);
-        return !!setting.isCredit || group.includes("信用卡") || /カード|信用|credit|visa|master|jcb/i.test(acc);
+        return !!setting.isCredit || group.includes("信用卡");
       }
 
       function creditOverviewMetaHtml(acc, currency) {
@@ -8000,7 +8000,6 @@
                             <div onclick="openAccountDetail(decodeURIComponent('${encodeURIComponent(acc)}'))" class="account-overview-child cursor-pointer hover:bg-gray-50 transition group">
                                 <div class="min-w-0 pr-3">
                                     <span class="font-semibold text-sm block truncate">${escapeHTML(displayLabel(acc))}</span>
-                                    <span class="text-[10px] text-gray-400">${t("initialPrefix")} ${formatPrivateMoney(accountInitials[acc], accCurrency)} · ${formatPrivateJPY(accountInitials[acc], accCurrency)}</span>
                                     ${creditMetaHtml}
                                 </div>
                                 <div class="flex items-start gap-2 shrink-0">
@@ -12606,7 +12605,7 @@
         showToast(t("toastExported"));
       }
 
-      const APP_VERSION = "20260707-01";
+      const APP_VERSION = "20260707-02";
 
       function registerServiceWorker() {
         if (!("serviceWorker" in navigator) || location.protocol === "file:")
