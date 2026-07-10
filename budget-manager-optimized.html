@@ -2847,34 +2847,15 @@
           />
 
           <div class="space-y-4">
-            <input
-              type="file"
-              id="receipt-ocr-upload"
-              accept="image/*"
-              class="hidden"
-              onchange="handleReceiptOcrUpload(event)"
-            />
-            <input
-              type="file"
-              id="receipt-ocr-camera"
-              accept="image/*"
-              capture="environment"
-              class="hidden"
-              onchange="handleReceiptOcrUpload(event)"
-            />
             <div class="receipt-ocr-panel">
               <div class="receipt-ocr-actions">
-                <button type="button" id="receipt-ocr-button" class="receipt-ocr-button" onclick="triggerReceiptOcrUpload('upload')">
-                  <span aria-hidden="true"><svg class="notion-icon-svg w-5 h-5" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10a2 2 0 0 1 2 2v16l-3-1.6-2 1.1-2-1.1-2 1.1-2-1.1L5 21V5a2 2 0 0 1 2-2z"/><path d="M8 8h8"/><path d="M8 12h8"/><path d="M8 16h5"/></svg></span>
-                  <span data-receipt-label data-i18n="receiptOcrUploadButton">上傳發票</span>
-                </button>
-                <button type="button" class="receipt-ocr-button secondary" onclick="triggerReceiptOcrUpload('camera')">
-                  <span aria-hidden="true"><svg class="notion-icon-svg w-5 h-5" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l1.4-2h7.2L17 7h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h2z"/><circle cx="12" cy="13" r="3.5"/></svg></span>
-                  <span data-i18n="receiptOcrCameraButton">拍攝發票</span>
+                <button type="button" id="receipt-ocr-button" class="receipt-ocr-button" onclick="toggleVoiceRecord()">
+                  <span aria-hidden="true">🎙</span>
+                  <span data-receipt-label data-i18n="receiptOcrButton">語音記帳</span>
                 </button>
               </div>
               <div id="receipt-ocr-status" class="receipt-ocr-status" data-i18n="receiptOcrHint">
-                可選擇相簿圖片或直接拍攝，辨識後自動帶入日期、商家、品名與金額
+                說出項目與金額，例如「午餐 500 PayPay」
               </div>
             </div>
             <div class="add-compose-grid">
@@ -3582,11 +3563,11 @@
               <button
                 id="receipt-ocr-header-button"
                 type="button"
-                onclick="triggerReceiptOcrUpload('upload')"
+                onclick="toggleVoiceRecord()"
                 class="w-10 h-10 rounded-full bg-gray-50 border border-gray-100 text-lg font-black"
-                aria-label="Receipt OCR"
+                aria-label="語音記帳"
               >
-                <svg class="notion-icon-svg w-5 h-5" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10a2 2 0 0 1 2 2v16l-3-1.6-2 1.1-2-1.1-2 1.1-2-1.1L5 21V5a2 2 0 0 1 2-2z"/><path d="M8 8h8"/><path d="M8 12h8"/><path d="M8 16h5"/></svg>
+                🎙
               </button>
             </div>
             <button
@@ -4378,6 +4359,7 @@
           autoDebitAccount: "",
           nonBusinessDayDebit: "original",
           carryOver: false,
+          pendingBillAmount: 0,
         };
       }
       function ensureAccountSetting(acc) {
@@ -5157,16 +5139,16 @@
           merchantNameLabel: "商家",
           merchantNamePlaceholder: "商家名稱",
           itemNamePlaceholder: "商品名稱",
-          receiptOcrButton: "發票辨識",
-          receiptOcrUploadButton: "上傳發票",
-          receiptOcrCameraButton: "拍攝發票",
-          receiptOcrProcessing: "辨識中",
-          receiptOcrHint: "可選擇相簿圖片或直接拍攝，辨識後自動帶入日期、商家、品名與金額",
+          receiptOcrButton: "語音記帳",
+          receiptOcrUploadButton: "語音記帳",
+          receiptOcrCameraButton: "停止聆聽",
+          receiptOcrProcessing: "聆聽中",
+          receiptOcrHint: "說出項目與金額，例如「午餐 500 PayPay」",
           receiptOcrLoading: "正在載入 OCR 引擎，第一次可能需要幾秒",
           receiptOcrReading: "正在辨識發票文字",
-          receiptOcrFailed: "辨識失敗，請換一張較清楚的照片",
+          receiptOcrFailed: "無法使用語音辨識，請確認麥克風權限",
           receiptOcrParsedPrefix: "已帶入：",
-          receiptOcrNoFile: "請先選擇發票圖片",
+          receiptOcrNoFile: "沒有聽到內容，請再試一次",
           notePlaceholder: "備註",
           paymentMethod: "付款方式",
           subAccountLabel: "子帳戶",
@@ -5522,16 +5504,16 @@
           merchantNameLabel: "店舗",
           merchantNamePlaceholder: "店舗名",
           itemNamePlaceholder: "品名",
-          receiptOcrButton: "レシート読取",
-          receiptOcrUploadButton: "画像を選択",
-          receiptOcrCameraButton: "撮影する",
-          receiptOcrProcessing: "読取中",
-          receiptOcrHint: "写真ライブラリから選ぶか撮影すると、日付、店舗、品名、金額を自動入力します",
+          receiptOcrButton: "音声入力",
+          receiptOcrUploadButton: "音声入力",
+          receiptOcrCameraButton: "停止",
+          receiptOcrProcessing: "聞き取り中",
+          receiptOcrHint: "項目と金額を話してください。例：「ランチ 500 PayPay」",
           receiptOcrLoading: "OCRエンジンを読み込んでいます。初回は数秒かかります",
           receiptOcrReading: "レシート文字を読み取っています",
-          receiptOcrFailed: "読み取れませんでした。より鮮明な写真でお試しください",
+          receiptOcrFailed: "音声入力を利用できません。マイクの権限をご確認ください",
           receiptOcrParsedPrefix: "入力しました：",
-          receiptOcrNoFile: "レシート画像を選択してください",
+          receiptOcrNoFile: "音声を認識できませんでした。もう一度お試しください",
           notePlaceholder: "メモ",
           paymentMethod: "支払い方法",
           subAccountLabel: "子口座",
@@ -7918,7 +7900,8 @@
         return `
           <div class="account-overview-credit-meta">
             <span>可用額度 ${formatPrivateMoney(usage.remaining || 0, currency)}</span>
-            <span>代繳帳款 ${escapeHTML(autoDebit)}</span>
+            <span>待繳帳款 ${formatPrivateMoney(setting.pendingBillAmount || 0, currency)}</span>
+            <span>代繳帳戶 ${escapeHTML(autoDebit)}</span>
           </div>
         `;
       }
@@ -8433,6 +8416,12 @@
               true,
             ),
             accountInfoButton(
+              "－ 待繳帳款",
+              formatPrivateMoney(setting.pendingBillAmount || 0, currency),
+              'openAccountNumberEditor("pendingBillAmount")',
+              true,
+            ),
+            accountInfoButton(
               "－ 信用額度",
               formatPrivateMoney(setting.creditLimit || 0, currency),
               'openAccountNumberEditor("creditLimit")',
@@ -8800,21 +8789,22 @@
         const setting = ensureAccountSetting(acc);
         const isInitial = kind === "initial";
         const isCreditLimit = kind === "creditLimit";
+        const isPendingBill = kind === "pendingBillAmount";
         const value = isInitial
           ? accountInitials[acc] || 0
-          : setting.creditLimit || 0;
-        const title = isInitial ? t("initialPrefix") : "信用額度";
+          : setting[kind] || 0;
+        const title = isInitial ? t("initialPrefix") : isPendingBill ? "待繳帳款" : "信用額度";
         const currency = currencyCodeFromSymbol(getAccountCurrency(acc));
         openAccountSettingModal(
           title,
-          `<p class="account-setting-help">${isCreditLimit ? "手動設定這張信用卡的總額度。若有共用額度，會一起計算已使用與可用額度。" : "調整此帳戶建立時的初始金額。"}</p><div class="account-setting-input flex items-center justify-between gap-3"><span class="text-gray-400">${currency}</span><input id="account-setting-input" type="number" inputmode="decimal" value="${value}" class="min-w-0 flex-1 text-right outline-none bg-transparent font-extrabold"></div>`,
+          `<p class="account-setting-help">${isPendingBill ? "手動輸入目前待繳的帳款金額。" : isCreditLimit ? "手動設定這張信用卡的總額度。若有共用額度，會一起計算已使用與可用額度。" : "調整此帳戶建立時的初始金額。"}</p><div class="account-setting-input flex items-center justify-between gap-3"><span class="text-gray-400">${currency}</span><input id="account-setting-input" type="number" inputmode="decimal" value="${value}" class="min-w-0 flex-1 text-right outline-none bg-transparent font-extrabold"></div>`,
           () => {
             const next = parseFloat(
               document.getElementById("account-setting-input")?.value || "0",
             );
             if (!Number.isFinite(next)) return;
             if (isInitial) accountInitials[acc] = next;
-            else setting.creditLimit = Math.max(0, next);
+            else setting[kind] = Math.max(0, next);
             saveAccountMeta();
             closeAccountSettingModal();
             updateBalances();
@@ -10818,9 +10808,62 @@
       }
 
       function triggerReceiptOcrUpload(mode = "upload") {
-        const targetId = mode === "camera" ? "receipt-ocr-camera" : "receipt-ocr-upload";
-        document.getElementById(targetId)?.click();
+        toggleVoiceRecord();
       }
+
+      let voiceRecognition = null;
+      function applyVoiceRecordText(rawText) {
+        const text = normalizeReceiptText(rawText);
+        if (!text) return false;
+        const amount = parseReceiptAmount(text);
+        const account = parseReceiptAccount(text);
+        const category = parseReceiptCategory(text);
+        selectType("支出");
+        if (category) {
+          document.getElementById("selected-main-cat").value = category.mainCat;
+          selectSubCat(category.name, category.icon || "•••");
+        }
+        if (amount) document.getElementById("price").value = amount;
+        if (account) {
+          document.getElementById("selected-account").value = account;
+          document.getElementById("selected-account-group").value = accountGroupMap[account] || "";
+        }
+        const spokenName = text.replace(/[¥￥$€₩]?\s*[0-9０-９,，]+(?:\s*(?:元|円|塊|块))?/g, " ").trim();
+        const nameInput = document.getElementById("name");
+        if (nameInput && spokenName) {
+          nameInput.value = spokenName;
+          nameInput.dataset.autoFilled = "false";
+        }
+        renderAccounts();
+        updateReceiptOcrStatus(`已帶入：${text}`);
+        return true;
+      }
+
+      function toggleVoiceRecord() {
+        if (voiceRecognition) {
+          voiceRecognition.stop();
+          return;
+        }
+        const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!Recognition) {
+          showToast(t("receiptOcrFailed"));
+          return;
+        }
+        const recognition = new Recognition();
+        voiceRecognition = recognition;
+        recognition.lang = currentLanguage === "ja" ? "ja-JP" : "zh-TW";
+        recognition.interimResults = false;
+        recognition.onstart = () => updateReceiptOcrStatus(t("receiptOcrHint"), true);
+        recognition.onresult = (event) => applyVoiceRecordText(event.results?.[0]?.[0]?.transcript || "");
+        recognition.onerror = () => showToast(t("receiptOcrFailed"));
+        recognition.onend = () => {
+          voiceRecognition = null;
+          updateReceiptOcrStatus(document.getElementById("receipt-ocr-status")?.textContent || t("receiptOcrHint"), false);
+        };
+        recognition.start();
+      }
+      window.toggleVoiceRecord = toggleVoiceRecord;
+      window.applyVoiceRecordText = applyVoiceRecordText;
 
       function normalizeReceiptText(text) {
         return String(text || "")
@@ -11094,6 +11137,11 @@
 
       document.addEventListener(
         "focusin",
+        hideCalculatorWhenLeavingAmount,
+        true,
+      );
+      document.addEventListener(
+        "pointerdown",
         hideCalculatorWhenLeavingAmount,
         true,
       );
