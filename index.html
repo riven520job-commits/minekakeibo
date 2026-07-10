@@ -4355,9 +4355,6 @@
           includeInTotal: true,
           archived: false,
           showWidget: true,
-          autoDebit: false,
-          autoDebitAccount: "",
-          nonBusinessDayDebit: "original",
           carryOver: false,
           pendingBillAmount: 0,
         };
@@ -7894,14 +7891,10 @@
         if (!isCreditOverviewAccount(acc)) return "";
         const setting = ensureAccountSetting(acc);
         const usage = accountCreditUsage(acc);
-        const autoDebit = setting.autoDebitAccount
-          ? displayLabel(setting.autoDebitAccount)
-          : t("uncategorized");
         return `
           <div class="account-overview-credit-meta">
             <span>可用額度 ${formatPrivateMoney(usage.remaining || 0, currency)}</span>
             <span>待繳帳款 ${formatPrivateMoney(setting.pendingBillAmount || 0, currency)}</span>
-            <span>代繳帳戶 ${escapeHTML(autoDebit)}</span>
           </div>
         `;
       }
@@ -8336,6 +8329,7 @@
 
       function creditLimitSummaryCard(acc, currency) {
         const usage = accountCreditUsage(acc);
+        const setting = ensureAccountSetting(acc);
         const memberText =
           usage.members.length > 1 ? `共用 ${usage.members.length} 張卡` : "單一卡片";
         return `
@@ -8353,18 +8347,12 @@
               <div><span>可用</span><strong>${formatPrivateMoney(usage.remaining, currency)}</strong></div>
               <div><span>共用</span><strong>${escapeHTML(memberText)}</strong></div>
             </div>
+            <div class="flex items-center justify-between gap-3 mt-4 pt-4 border-t border-gray-100">
+              <div><span class="block text-xs text-gray-400">待繳帳款</span><strong class="text-lg">${formatPrivateMoney(setting.pendingBillAmount || 0, currency)}</strong></div>
+              <button type="button" class="px-3 py-2 rounded-xl bg-gray-100 font-bold text-sm" onclick="openPendingBillEditor()">設定金額</button>
+            </div>
           </div>
         `;
-      }
-
-      function nonBusinessDayDebitLabel(mode) {
-        return (
-          {
-            original: "依原日期",
-            previous: "提前至前一工作日",
-            next: "順延至下一工作日",
-          }[mode || "original"] || "依原日期"
-        );
       }
 
       function renderAccountInfoTab(acc) {
@@ -8418,7 +8406,7 @@
             accountInfoButton(
               "－ 待繳帳款",
               formatPrivateMoney(setting.pendingBillAmount || 0, currency),
-              'openAccountNumberEditor("pendingBillAmount")',
+              "openPendingBillEditor()",
               true,
             ),
             accountInfoButton(
@@ -8445,19 +8433,6 @@
               "－ 帳單折抵",
               accountSwitchHtml(!!setting.carryOver),
               'toggleAccountSetting("carryOver")',
-              true,
-            ),
-            accountInfoButton(
-              "自動扣繳",
-              setting.autoDebitAccount
-                ? displayLabel(setting.autoDebitAccount)
-                : t("uncategorized"),
-              "openAutoDebitAccountPicker()",
-            ),
-            accountInfoButton(
-              "－ 遇非工作日扣繳",
-              nonBusinessDayDebitLabel(setting.nonBusinessDayDebit),
-              "openNonBusinessDayDebitPicker()",
               true,
             ),
             accountInfoButton(
@@ -8817,6 +8792,33 @@
           80,
         );
       }
+      function openPendingBillEditor() {
+        const acc = activeAccountDetail.account;
+        if (!acc) return;
+        const setting = ensureAccountSetting(acc);
+        const currency = currencyCodeFromSymbol(getAccountCurrency(acc));
+        openAccountSettingModal(
+          "待繳帳款",
+          `<p class="account-setting-help">輸入目前待繳的帳款金額，可隨時重新修改。</p><div class="account-setting-input flex items-center justify-between gap-3"><span class="text-gray-400">${currency}</span><input id="account-setting-input" type="number" min="0" step="any" inputmode="decimal" value="${Number(setting.pendingBillAmount) || 0}" class="min-w-0 flex-1 text-right outline-none bg-transparent font-extrabold"></div>`,
+          () => {
+            const input = document.getElementById("account-setting-input");
+            const next = Number(input?.value);
+            if (!Number.isFinite(next) || next < 0) {
+              showToast("請輸入有效的待繳金額");
+              input?.focus();
+              return;
+            }
+            setting.pendingBillAmount = next;
+            persistAccountSettings();
+            closeAccountSettingModal();
+            updateBalances();
+            renderAccountDetail();
+            showToast("待繳帳款已更新");
+          },
+          true,
+        );
+        setTimeout(() => document.getElementById("account-setting-input")?.focus(), 80);
+      }
       function openAccountCurrencyPicker() {
         const acc = activeAccountDetail.account;
         const current = accountCurrencies[acc] || "¥";
@@ -8968,57 +8970,6 @@
           .forEach((el) => el.classList.add("active"));
       }
 
-      function openAutoDebitAccountPicker() {
-        const acc = activeAccountDetail.account;
-        const setting = ensureAccountSetting(acc);
-        const current = setting.autoDebitAccount || "";
-        const choices = [""].concat(userAccounts.filter((item) => item !== acc));
-        openAccountSettingModal(
-          "自動扣繳",
-          choices
-            .map(
-              (item) =>
-                `<button class="account-setting-option ${item === current ? "active" : ""}" onclick="setAutoDebitAccountFromPicker(decodeURIComponent('${encodeURIComponent(item)}'))"><span class="font-bold">${item ? escapeHTML(displayLabel(item)) : "無"}</span><span>${item === current ? "✓" : "›"}</span></button>`,
-            )
-            .join(""),
-        );
-      }
-
-      function setAutoDebitAccountFromPicker(value) {
-        const setting = ensureAccountSetting(activeAccountDetail.account);
-        setting.autoDebitAccount = value;
-        setting.autoDebit = !!value;
-        persistAccountSettings();
-        closeAccountSettingModal();
-        renderAccountDetail();
-      }
-
-      function openNonBusinessDayDebitPicker() {
-        const setting = ensureAccountSetting(activeAccountDetail.account);
-        const choices = [
-          ["original", "依原日期"],
-          ["previous", "提前至前一工作日"],
-          ["next", "順延至下一工作日"],
-        ];
-        openAccountSettingModal(
-          "遇非工作日扣繳",
-          choices
-            .map(
-              ([value, label]) =>
-                `<button class="account-setting-option ${setting.nonBusinessDayDebit === value ? "active" : ""}" onclick="setNonBusinessDayDebitMode('${value}')"><span class="font-bold">${label}</span><span>${setting.nonBusinessDayDebit === value ? "✓" : "›"}</span></button>`,
-            )
-            .join(""),
-        );
-      }
-
-      function setNonBusinessDayDebitMode(value) {
-        const setting = ensureAccountSetting(activeAccountDetail.account);
-        setting.nonBusinessDayDebit = value || "original";
-        persistAccountSettings();
-        closeAccountSettingModal();
-        renderAccountDetail();
-      }
-
       function openCreditOffsetTip() {
         openAccountSettingModal(
           "小提示",
@@ -9053,6 +9004,7 @@
       window.openAccountNameEditor = openAccountNameEditor;
       window.openAccountTextSetting = openAccountTextSetting;
       window.openAccountNumberEditor = openAccountNumberEditor;
+      window.openPendingBillEditor = openPendingBillEditor;
       window.openAccountCurrencyPicker = openAccountCurrencyPicker;
       window.setAccountCurrencyFromPicker = setAccountCurrencyFromPicker;
       window.openAccountGroupPicker = openAccountGroupPicker;
@@ -9065,10 +9017,6 @@
       window.setPrimaryAccountFromPicker = setPrimaryAccountFromPicker;
       window.openSharedLimitPicker = openSharedLimitPicker;
       window.selectAllSharedLimit = selectAllSharedLimit;
-      window.openAutoDebitAccountPicker = openAutoDebitAccountPicker;
-      window.setAutoDebitAccountFromPicker = setAutoDebitAccountFromPicker;
-      window.openNonBusinessDayDebitPicker = openNonBusinessDayDebitPicker;
-      window.setNonBusinessDayDebitMode = setNonBusinessDayDebitMode;
       window.openCreditOffsetTip = openCreditOffsetTip;
       window.toggleAccountSetting = toggleAccountSetting;
       window.renameAccountGroup = renameAccountGroup;
@@ -10851,11 +10799,21 @@
         }
         const recognition = new Recognition();
         voiceRecognition = recognition;
-        recognition.lang = currentLanguage === "ja" ? "ja-JP" : "zh-TW";
+        recognition.lang = currentLang === "ja" ? "ja-JP" : "zh-TW";
         recognition.interimResults = false;
+        recognition.continuous = false;
+        recognition.maxAlternatives = 1;
         recognition.onstart = () => updateReceiptOcrStatus(t("receiptOcrHint"), true);
         recognition.onresult = (event) => applyVoiceRecordText(event.results?.[0]?.[0]?.transcript || "");
-        recognition.onerror = () => showToast(t("receiptOcrFailed"));
+        recognition.onerror = (event) => {
+          const message = event?.error === "not-allowed"
+            ? "請允許麥克風權限後再試一次"
+            : event?.error === "no-speech"
+              ? t("receiptOcrNoFile")
+              : t("receiptOcrFailed");
+          updateReceiptOcrStatus(message);
+          showToast(message);
+        };
         recognition.onend = () => {
           voiceRecognition = null;
           updateReceiptOcrStatus(document.getElementById("receipt-ocr-status")?.textContent || t("receiptOcrHint"), false);
