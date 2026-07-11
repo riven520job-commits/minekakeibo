@@ -3241,6 +3241,13 @@
               >
                 尚未登入
               </div>
+              <label class="flex items-center justify-between gap-3 p-3 rounded-xl bg-gray-50">
+                <span>
+                  <span class="block text-sm font-semibold">自動同步</span>
+                  <span class="block text-xs text-gray-400 mt-1">資料變更、回到頁面或重新連線時同步</span>
+                </span>
+                <input id="cloud-auto-sync" type="checkbox" class="w-5 h-5 accent-sky-500" onchange="toggleCloudAutoSync(this.checked)" checked>
+              </label>
               <button
                 onclick="loginCloudSync()"
                 class="w-full text-left p-3 rounded-xl bg-blue-50 hover:bg-blue-100 transition flex items-center justify-between"
@@ -3263,7 +3270,15 @@
                 >
                 <span class="text-green-300">›</span>
               </button>
-              <div class="grid grid-cols-2 gap-2">
+              <button
+                onclick="syncBudgetNow({ showResult: true })"
+                class="w-full p-3 rounded-xl bg-sky-50 hover:bg-sky-100 text-sm font-semibold text-sky-700"
+              >
+                立即同步
+              </button>
+              <details class="rounded-xl bg-gray-50 p-3">
+                <summary class="text-xs font-semibold text-gray-500 cursor-pointer">手動備份工具</summary>
+                <div class="grid grid-cols-2 gap-2 mt-3">
                 <button
                   onclick="uploadBudgetToCloud()"
                   class="p-3 rounded-xl bg-gray-50 hover:bg-gray-100 text-xs font-semibold text-gray-700"
@@ -3278,7 +3293,8 @@
                 >
                   下載雲端資料
                 </button>
-              </div>
+                </div>
+              </details>
               <button
                 onclick="logoutCloudSync()"
                 class="w-full text-left p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition flex items-center justify-between"
@@ -5000,6 +5016,9 @@
       const SITE_URL = "https://riven520job-commits.github.io/minekakeibo/";
       let supabaseClient = null;
       let cloudUser = null;
+      let cloudSyncBusy = false;
+      let cloudSyncTimer = null;
+      let cloudSyncApplyingRemote = false;
 
       var translations = {
         zh: {
@@ -7297,9 +7316,14 @@
       function renderCloudSyncStatus() {
         const status = document.getElementById("cloud-sync-status");
         if (!status) return;
-        status.textContent = cloudUser?.email
-          ? t("cloudSignedIn", cloudUser.email)
-          : t("cloudSignedOut");
+        if (!cloudUser?.email) {
+          status.textContent = t("cloudSignedOut");
+          return;
+        }
+        const lastSync = localStorage.getItem("myLastCloudSyncAt");
+        status.textContent = lastSync
+          ? `${t("cloudSignedIn", cloudUser.email)} · 上次同步 ${new Date(lastSync).toLocaleString()}`
+          : t("cloudSignedIn", cloudUser.email);
       }
 
       async function getCloudUser() {
@@ -7318,9 +7342,13 @@
         const { data } = await client.auth.getSession();
         cloudUser = data.session?.user || null;
         renderCloudSyncStatus();
+        const toggle = document.getElementById("cloud-auto-sync");
+        if (toggle) toggle.checked = localStorage.getItem("myCloudAutoSync") !== "false";
+        if (cloudUser) scheduleCloudSync(400);
         client.auth.onAuthStateChange((_event, session) => {
           cloudUser = session?.user || null;
           renderCloudSyncStatus();
+          if (cloudUser) scheduleCloudSync(400);
         });
       }
 
@@ -7372,6 +7400,7 @@
         cloudUser = data.user || null;
         renderCloudSyncStatus();
         showToast(t("cloudOtpVerified"));
+        scheduleCloudSync(200);
       }
 
       async function logoutCloudSync() {
@@ -7409,6 +7438,7 @@
       }
 
       function applyBudgetPayload(payload = {}) {
+        cloudSyncApplyingRemote = true;
         localStorage.setItem("myBudget", JSON.stringify(payload.data || []));
         localStorage.setItem(
           "myAccounts",
@@ -7485,7 +7515,107 @@
             JSON.stringify(!!payload.settings.nightMode),
           );
         }
+        cloudSyncApplyingRemote = false;
       }
+
+      const cloudSyncKeys = new Set([
+        "myBudget", "myAccounts", "myAccountInitials", "myAccountCurrencies",
+        "myExchangeRatesJPY", "myBudgetProjects", "myAccountGroups",
+        "myAccountGroupMap", "myAccountSettingsV1", "myCustomCatsV3",
+      ]);
+      const originalStorageSetItem = Storage.prototype.setItem;
+      const originalLocalStorageSetItem = (key, value) =>
+        originalStorageSetItem.call(localStorage, key, value);
+
+      function cloudAutoSyncEnabled() {
+        return localStorage.getItem("myCloudAutoSync") !== "false";
+      }
+
+      function toggleCloudAutoSync(enabled) {
+        originalLocalStorageSetItem("myCloudAutoSync", enabled ? "true" : "false");
+        if (enabled) scheduleCloudSync(150);
+        else if (cloudSyncTimer) clearTimeout(cloudSyncTimer);
+      }
+
+      function scheduleCloudSync(delay = 1200) {
+        if (!cloudAutoSyncEnabled() || !cloudUser || cloudSyncApplyingRemote) return;
+        clearTimeout(cloudSyncTimer);
+        cloudSyncTimer = setTimeout(() => syncBudgetNow(), delay);
+      }
+
+      Storage.prototype.setItem = function (key, value) {
+        originalStorageSetItem.call(this, key, value);
+        if (this === localStorage && !cloudSyncApplyingRemote && cloudSyncKeys.has(String(key))) {
+          originalLocalStorageSetItem("myLastDataChangeAt", new Date().toISOString());
+          scheduleCloudSync();
+        }
+      };
+
+      async function syncBudgetNow(options = {}) {
+        if (cloudSyncBusy) return;
+        const client = await getSupabaseClient();
+        if (!client) return;
+        const user = cloudUser || (await getCloudUser());
+        if (!user) {
+          if (options.showResult) showToast(t("cloudNeedLogin"));
+          return;
+        }
+        cloudSyncBusy = true;
+        const status = document.getElementById("cloud-sync-status");
+        if (status) status.textContent = "同步中…";
+        try {
+          const { data: row, error: readError } = await client
+            .from("budget_sync")
+            .select("payload, updated_at")
+            .eq("user_id", user.id)
+            .maybeSingle();
+          if (readError) throw readError;
+          const localChangedAt = Date.parse(localStorage.getItem("myLastDataChangeAt") || "0");
+          const lastSyncedAt = Date.parse(localStorage.getItem("myLastCloudSyncAt") || "0");
+          const cloudChangedAt = Date.parse(row?.updated_at || row?.payload?.savedAt || "0");
+          const hasMeaningfulLocalData = data.length > 0 || budgetProjects.length > 0 || Object.keys(customCategories || {}).length > 0;
+          const hasUnsyncedLocalChanges = localChangedAt > lastSyncedAt || (!lastSyncedAt && hasMeaningfulLocalData);
+          if (!lastSyncedAt && row?.payload && hasMeaningfulLocalData) {
+            if (status) status.textContent = "本機與雲端都有資料，請從手動備份工具選擇保留版本";
+            if (options.showResult) showToast("請選擇上傳本機或下載雲端資料");
+            return;
+          }
+          if (row?.payload && cloudChangedAt > lastSyncedAt && !hasUnsyncedLocalChanges) {
+            applyBudgetPayload(row.payload);
+            originalLocalStorageSetItem("myLastCloudSyncAt", new Date().toISOString());
+            if (options.showResult) showToast("已下載最新雲端資料");
+            setTimeout(() => location.reload(), 300);
+            return;
+          }
+          if (!row?.payload || hasUnsyncedLocalChanges) {
+            const updatedAt = new Date().toISOString();
+            const { error: writeError } = await client.from("budget_sync").upsert({
+              user_id: user.id,
+              payload: collectBudgetPayload(),
+              updated_at: updatedAt,
+            });
+            if (writeError) throw writeError;
+            originalLocalStorageSetItem("myLastCloudSyncAt", updatedAt);
+          } else {
+            originalLocalStorageSetItem("myLastCloudSyncAt", new Date().toISOString());
+          }
+          renderCloudSyncStatus();
+          if (options.showResult) showToast("資料已同步");
+        } catch (error) {
+          if (status) status.textContent = `同步失敗：${error.message || "請稍後重試"}`;
+          if (options.showResult) showToast(error.message || t("cloudUnavailable"));
+        } finally {
+          cloudSyncBusy = false;
+        }
+      }
+
+      window.toggleCloudAutoSync = toggleCloudAutoSync;
+      window.syncBudgetNow = syncBudgetNow;
+      window.addEventListener("online", () => scheduleCloudSync(200));
+      window.addEventListener("focus", () => scheduleCloudSync(300));
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") scheduleCloudSync(300);
+      });
 
       async function uploadBudgetToCloud() {
         const client = await getSupabaseClient();
@@ -7506,6 +7636,8 @@
           showToast(error.message);
           return;
         }
+        originalLocalStorageSetItem("myLastCloudSyncAt", payload.savedAt);
+        renderCloudSyncStatus();
         showToast(t("cloudUploaded"));
       }
 
@@ -7532,6 +7664,7 @@
           return;
         }
         applyBudgetPayload(row.payload);
+        originalLocalStorageSetItem("myLastCloudSyncAt", row.updated_at || new Date().toISOString());
         showToast(t("cloudDownloaded"));
         setTimeout(() => location.reload(), 800);
       }
