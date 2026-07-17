@@ -25,13 +25,10 @@
       href="icons/apple-touch-icon.png"
     />
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"
-      rel="stylesheet"
-    />
+    <link rel="stylesheet" href="assets/app.css" />
+    <script src="assets/vendor/chart.umd.js"></script>
+    <script src="assets/vendor/supabase.js"></script>
+    <script src="src/stats-core.js"></script>
     <style>
       :root {
         color-scheme: light;
@@ -3515,6 +3512,7 @@
                 支出趨勢
               </p>
               <canvas id="trendChart" width="400" height="220"></canvas>
+              <div id="trend-chart-fallback" class="empty-state hidden"></div>
             </div>
 
             <div class="surface p-4">
@@ -5109,6 +5107,7 @@
           statsTopCategory: "最高分類",
           noChartData: "此期間還沒有支出紀錄",
           hiddenChartHint: "金額已隱藏，圖表暫停顯示",
+          chartUnavailableHint: "圖表元件暫時無法載入，其他分析仍可正常查看",
           aiSavingsTitle: "AI 省錢分析",
           aiSavingsLocalBadge: "本機分析",
           aiSavingsNoData: "目前資料還不夠，先累積幾筆收入與支出後，會自動產生建議。",
@@ -5464,6 +5463,8 @@
           statsTopCategory: "最大カテゴリ",
           noChartData: "この期間の支出記録はまだありません",
           hiddenChartHint: "金額を隠しているため、グラフを一時停止しています",
+          chartUnavailableHint:
+            "グラフを読み込めませんが、その他の分析は引き続き確認できます",
           aiSavingsTitle: "AI節約分析",
           aiSavingsLocalBadge: "端末内分析",
           aiSavingsNoData: "まだデータが少ないため、収入と支出を数件入力すると自動で提案します。",
@@ -7166,54 +7167,8 @@
         return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
       }
 
-      function addMonths(date, months) {
-        return new Date(date.getFullYear(), date.getMonth() + months, 1);
-      }
-
-      function monthsBetween(startDate, endDate) {
-        const months = [];
-        const cursor = new Date(
-          startDate.getFullYear(),
-          startDate.getMonth(),
-          1,
-        );
-        const end = new Date(endDate.getFullYear(), endDate.getMonth(), 1);
-        while (cursor <= end) {
-          months.push(monthKey(cursor));
-          cursor.setMonth(cursor.getMonth() + 1);
-        }
-        return months;
-      }
-
       function getStatsRangeConfig(expenses = []) {
-        const now = new Date();
-        let start = addMonths(now, -5);
-        let end = new Date(now.getFullYear(), now.getMonth(), 1);
-
-        if (statsRange === "12m") start = addMonths(now, -11);
-        if (statsRange === "24m") start = addMonths(now, -23);
-        if (statsRange === "thisYear")
-          start = new Date(now.getFullYear(), 0, 1);
-        if (statsRange === "lastYear") {
-          start = new Date(now.getFullYear() - 1, 0, 1);
-          end = new Date(now.getFullYear() - 1, 11, 1);
-        }
-        if (statsRange === "all") {
-          const validDates = expenses
-            .map((item) => new Date(item.date))
-            .filter((date) => !isNaN(date));
-          const first = validDates.length
-            ? new Date(Math.min(...validDates.map((date) => date.getTime())))
-            : now;
-          start = new Date(first.getFullYear(), first.getMonth(), 1);
-          end = new Date(now.getFullYear(), now.getMonth(), 1);
-        }
-
-        const months = monthsBetween(start, end);
-        const previousStart = addMonths(start, -months.length);
-        const previousEnd = addMonths(start, -1);
-        const previousMonths = monthsBetween(previousStart, previousEnd);
-        return { months, previousMonths };
+        return StatsCore.getStatsRangeConfig(expenses, statsRange, new Date());
       }
 
       function setStatsRange(value) {
@@ -7266,14 +7221,8 @@
           window.supabaseJs?.createClient ||
           window.Supabase?.createClient;
         if (!factory) {
-          try {
-            const mod =
-              await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm");
-            factory = mod.createClient;
-          } catch (error) {
-            showToast(t("cloudUnavailable"));
-            return null;
-          }
+          showToast(t("cloudUnavailable"));
+          return null;
         }
         supabaseClient = factory(SUPABASE_URL, SUPABASE_ANON_KEY);
         return supabaseClient;
@@ -7745,12 +7694,14 @@
 
       // 渲染圖表邏輯
       function renderCharts() {
-        if (typeof Chart === "undefined") return;
         const modal = document.getElementById("stats-modal");
         if (modal && modal.classList.contains("hidden")) return;
         const insightContainer = document.getElementById("chart-insights");
         const topCategoryList = document.getElementById("top-category-list");
         const currencyBreakdown = document.getElementById("currency-breakdown");
+        const trendCanvas = document.getElementById("trendChart");
+        const trendFallback = document.getElementById("trend-chart-fallback");
+        const chartAvailable = typeof Chart !== "undefined";
         if (amountsHidden) {
           if (trendChartObj) trendChartObj.destroy();
           if (categoryChartObj) categoryChartObj.destroy();
@@ -7770,10 +7721,15 @@
           if (topCategoryList)
             topCategoryList.innerHTML = `<div class="empty-state">${t("hiddenChartHint")}</div>`;
           if (currencyBreakdown) currencyBreakdown.innerHTML = "";
+          if (trendCanvas) trendCanvas.classList.add("hidden");
+          if (trendFallback) {
+            trendFallback.classList.remove("hidden");
+            trendFallback.textContent = t("hiddenChartHint");
+          }
           return;
         }
-        const expenses = data.filter((d) => d.type === "支出");
-        Chart.defaults.font.family = "Inter";
+        const expenses = data.filter((d) => d && d.type === "支出");
+        if (chartAvailable) Chart.defaults.font.family = "Inter";
 
         const rangeConfig = getStatsRangeConfig(expenses);
         const monthData = {};
@@ -7785,14 +7741,17 @@
         const rangeCategories = {};
         const rangeCurrencies = {};
         expenses.forEach((e) => {
-          const m = e.date.substring(0, 7);
-          const valueJPY = Math.round(toJPY(e.price, e.currency || "¥"));
+          const normalized = StatsCore.normalizeExpense(e, t("uncategorized"));
+          if (!normalized) return;
+          const { month: m, currency, category, amount } = normalized;
+          const valueJPY = Math.round(toJPY(amount, currency));
+          if (!Number.isFinite(valueJPY)) return;
           if (monthData[m] !== undefined) {
             monthData[m] += valueJPY;
-            rangeCategories[e.mainCat] =
-              (rangeCategories[e.mainCat] || 0) + valueJPY;
-            rangeCurrencies[e.currency] =
-              (rangeCurrencies[e.currency] || 0) + (parseFloat(e.price) || 0);
+            rangeCategories[category] =
+              (rangeCategories[category] || 0) + valueJPY;
+            rangeCurrencies[currency] =
+              (rangeCurrencies[currency] || 0) + amount;
           } else if (previousMonthData[m] !== undefined) {
             previousMonthData[m] += valueJPY;
           }
@@ -7847,7 +7806,17 @@
         }
 
         if (trendChartObj) trendChartObj.destroy();
-        trendChartObj = new Chart(document.getElementById("trendChart"), {
+        trendChartObj = null;
+        if (trendCanvas)
+          trendCanvas.classList.toggle("hidden", !chartAvailable);
+        if (trendFallback) {
+          trendFallback.classList.toggle("hidden", chartAvailable);
+          trendFallback.textContent = chartAvailable
+            ? ""
+            : t("chartUnavailableHint");
+        }
+        if (chartAvailable && trendCanvas)
+          trendChartObj = new Chart(trendCanvas, {
           type: "bar",
           data: {
             labels: Object.keys(monthData).map((m) =>
@@ -7881,7 +7850,7 @@
               x: { grid: { display: false }, ticks: { color: "#6b7280" } },
             },
           },
-        });
+          });
 
         if (categoryChartObj) categoryChartObj.destroy();
         if (currencyChartObj) currencyChartObj.destroy();
@@ -12395,7 +12364,7 @@
         showToast(t("toastExported"));
       }
 
-      const APP_VERSION = "20260718-02";
+      const APP_VERSION = "20260718-03";
 
       function bindWebKeyboardShortcuts() {
         document.addEventListener("keydown", (event) => {

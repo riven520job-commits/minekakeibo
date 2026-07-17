@@ -14,11 +14,20 @@
 - Installment expense records
 
 ## Tech Stack
-- Frontend:
-- Backend / Database:
-- Auth:
-- Hosting:
-- AI Coding Support:
+- Frontend: HTML, JavaScript, Tailwind CSS, Chart.js
+- Backend / Database: Supabase（可選雲端同步）
+- Offline: Service Worker / PWA App Shell
+
+## Development
+
+```bash
+npm install
+npm run build
+npm test
+```
+
+`index.html` 是唯一應用程式入口。舊的 `budget-manager-optimized.html`
+僅保留相容轉址，避免維護兩份相同程式碼。
 
 ## Why I built it
 自己在日本生活時，需要同時管理日幣、台幣與日常支出，因此開發這個工具。

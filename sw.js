@@ -1,8 +1,13 @@
-const CACHE_NAME = 'minekakeibo-v20260718-02';
+const CACHE_NAME = 'minekakeibo-v20260718-03';
 const APP_SHELL = [
   './',
   './index.html',
+  './budget-manager-optimized.html',
   './manifest.webmanifest',
+  './assets/app.css',
+  './assets/vendor/chart.umd.js',
+  './assets/vendor/supabase.js',
+  './src/stats-core.js',
   './icons/favicon-32.png',
   './icons/apple-touch-icon.png',
   './icons/icon-192.png',
