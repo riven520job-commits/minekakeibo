@@ -3086,22 +3086,22 @@
                 >
               </div>
               <div class="quick-amounts no-scrollbar">
-                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorQuick(538)">
+                <button type="button" onpointerdown="calculatorPointerQuick(event, 538)" onclick="if(event.detail===0) calculatorQuick(538)">
                   538
                 </button>
-                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorQuick(1299)">
+                <button type="button" onpointerdown="calculatorPointerQuick(event, 1299)" onclick="if(event.detail===0) calculatorQuick(1299)">
                   1,299
                 </button>
-                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorQuick(587)">
+                <button type="button" onpointerdown="calculatorPointerQuick(event, 587)" onclick="if(event.detail===0) calculatorQuick(587)">
                   587
                 </button>
-                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorQuick(2026)">
+                <button type="button" onpointerdown="calculatorPointerQuick(event, 2026)" onclick="if(event.detail===0) calculatorQuick(2026)">
                   2,026
                 </button>
-                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorQuick(799)">
+                <button type="button" onpointerdown="calculatorPointerQuick(event, 799)" onclick="if(event.detail===0) calculatorQuick(799)">
                   799
                 </button>
-                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorQuick(868)">
+                <button type="button" onpointerdown="calculatorPointerQuick(event, 868)" onclick="if(event.detail===0) calculatorQuick(868)">
                   868
                 </button>
               </div>
@@ -3110,28 +3110,28 @@
                 class="min-h-[1rem] text-right text-xs text-gray-400"
               ></div>
               <div class="calculator-grid" aria-label="calculator">
-                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('÷')">÷</button>
-                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('×')">×</button>
-                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('−')">−</button>
-                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('+')">+</button>
-                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('7')">7</button>
-                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('8')">8</button>
-                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('9')">9</button>
-                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('⌫')">⌫</button>
-                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('4')">4</button>
-                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('5')">5</button>
-                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('6')">6</button>
-                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('C')">C</button>
-                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('1')">1</button>
-                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('2')">2</button>
-                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('3')">3</button>
-                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('↵')">↵</button>
-                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('.')">.</button>
-                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('0')">0</button>
-                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('00')">
+                <button type="button" onpointerdown="calculatorPointerPress(event, '÷')" onclick="if(event.detail===0) calculatorPress('÷')">÷</button>
+                <button type="button" onpointerdown="calculatorPointerPress(event, '×')" onclick="if(event.detail===0) calculatorPress('×')">×</button>
+                <button type="button" onpointerdown="calculatorPointerPress(event, '−')" onclick="if(event.detail===0) calculatorPress('−')">−</button>
+                <button type="button" onpointerdown="calculatorPointerPress(event, '+')" onclick="if(event.detail===0) calculatorPress('+')">+</button>
+                <button type="button" onpointerdown="calculatorPointerPress(event, '7')" onclick="if(event.detail===0) calculatorPress('7')">7</button>
+                <button type="button" onpointerdown="calculatorPointerPress(event, '8')" onclick="if(event.detail===0) calculatorPress('8')">8</button>
+                <button type="button" onpointerdown="calculatorPointerPress(event, '9')" onclick="if(event.detail===0) calculatorPress('9')">9</button>
+                <button type="button" onpointerdown="calculatorPointerPress(event, '⌫')" onclick="if(event.detail===0) calculatorPress('⌫')">⌫</button>
+                <button type="button" onpointerdown="calculatorPointerPress(event, '4')" onclick="if(event.detail===0) calculatorPress('4')">4</button>
+                <button type="button" onpointerdown="calculatorPointerPress(event, '5')" onclick="if(event.detail===0) calculatorPress('5')">5</button>
+                <button type="button" onpointerdown="calculatorPointerPress(event, '6')" onclick="if(event.detail===0) calculatorPress('6')">6</button>
+                <button type="button" onpointerdown="calculatorPointerPress(event, 'C')" onclick="if(event.detail===0) calculatorPress('C')">C</button>
+                <button type="button" onpointerdown="calculatorPointerPress(event, '1')" onclick="if(event.detail===0) calculatorPress('1')">1</button>
+                <button type="button" onpointerdown="calculatorPointerPress(event, '2')" onclick="if(event.detail===0) calculatorPress('2')">2</button>
+                <button type="button" onpointerdown="calculatorPointerPress(event, '3')" onclick="if(event.detail===0) calculatorPress('3')">3</button>
+                <button type="button" onpointerdown="calculatorPointerPress(event, '↵')" onclick="if(event.detail===0) calculatorPress('↵')">↵</button>
+                <button type="button" onpointerdown="calculatorPointerPress(event, '.')" onclick="if(event.detail===0) calculatorPress('.')">.</button>
+                <button type="button" onpointerdown="calculatorPointerPress(event, '0')" onclick="if(event.detail===0) calculatorPress('0')">0</button>
+                <button type="button" onpointerdown="calculatorPointerPress(event, '00')" onclick="if(event.detail===0) calculatorPress('00')">
                   00
                 </button>
-                <button type="button" onpointerdown="event.preventDefault()" onclick="calculatorPress('✓')">✓</button>
+                <button type="button" onpointerdown="calculatorPointerPress(event, '✓')" onclick="if(event.detail===0) calculatorPress('✓')">✓</button>
               </div>
             </div>
             <button
@@ -6256,6 +6256,14 @@
         renderAccounts();
         renderProjectButtons();
         toggleInstallmentFields();
+        if (editingRecordIndex === null) {
+          const nameInput = document.getElementById("name");
+          if (nameInput) {
+            nameInput.value = "";
+            nameInput.dataset.rawValue = "";
+            nameInput.dataset.autoFilled = "true";
+          }
+        }
         hideCalculator();
         document.getElementById("date").value =
           selectedEntryDate || todayString();
@@ -10803,6 +10811,14 @@
         renderCalculator();
       }
 
+      function calculatorPointerPress(event, key) {
+        if (event.pointerType === "touch" || event.pointerType === "pen") {
+          event.preventDefault();
+          if (navigator.vibrate) navigator.vibrate(6);
+        }
+        calculatorPress(key);
+      }
+
       function calculatorQuick(value) {
         const panel = document.getElementById("calculator-panel");
         if (panel?.classList.contains("hidden")) showCalculator();
@@ -10810,6 +10826,14 @@
         const input = document.getElementById("price");
         if (input) input.value = calculatorExpression;
         renderCalculator();
+      }
+
+      function calculatorPointerQuick(event, value) {
+        if (event.pointerType === "touch" || event.pointerType === "pen") {
+          event.preventDefault();
+          if (navigator.vibrate) navigator.vibrate(6);
+        }
+        calculatorQuick(value);
       }
 
       window.toggleMerchantFavorite = toggleMerchantFavorite;
@@ -10831,33 +10855,11 @@
       window.closeAccountPicker = closeAccountPicker;
       window.calculatorPress = calculatorPress;
       window.calculatorQuick = calculatorQuick;
+      window.calculatorPointerPress = calculatorPointerPress;
+      window.calculatorPointerQuick = calculatorPointerQuick;
       window.openAddDatePicker = openAddDatePicker;
       window.syncAddDateFromInput = syncAddDateFromInput;
 
-
-      let lastTouchEnd = 0;
-      document.addEventListener(
-        "touchend",
-        (event) => {
-          const now = Date.now();
-          if (now - lastTouchEnd <= 420) event.preventDefault();
-          lastTouchEnd = now;
-        },
-        { passive: false },
-      );
-      document.addEventListener("dblclick", (event) => event.preventDefault(), {
-        passive: false,
-      });
-      document.addEventListener(
-        "gesturestart",
-        (event) => event.preventDefault(),
-        { passive: false },
-      );
-      document.addEventListener(
-        "gesturechange",
-        (event) => event.preventDefault(),
-        { passive: false },
-      );
 
       function hideCalculatorWhenLeavingAmount(event) {
         if (!document.getElementById("page-add")?.classList.contains("active"))
@@ -12393,7 +12395,7 @@
         showToast(t("toastExported"));
       }
 
-      const APP_VERSION = "20260718-01";
+      const APP_VERSION = "20260718-02";
 
       function bindWebKeyboardShortcuts() {
         document.addEventListener("keydown", (event) => {
