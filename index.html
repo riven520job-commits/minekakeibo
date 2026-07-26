@@ -1457,6 +1457,39 @@
       .monthly-calendar-detail {
         padding: 4px 0 16px;
       }
+      .monthly-calendar-detail-heading {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+      }
+      .monthly-calendar-detail-heading .notion-icon-svg {
+        width: 18px;
+        height: 18px;
+        flex: 0 0 auto;
+        color: var(--muted);
+      }
+      .monthly-calendar-detail-title {
+        min-width: 0;
+        margin: 0;
+        color: var(--ink);
+        font-size: 0.82rem;
+        font-weight: 800;
+        line-height: 1.35;
+        letter-spacing: 0;
+        text-transform: none;
+      }
+      .monthly-calendar-detail-count {
+        flex: 0 0 auto;
+        min-width: 25px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        background: var(--soft);
+        color: var(--muted);
+        font-size: 0.68rem;
+        font-weight: 800;
+        text-align: center;
+      }
       .monthly-calendar-entry.is-scheduled {
         color: #5573b8;
       }
@@ -4465,9 +4498,12 @@
         </button>
         <button
           onclick="openMonthlyReportModal()"
+          data-monthly-action="true"
+          aria-label="開啟月曆"
+          aria-expanded="false"
           class="nav-btn p-2 text-xs font-semibold flex flex-col items-center justify-center"
         >
-          <svg class="nav-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16"/><path d="M6 16l4-4 3 3 5-7"/><path d="M18 8v5h-5"/></svg><span data-i18n="navMonthly">月報</span>
+          <svg class="nav-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v4"/><path d="M17 3v4"/><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/></svg><span data-i18n="navMonthly">月曆</span>
         </button>
         <button
           data-page="more"
@@ -5560,7 +5596,7 @@
           navDashboard: "總覽",
           navAdd: "新增",
           navReport: "省錢",
-          navMonthly: "月報",
+          navMonthly: "月曆",
           navMore: "設定",
           monthlyReportTitle: "每月報表",
           monthlyIncome: "本月收入",
@@ -5586,7 +5622,8 @@
           monthlyCalendarExpense: "本月支出",
           monthlyCalendarCount: "筆數",
           monthlyCalendarToday: "本月",
-          monthlyCalendarDayRecords: "當日紀錄",
+          monthlyCalendarDayRecords: "當日收支紀錄",
+          monthlyCalendarNoDayRecords: "這一天沒有符合條件的收支紀錄",
           monthlyCalendarMore: (count) => `另有 ${count} 筆`,
           monthlyCalendarExpenseShort: "支",
           monthlyCalendarIncomeShort: "收",
@@ -5979,7 +6016,7 @@
           navDashboard: "総覧",
           navAdd: "追加",
           navReport: "節約",
-          navMonthly: "月報",
+          navMonthly: "カレンダー",
           navMore: "設定",
           monthlyReportTitle: "月次レポート",
           monthlyIncome: "今月の収入",
@@ -6005,7 +6042,8 @@
           monthlyCalendarExpense: "今月の支出",
           monthlyCalendarCount: "件数",
           monthlyCalendarToday: "今月",
-          monthlyCalendarDayRecords: "当日の記録",
+          monthlyCalendarDayRecords: "当日の収支記録",
+          monthlyCalendarNoDayRecords: "この日に条件に合う収支記録はありません",
           monthlyCalendarMore: (count) => `ほか ${count} 件`,
           monthlyCalendarExpenseShort: "支",
           monthlyCalendarIncomeShort: "収",
@@ -6798,6 +6836,9 @@
         const modal = document.getElementById("monthly-report-modal");
         if (!modal) return;
         modal.classList.remove("hidden");
+        const monthlyAction = document.querySelector("[data-monthly-action]");
+        monthlyAction?.classList.add("active");
+        monthlyAction?.setAttribute("aria-expanded", "true");
         document.body.style.overflow = "hidden";
         showScheduleDueNotifications();
       }
@@ -6806,6 +6847,9 @@
         const modal = document.getElementById("monthly-report-modal");
         if (!modal) return;
         modal.classList.add("hidden");
+        const monthlyAction = document.querySelector("[data-monthly-action]");
+        monthlyAction?.classList.remove("active");
+        monthlyAction?.setAttribute("aria-expanded", "false");
         document.body.style.overflow = "";
       }
 
@@ -7727,6 +7771,13 @@
         const selectedPairs = grouped[selectedMonthlyCalendarDate] || [];
         const selectedOccurrences =
           occurrencesByDate[selectedMonthlyCalendarDate] || [];
+        const selectedUnscheduledPairs = selectedPairs.filter(
+          ({ item }) =>
+            !item.scheduleId ||
+            !occurrenceScheduleIds.has(item.scheduleId),
+        );
+        const selectedRecordCount =
+          selectedOccurrences.length + selectedUnscheduledPairs.length;
         const calendarCells = MonthlyCore.buildMonthCalendar(monthKeyValue);
         const selectedLabel = formatEntryDateLabel(selectedMonthlyCalendarDate);
         return `
@@ -7783,20 +7834,19 @@
               .join("")}
           </div>
           <div class="monthly-calendar-detail">
-            <div class="flex items-center justify-between gap-3 mb-1">
-              <h3 class="dark-section-title m-0">${escapeHTML(selectedLabel)} · ${t("monthlyCalendarDayRecords")}</h3>
+            <div class="flex items-center justify-between gap-3 mb-2">
+              <div class="monthly-calendar-detail-heading">
+                <svg class="notion-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><circle cx="3.5" cy="6" r=".75" fill="currentColor" stroke="none"/><circle cx="3.5" cy="12" r=".75" fill="currentColor" stroke="none"/><circle cx="3.5" cy="18" r=".75" fill="currentColor" stroke="none"/></svg>
+                <h3 class="monthly-calendar-detail-title">${escapeHTML(selectedLabel)} · ${t("monthlyCalendarDayRecords")}</h3>
+              </div>
+              <span class="monthly-calendar-detail-count" aria-label="${selectedRecordCount} ${t("monthlyCalendarCount")}">${selectedRecordCount}</span>
             </div>
             ${
-              selectedPairs.length || selectedOccurrences.length
-                ? `${selectedOccurrences.map(monthlyScheduleDetail).join("")}${selectedPairs
-                    .filter(
-                      ({ item }) =>
-                        !item.scheduleId ||
-                        !occurrenceScheduleIds.has(item.scheduleId),
-                    )
+              selectedRecordCount
+                ? `${selectedOccurrences.map(monthlyScheduleDetail).join("")}${selectedUnscheduledPairs
                     .map((pair) => monthlyRecordRow(pair, false))
                     .join("")}`
-                : `<div class="empty-state">${t("monthlyNoData")}</div>`
+                : `<div class="empty-state">${t("monthlyCalendarNoDayRecords")}</div>`
             }
           </div>
           ${renderScheduleSuggestionPanel(suggestions)}
@@ -13514,7 +13564,7 @@
         showToast(t("toastExported"));
       }
 
-      const APP_VERSION = "20260726-07";
+      const APP_VERSION = "20260726-08";
 
       function bindWebKeyboardShortcuts() {
         document.addEventListener("keydown", (event) => {
