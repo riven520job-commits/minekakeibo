@@ -109,6 +109,47 @@
     return occurrences.filter(({ schedule }) => matchesFilters(schedule, filters));
   }
 
+  function summarizeCalendarDays(
+    records = [],
+    occurrences = [],
+    amountResolver = (item) => Number.parseFloat(item?.price) || 0,
+  ) {
+    const summaries = {};
+    const summaryFor = (date) => {
+      if (!summaries[date])
+        summaries[date] = {
+          expense: 0,
+          income: 0,
+          expenseCount: 0,
+          incomeCount: 0,
+          scheduleCount: 0,
+          overdueCount: 0,
+        };
+      return summaries[date];
+    };
+    records.forEach((record) => {
+      const item = record?.item || record;
+      const date = String(item?.date || "").slice(0, 10);
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
+      const summary = summaryFor(date);
+      const amount = Number(amountResolver(item)) || 0;
+      if (["收入", "應收帳款"].includes(item.type)) {
+        summary.income += amount;
+        summary.incomeCount += 1;
+      } else if (["支出", "應付帳款", "系統"].includes(item.type)) {
+        summary.expense += amount;
+        summary.expenseCount += 1;
+      }
+    });
+    occurrences.forEach((occurrence) => {
+      if (!occurrence?.date || occurrence.status === "paid") return;
+      const summary = summaryFor(occurrence.date);
+      summary.scheduleCount += 1;
+      if (occurrence.status === "overdue") summary.overdueCount += 1;
+    });
+    return summaries;
+  }
+
   function getScheduleReminders(occurrences = [], today = "", daysAhead = 3) {
     const todayDate = new Date(`${today}T00:00:00`);
     if (!Number.isFinite(todayDate.getTime())) return [];
@@ -209,5 +250,6 @@
     matchesFilters,
     parseMonthKey,
     scheduleOccurrenceDate,
+    summarizeCalendarDays,
   };
 });

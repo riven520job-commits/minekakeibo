@@ -145,6 +145,31 @@ test("returns overdue and soon-due schedule reminders", () => {
   ]);
 });
 
+test("summarizes daily income, expenses, and pending schedules", () => {
+  const summaries = MonthlyCore.summarizeCalendarDays(
+    [
+      { item: { type: "支出", date: "2026-07-03", price: 1200 } },
+      { item: { type: "系統", date: "2026-07-03", price: 50 } },
+      { item: { type: "收入", date: "2026-07-03", price: 5000 } },
+      { item: { type: "收入", date: "2026-07-04", price: 800 } },
+    ],
+    [
+      { date: "2026-07-03", status: "scheduled" },
+      { date: "2026-07-03", status: "overdue" },
+      { date: "2026-07-03", status: "paid" },
+    ],
+  );
+  assert.deepEqual(summaries["2026-07-03"], {
+    expense: 1250,
+    income: 5000,
+    expenseCount: 2,
+    incomeCount: 1,
+    scheduleCount: 2,
+    overdueCount: 1,
+  });
+  assert.equal(summaries["2026-07-04"].income, 800);
+});
+
 test("detects stable monthly expenses and excludes existing schedules", () => {
   const records = [
     { type: "支出", date: "2026-04-10", price: 980, name: "Music", account: "Card", currency: "¥", mainCat: "固定支出" },

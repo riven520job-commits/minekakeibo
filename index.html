@@ -1359,6 +1359,51 @@
         font-size: 0.72rem;
         font-weight: 800;
       }
+      .monthly-calendar-day-summary {
+        display: grid;
+        gap: 2px;
+        min-width: 0;
+      }
+      .monthly-calendar-day-total {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        min-width: 0;
+        font-size: 0.58rem;
+        line-height: 1.2;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+      .monthly-calendar-day-total strong {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .monthly-calendar-day-total.is-expense {
+        color: #a55252;
+      }
+      .monthly-calendar-day-total.is-income {
+        color: #3f7b56;
+      }
+      .monthly-calendar-schedule-count {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        margin-top: 2px;
+        color: #5573b8;
+        font-size: 0.56rem;
+        line-height: 1;
+        font-weight: 800;
+      }
+      .monthly-calendar-schedule-count::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background: currentColor;
+      }
+      .monthly-calendar-schedule-count.is-overdue {
+        color: #c9505b;
+      }
       .monthly-calendar-day:nth-child(7n + 1)
         .monthly-calendar-day-number {
         color: #dc5f68;
@@ -1496,13 +1541,8 @@
           min-height: 68px;
           padding: 5px 3px;
         }
-        .monthly-calendar-entry {
-          grid-template-columns: 12px minmax(0, 1fr);
-          font-size: 0.54rem;
-        }
-        .monthly-calendar-entry-icon {
-          width: 11px;
-          height: 11px;
+        .monthly-calendar-day-total {
+          font-size: 0.52rem;
         }
       }
 
@@ -5548,6 +5588,9 @@
           monthlyCalendarToday: "本月",
           monthlyCalendarDayRecords: "當日紀錄",
           monthlyCalendarMore: (count) => `另有 ${count} 筆`,
+          monthlyCalendarExpenseShort: "支",
+          monthlyCalendarIncomeShort: "收",
+          monthlyCalendarScheduleShort: (count) => `${count} 筆待扣`,
           monthlyCalendarScheduledTotal: "預定扣款",
           monthlyCalendarScheduledCount: "預定筆數",
           scheduleKicker: "Recurring",
@@ -5964,6 +6007,9 @@
           monthlyCalendarToday: "今月",
           monthlyCalendarDayRecords: "当日の記録",
           monthlyCalendarMore: (count) => `ほか ${count} 件`,
+          monthlyCalendarExpenseShort: "支",
+          monthlyCalendarIncomeShort: "収",
+          monthlyCalendarScheduleShort: (count) => `予定 ${count}件`,
           monthlyCalendarScheduledTotal: "引落予定",
           monthlyCalendarScheduledCount: "予定件数",
           scheduleKicker: "Recurring",
@@ -7580,13 +7626,51 @@
         `;
       }
 
+      function monthlyCalendarCompactJPY(value) {
+        if (amountsHidden) return `¥${t("hiddenAmount")}`;
+        return `¥${new Intl.NumberFormat(
+          currentLang === "ja" ? "ja-JP" : "zh-TW",
+          {
+            notation: "compact",
+            maximumFractionDigits: 1,
+          },
+        ).format(Math.round(Number(value) || 0))}`;
+      }
+
+      function monthlyCalendarDaySummary(summary) {
+        if (!summary) return "";
+        return `
+          <span class="monthly-calendar-day-summary">
+            ${
+              summary.expense
+                ? `<span class="monthly-calendar-day-total is-expense"><span>${t("monthlyCalendarExpenseShort")}</span><strong>${monthlyCalendarCompactJPY(summary.expense)}</strong></span>`
+                : ""
+            }
+            ${
+              summary.income
+                ? `<span class="monthly-calendar-day-total is-income"><span>${t("monthlyCalendarIncomeShort")}</span><strong>${monthlyCalendarCompactJPY(summary.income)}</strong></span>`
+                : ""
+            }
+            ${
+              summary.scheduleCount
+                ? `<span class="monthly-calendar-schedule-count ${summary.overdueCount ? "is-overdue" : ""}">${t("monthlyCalendarScheduleShort", summary.scheduleCount)}</span>`
+                : ""
+            }
+          </span>
+        `;
+      }
+
       function renderMonthlyCalendar(context) {
-        const { monthKeyValue, expensePairs } = context;
+        const { monthKeyValue, monthRecords, expensePairs } = context;
+        const filteredMonthRecords = MonthlyCore.filterRecordPairs(
+          monthRecords,
+          monthlyCalendarFilters,
+        );
         const filteredExpensePairs = MonthlyCore.filterRecordPairs(
           expensePairs,
           monthlyCalendarFilters,
         );
-        const grouped = MonthlyCore.groupRecordsByDate(filteredExpensePairs);
+        const grouped = MonthlyCore.groupRecordsByDate(filteredMonthRecords);
         const allOccurrences = MonthlyCore.buildScheduleOccurrences(
           recurringSchedules,
           monthKeyValue,
@@ -7596,6 +7680,11 @@
         const occurrences = MonthlyCore.filterOccurrences(
           allOccurrences,
           monthlyCalendarFilters,
+        );
+        const daySummaries = MonthlyCore.summarizeCalendarDays(
+          filteredMonthRecords,
+          occurrences,
+          (item) => toJPY(item.price, item.currency || "¥"),
         );
         const occurrencesByDate = occurrences.reduce((groups, occurrence) => {
           if (!groups[occurrence.date]) groups[occurrence.date] = [];
@@ -7641,7 +7730,7 @@
         const calendarCells = MonthlyCore.buildMonthCalendar(monthKeyValue);
         const selectedLabel = formatEntryDateLabel(selectedMonthlyCalendarDate);
         return `
-          ${renderMonthlyCalendarFilters(expensePairs)}
+          ${renderMonthlyCalendarFilters(monthRecords)}
           <div class="monthly-calendar-summary">
             <div>
               <div class="text-xs text-gray-400 font-semibold">${t("monthlyCalendarExpense")}</div>
@@ -7665,20 +7754,12 @@
             ${calendarCells
               .map((cell) => {
                 const pairs = grouped[cell.date] || [];
-                const unscheduledPairs = pairs.filter(
-                  ({ item }) =>
-                    !item.scheduleId ||
-                    !occurrenceScheduleIds.has(item.scheduleId),
-                );
                 const dayOccurrences = occurrencesByDate[cell.date] || [];
-                const dayEntries = [
-                  ...unscheduledPairs.map((pair) => ({
-                    html: monthlyCalendarEntry(pair),
-                  })),
-                  ...dayOccurrences.map((occurrence) => ({
-                    html: monthlyCalendarScheduleEntry(occurrence),
-                  })),
-                ];
+                const daySummary = daySummaries[cell.date];
+                const dayRecordCount = pairs.length;
+                const pendingScheduleCount = dayOccurrences.filter(
+                  (occurrence) => occurrence.status !== "paid",
+                ).length;
                 const classes = [
                   "monthly-calendar-day",
                   cell.inMonth ? "" : "is-outside",
@@ -7692,15 +7773,10 @@
                     type="button"
                     class="${classes}"
                     ${cell.inMonth ? `onclick="setMonthlyCalendarDate('${cell.date}')"` : "disabled"}
-                    aria-label="${escapeHTML(cell.date)}${dayEntries.length ? ` · ${dayEntries.length}` : ""}"
+                    aria-label="${escapeHTML(cell.date)}${dayRecordCount ? ` · ${dayRecordCount} ${t("monthlyCalendarCount")}` : ""}${pendingScheduleCount ? ` · ${t("monthlyCalendarScheduleShort", pendingScheduleCount)}` : ""}"
                   >
                     <span class="monthly-calendar-day-number">${cell.day}</span>
-                    ${dayEntries.slice(0, 2).map((entry) => entry.html).join("")}
-                    ${
-                      dayEntries.length > 2
-                        ? `<span class="monthly-calendar-more">${escapeHTML(t("monthlyCalendarMore", dayEntries.length - 2))}</span>`
-                        : ""
-                    }
+                    ${monthlyCalendarDaySummary(daySummary)}
                   </button>
                 `;
               })
@@ -13438,7 +13514,7 @@
         showToast(t("toastExported"));
       }
 
-      const APP_VERSION = "20260726-06";
+      const APP_VERSION = "20260726-07";
 
       function bindWebKeyboardShortcuts() {
         document.addEventListener("keydown", (event) => {
