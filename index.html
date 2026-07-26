@@ -29,6 +29,7 @@
     <script src="assets/vendor/chart.umd.js"></script>
     <script src="assets/vendor/supabase.js"></script>
     <script src="src/stats-core.js"></script>
+    <script src="src/monthly-core.js"></script>
     <style>
       :root {
         color-scheme: light;
@@ -1285,6 +1286,224 @@
         height: 10px;
         border-radius: 9999px;
         flex: 0 0 auto;
+      }
+      .monthly-calendar-summary {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 16px;
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: var(--panel);
+      }
+      .monthly-calendar-weekdays,
+      .monthly-calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+      }
+      .monthly-calendar-weekdays {
+        color: var(--muted);
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-align: center;
+        padding: 0 2px;
+      }
+      .monthly-calendar-weekdays span {
+        padding: 7px 0;
+      }
+      .monthly-calendar-weekdays span:first-child {
+        color: #dc5f68;
+      }
+      .monthly-calendar-weekdays span:last-child {
+        color: #5573b8;
+      }
+      .monthly-calendar-grid {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--line);
+        gap: 1px;
+      }
+      .report-modal button.monthly-calendar-day {
+        position: relative;
+        min-width: 0;
+        min-height: 78px;
+        padding: 6px 4px;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: var(--panel) !important;
+        text-align: left;
+        overflow: hidden;
+      }
+      .report-modal button.monthly-calendar-day.is-outside {
+        color: #b8c0ca !important;
+        background: color-mix(in srgb, var(--soft) 72%, transparent) !important;
+      }
+      .report-modal button.monthly-calendar-day.is-selected {
+        box-shadow: inset 0 0 0 2px var(--ink);
+        z-index: 1;
+      }
+      .report-modal button.monthly-calendar-day.is-today
+        .monthly-calendar-day-number {
+        color: #fff;
+        background: var(--ink);
+      }
+      .monthly-calendar-day-number {
+        display: grid;
+        place-items: center;
+        width: 22px;
+        height: 22px;
+        margin-bottom: 3px;
+        border-radius: 9999px;
+        font-size: 0.72rem;
+        font-weight: 800;
+      }
+      .monthly-calendar-day:nth-child(7n + 1)
+        .monthly-calendar-day-number {
+        color: #dc5f68;
+      }
+      .monthly-calendar-day:nth-child(7n)
+        .monthly-calendar-day-number {
+        color: #5573b8;
+      }
+      .monthly-calendar-entry {
+        display: grid;
+        grid-template-columns: 14px minmax(0, 1fr);
+        align-items: center;
+        gap: 2px;
+        margin-top: 2px;
+        font-size: 0.58rem;
+        line-height: 1.15;
+      }
+      .monthly-calendar-entry-icon {
+        width: 13px;
+        height: 13px;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+      }
+      .monthly-calendar-entry-icon img,
+      .monthly-calendar-entry-icon svg {
+        width: 100%;
+        height: 100%;
+      }
+      .monthly-calendar-entry-copy {
+        min-width: 0;
+      }
+      .monthly-calendar-entry-name,
+      .monthly-calendar-entry-amount {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .monthly-calendar-entry-amount {
+        color: var(--muted);
+        font-weight: 700;
+      }
+      .monthly-calendar-more {
+        display: block;
+        margin-top: 3px;
+        color: var(--muted);
+        font-size: 0.56rem;
+        font-weight: 700;
+      }
+      .monthly-calendar-detail {
+        padding: 4px 0 16px;
+      }
+      .monthly-calendar-entry.is-scheduled {
+        color: #5573b8;
+      }
+      .monthly-calendar-entry.is-overdue {
+        color: #c9505b;
+      }
+      .monthly-calendar-entry.is-paid {
+        color: #4b8b63;
+        opacity: 0.78;
+      }
+      .monthly-schedule-panel {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--panel);
+        padding: 12px;
+        margin-top: 8px;
+      }
+      .monthly-schedule-status {
+        display: inline-flex;
+        align-items: center;
+        min-height: 24px;
+        padding: 4px 8px;
+        border-radius: 9999px;
+        font-size: 0.68rem;
+        font-weight: 800;
+      }
+      .monthly-schedule-status.scheduled {
+        color: #4665a9;
+        background: #edf3ff;
+      }
+      .monthly-schedule-status.overdue {
+        color: #b74751;
+        background: #fff0f1;
+      }
+      .monthly-schedule-status.paid {
+        color: #3f7b56;
+        background: #edf8f1;
+      }
+      .schedule-modal-panel {
+        background: var(--panel);
+        color: var(--ink);
+      }
+      .monthly-calendar-filters {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+      }
+      .monthly-calendar-filters select {
+        min-width: 0;
+        width: 100%;
+        padding: 9px 28px 9px 10px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--panel);
+        color: var(--ink);
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+      .schedule-reminder-panel {
+        border: 1px solid #f3d6a4;
+        border-radius: 16px;
+        background: #fff9ed;
+        padding: 12px;
+      }
+      .schedule-suggestion-panel {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--soft);
+        padding: 12px;
+      }
+      body.night-mode .schedule-reminder-panel {
+        border-color: #5b4b2f;
+        background: #292318;
+      }
+      @media (max-width: 370px) {
+        .monthly-calendar-filters {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 370px) {
+        .report-modal button.monthly-calendar-day {
+          min-height: 68px;
+          padding: 5px 3px;
+        }
+        .monthly-calendar-entry {
+          grid-template-columns: 12px minmax(0, 1fr);
+          font-size: 0.54rem;
+        }
+        .monthly-calendar-entry-icon {
+          width: 11px;
+          height: 11px;
+        }
       }
 
       .ai-savings-panel {
@@ -4069,6 +4288,73 @@
       </div>
 
       <div
+        id="schedule-modal"
+        class="hidden fixed inset-0 z-[78] bg-black/40 backdrop-blur-sm"
+      >
+        <div
+          class="schedule-modal-panel absolute inset-x-0 bottom-0 max-w-md mx-auto rounded-t-3xl shadow-2xl overflow-hidden"
+        >
+          <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between gap-3">
+            <div>
+              <p class="section-label mb-1" data-i18n="scheduleKicker">Recurring</p>
+              <h2 id="schedule-modal-title" class="text-xl font-bold" data-i18n="scheduleAddTitle">新增定期扣款</h2>
+            </div>
+            <button type="button" onclick="closeScheduleModal()" class="w-10 h-10 rounded-full bg-gray-100 text-gray-500 font-bold">×</button>
+          </div>
+          <div class="px-5 py-5 space-y-4 max-h-[76vh] overflow-y-auto">
+            <label class="block">
+              <span class="text-xs text-gray-500 font-semibold" data-i18n="scheduleName">名稱</span>
+              <input id="schedule-name" class="notion-input mt-2" type="text" maxlength="60" />
+            </label>
+            <div class="grid grid-cols-[1fr_120px] gap-3">
+              <label class="block">
+                <span class="text-xs text-gray-500 font-semibold" data-i18n="scheduleAmount">金額</span>
+                <input id="schedule-amount" class="notion-input mt-2" type="number" min="0" step="0.01" inputmode="decimal" />
+              </label>
+              <label class="block">
+                <span class="text-xs text-gray-500 font-semibold" data-i18n="scheduleCurrency">幣別</span>
+                <select id="schedule-currency" class="notion-input mt-2"></select>
+              </label>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <label class="block">
+                <span class="text-xs text-gray-500 font-semibold" data-i18n="scheduleBillingDay">每月扣款日</span>
+                <input id="schedule-billing-day" class="notion-input mt-2" type="number" min="1" max="31" inputmode="numeric" />
+              </label>
+              <label class="block">
+                <span class="text-xs text-gray-500 font-semibold" data-i18n="scheduleStartMonth">開始月份</span>
+                <input id="schedule-start-month" class="notion-input mt-2" type="month" />
+              </label>
+            </div>
+            <label class="block">
+              <span class="text-xs text-gray-500 font-semibold" data-i18n="scheduleAccount">扣款帳戶</span>
+              <select id="schedule-account" class="notion-input mt-2"></select>
+            </label>
+            <label class="block">
+              <span class="text-xs text-gray-500 font-semibold" data-i18n="scheduleProject">預算專案</span>
+              <select id="schedule-project" class="notion-input mt-2"></select>
+            </label>
+            <label class="block">
+              <span class="text-xs text-gray-500 font-semibold" data-i18n="scheduleCategory">支出分類</span>
+              <input id="schedule-category" class="notion-input mt-2" type="text" maxlength="40" />
+            </label>
+            <label class="block">
+              <span class="text-xs text-gray-500 font-semibold" data-i18n="scheduleReminderDays">提前提醒天數</span>
+              <input id="schedule-reminder-days" class="notion-input mt-2" type="number" min="0" max="30" inputmode="numeric" />
+            </label>
+            <label class="flex items-center justify-between gap-3 surface p-3 shadow-none">
+              <span class="text-sm font-semibold" data-i18n="scheduleEnabled">啟用排程</span>
+              <input id="schedule-enabled" type="checkbox" class="w-5 h-5 accent-gray-900" checked />
+            </label>
+            <div class="flex gap-3">
+              <button id="schedule-delete-button" type="button" onclick="deleteRecurringSchedule()" class="hidden flex-1 py-3 rounded-xl bg-red-50 text-red-500 font-semibold" data-i18n="scheduleDeleteAction">刪除排程</button>
+              <button type="button" onclick="saveRecurringSchedule()" class="flex-[2] py-3 rounded-xl bg-gray-900 text-white font-semibold" data-i18n="saveButton">儲存</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
         id="asset-analysis-modal"
         class="hidden fixed inset-0 z-[74] bg-black/40 backdrop-blur-sm"
       >
@@ -4211,6 +4497,9 @@
       ) || { "¥": 1, NT$: 4.8, "₩": 0.11, $: 155, "€": 170 };
       let budgetProjects =
         JSON.parse(localStorage.getItem("myBudgetProjects")) || [];
+      let recurringSchedules =
+        JSON.parse(localStorage.getItem("myRecurringSchedulesV1")) || [];
+      let editingScheduleId = "";
       let activeProjectOverviewMonth = monthKey(new Date());
       const defaultAccountGroups = [
         "💵 現金",
@@ -4953,7 +5242,13 @@
       let selectedEntryDate =
         localStorage.getItem("mySelectedEntryDate") || todayString();
       let dailyRecordsExpanded = false;
-      let activeMonthlyReportTab = "overview";
+      let activeMonthlyReportTab = "calendar";
+      let selectedMonthlyCalendarDate = "";
+      let monthlyCalendarFilters = {
+        account: "",
+        category: "",
+        project: "",
+      };
       let editingRecordIndex = null;
       let installmentModalEnabled = false;
       let assetAnalysisData = {
@@ -5233,6 +5528,7 @@
           monthlyNet: "本月淨額",
           monthlyTopCategories: "支出分類排行",
           monthlyTabDetail: "明細",
+          monthlyTabCalendar: "月曆",
           monthlyTabCategory: "類別",
           monthlyTabRanking: "排行",
           monthlyTabAccount: "帳戶",
@@ -5247,6 +5543,54 @@
           monthlyRecordsBelow: "當月紀錄",
           monthlyCategoryShare: "支出類別佔比",
           monthlyRankingTitle: "消費排行",
+          monthlyCalendarExpense: "本月支出",
+          monthlyCalendarCount: "筆數",
+          monthlyCalendarToday: "本月",
+          monthlyCalendarDayRecords: "當日紀錄",
+          monthlyCalendarMore: (count) => `另有 ${count} 筆`,
+          monthlyCalendarScheduledTotal: "預定扣款",
+          monthlyCalendarScheduledCount: "預定筆數",
+          scheduleKicker: "Recurring",
+          scheduleAddTitle: "新增定期扣款",
+          scheduleEditTitle: "編輯定期扣款",
+          scheduleName: "名稱",
+          scheduleAmount: "金額",
+          scheduleCurrency: "幣別",
+          scheduleBillingDay: "每月扣款日",
+          scheduleStartMonth: "開始月份",
+          scheduleAccount: "扣款帳戶",
+          scheduleProject: "預算專案",
+          scheduleNoProject: "不指定專案",
+          scheduleCategory: "支出分類",
+          scheduleReminderDays: "提前提醒天數",
+          scheduleEnabled: "啟用排程",
+          scheduleAddButton: "＋ 定期扣款",
+          scheduleStatusScheduled: "預定",
+          scheduleStatusOverdue: "逾期",
+          scheduleStatusPaid: "已扣款",
+          scheduleMarkPaid: "轉成支出",
+          scheduleSaved: "定期扣款已儲存",
+          scheduleDeleted: "定期扣款已刪除",
+          schedulePaid: "已建立支出紀錄",
+          scheduleInvalid: "請完整輸入名稱、金額與扣款日",
+          scheduleConfirmDelete: "確定刪除這筆定期扣款？",
+          scheduleEditAction: "編輯排程",
+          scheduleDeleteAction: "刪除排程",
+          scheduleFilterAllAccounts: "全部帳戶",
+          scheduleFilterAllCategories: "全部分類",
+          scheduleFilterAllProjects: "全部專案",
+          scheduleFilterAccount: "帳戶",
+          scheduleFilterCategory: "分類",
+          scheduleFilterProject: "專案",
+          scheduleReminderTitle: "近期扣款提醒",
+          scheduleReminderEnable: "啟用系統通知",
+          scheduleReminderEnabled: "系統通知已啟用",
+          scheduleReminderDenied: "通知權限未開啟",
+          scheduleDueOn: (date) => `${formatEntryDateLabel(date)} 扣款`,
+          scheduleSuggestionsTitle: "可能的固定支出",
+          scheduleSuggestionsHint: "依相近日期與金額、至少連續三個月份偵測",
+          scheduleSuggestionCreate: "建立排程",
+          scheduleSuggestionHistory: (count) => `${count} 個月份`,
           monthlyUnsupportedTab: "這個頁籤會在下一階段整理成專屬分析。",
           initialPrefix: "初始",
           accountCount: "個帳戶",
@@ -5600,6 +5944,7 @@
           monthlyNet: "今月の純額",
           monthlyTopCategories: "支出カテゴリランキング",
           monthlyTabDetail: "明細",
+          monthlyTabCalendar: "カレンダー",
           monthlyTabCategory: "カテゴリ",
           monthlyTabRanking: "ランキング",
           monthlyTabAccount: "口座",
@@ -5614,6 +5959,54 @@
           monthlyRecordsBelow: "月内記録",
           monthlyCategoryShare: "支出カテゴリ比率",
           monthlyRankingTitle: "支出ランキング",
+          monthlyCalendarExpense: "今月の支出",
+          monthlyCalendarCount: "件数",
+          monthlyCalendarToday: "今月",
+          monthlyCalendarDayRecords: "当日の記録",
+          monthlyCalendarMore: (count) => `ほか ${count} 件`,
+          monthlyCalendarScheduledTotal: "引落予定",
+          monthlyCalendarScheduledCount: "予定件数",
+          scheduleKicker: "Recurring",
+          scheduleAddTitle: "定期引落を追加",
+          scheduleEditTitle: "定期引落を編集",
+          scheduleName: "名称",
+          scheduleAmount: "金額",
+          scheduleCurrency: "通貨",
+          scheduleBillingDay: "毎月の引落日",
+          scheduleStartMonth: "開始月",
+          scheduleAccount: "引落口座",
+          scheduleProject: "予算プロジェクト",
+          scheduleNoProject: "プロジェクトなし",
+          scheduleCategory: "支出カテゴリ",
+          scheduleReminderDays: "事前通知日数",
+          scheduleEnabled: "スケジュールを有効にする",
+          scheduleAddButton: "＋ 定期引落",
+          scheduleStatusScheduled: "予定",
+          scheduleStatusOverdue: "期限超過",
+          scheduleStatusPaid: "支払済み",
+          scheduleMarkPaid: "支出にする",
+          scheduleSaved: "定期引落を保存しました",
+          scheduleDeleted: "定期引落を削除しました",
+          schedulePaid: "支出記録を作成しました",
+          scheduleInvalid: "名称・金額・引落日を入力してください",
+          scheduleConfirmDelete: "この定期引落を削除しますか？",
+          scheduleEditAction: "予定を編集",
+          scheduleDeleteAction: "予定を削除",
+          scheduleFilterAllAccounts: "すべての口座",
+          scheduleFilterAllCategories: "すべてのカテゴリ",
+          scheduleFilterAllProjects: "すべてのプロジェクト",
+          scheduleFilterAccount: "口座",
+          scheduleFilterCategory: "カテゴリ",
+          scheduleFilterProject: "プロジェクト",
+          scheduleReminderTitle: "近日の引落通知",
+          scheduleReminderEnable: "システム通知を有効にする",
+          scheduleReminderEnabled: "システム通知を有効にしました",
+          scheduleReminderDenied: "通知権限がありません",
+          scheduleDueOn: (date) => `${formatEntryDateLabel(date)} 引落`,
+          scheduleSuggestionsTitle: "固定費の候補",
+          scheduleSuggestionsHint: "近い日付・金額で3か月以上続く支出を検出",
+          scheduleSuggestionCreate: "予定を作成",
+          scheduleSuggestionHistory: (count) => `${count} か月`,
           monthlyUnsupportedTab:
             "このタブは次の段階で専用分析として整理します。",
           initialPrefix: "初期",
@@ -6360,6 +6753,7 @@
         if (!modal) return;
         modal.classList.remove("hidden");
         document.body.style.overflow = "hidden";
+        showScheduleDueNotifications();
       }
 
       function closeMonthlyReportModal() {
@@ -6381,6 +6775,7 @@
 
       function monthlyReportTabs() {
         return [
+          { id: "calendar", label: t("monthlyTabCalendar") },
           { id: "overview", label: t("navDashboard") },
           { id: "detail", label: t("monthlyTabDetail") },
           { id: "category", label: t("monthlyTabCategory") },
@@ -6396,8 +6791,327 @@
       }
 
       function setMonthlyReportTab(tabId) {
-        activeMonthlyReportTab = tabId || "overview";
+        activeMonthlyReportTab = tabId || "calendar";
         renderMonthlyReport();
+      }
+
+      function setMonthlyCalendarDate(date) {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(date || "")) return;
+        selectedMonthlyCalendarDate = date;
+        renderMonthlyReport();
+      }
+
+      function goToCurrentMonth() {
+        selectedEntryDate = todayString();
+        selectedMonthlyCalendarDate = selectedEntryDate;
+        localStorage.setItem("mySelectedEntryDate", selectedEntryDate);
+        renderDashboardDatePicker();
+        renderDailyRecords();
+        renderMonthlyReport();
+      }
+
+      function persistRecurringSchedules() {
+        localStorage.setItem(
+          "myRecurringSchedulesV1",
+          JSON.stringify(recurringSchedules),
+        );
+      }
+
+      function openScheduleModal(scheduleId = "", preset = null) {
+        editingScheduleId = scheduleId || "";
+        const schedule = recurringSchedules.find(
+          (item) => item.id === editingScheduleId,
+        ) || preset;
+        const monthValue = selectedMonthKey();
+        const selectedDay = Number(selectedMonthlyCalendarDate.slice(8, 10)) || 1;
+        const currencySelect = document.getElementById("schedule-currency");
+        const accountSelect = document.getElementById("schedule-account");
+        const projectSelect = document.getElementById("schedule-project");
+        if (currencySelect)
+          currencySelect.innerHTML = supportedCurrencies
+            .map(
+              (currency) =>
+                `<option value="${escapeHTML(currency.symbol)}">${escapeHTML(currency.code)}</option>`,
+            )
+            .join("");
+        if (accountSelect)
+          accountSelect.innerHTML = userAccounts
+            .map(
+              (account) =>
+                `<option value="${escapeHTML(account)}">${escapeHTML(displayLabel(account))}</option>`,
+            )
+            .join("");
+        if (projectSelect)
+          projectSelect.innerHTML = [
+            `<option value="">${escapeHTML(t("scheduleNoProject"))}</option>`,
+            ...budgetProjects.map(
+              (project) =>
+                `<option value="${escapeHTML(project.id)}">${escapeHTML(project.name)}</option>`,
+            ),
+          ].join("");
+        document.getElementById("schedule-modal-title").textContent = schedule
+          ? t("scheduleEditTitle")
+          : t("scheduleAddTitle");
+        document.getElementById("schedule-name").value = schedule?.name || "";
+        document.getElementById("schedule-amount").value =
+          schedule?.amount || "";
+        document.getElementById("schedule-currency").value =
+          schedule?.currency || "¥";
+        document.getElementById("schedule-billing-day").value =
+          schedule?.billingDay || selectedDay;
+        document.getElementById("schedule-start-month").value =
+          schedule?.startMonth || monthValue;
+        document.getElementById("schedule-account").value =
+          schedule?.account || userAccounts[0] || "💵 現金";
+        document.getElementById("schedule-project").value =
+          schedule?.projectId || "";
+        document.getElementById("schedule-category").value =
+          schedule?.mainCat || "固定支出";
+        document.getElementById("schedule-reminder-days").value =
+          schedule?.reminderDays ?? 3;
+        document.getElementById("schedule-enabled").checked =
+          schedule?.enabled !== false;
+        document
+          .getElementById("schedule-delete-button")
+          ?.classList.toggle("hidden", !schedule);
+        document.getElementById("schedule-modal")?.classList.remove("hidden");
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeScheduleModal() {
+        document.getElementById("schedule-modal")?.classList.add("hidden");
+        document.body.style.overflow = document
+          .getElementById("monthly-report-modal")
+          ?.classList.contains("hidden")
+          ? ""
+          : "hidden";
+        editingScheduleId = "";
+      }
+
+      function saveRecurringSchedule() {
+        const name = document.getElementById("schedule-name")?.value.trim();
+        const amount = Number.parseFloat(
+          document.getElementById("schedule-amount")?.value || "",
+        );
+        const billingDay = Number.parseInt(
+          document.getElementById("schedule-billing-day")?.value || "",
+          10,
+        );
+        if (
+          !name ||
+          !Number.isFinite(amount) ||
+          amount <= 0 ||
+          billingDay < 1 ||
+          billingDay > 31
+        ) {
+          showToast(t("scheduleInvalid"));
+          return;
+        }
+        const existingIndex = recurringSchedules.findIndex(
+          (item) => item.id === editingScheduleId,
+        );
+        const schedule = {
+          id:
+            editingScheduleId ||
+            globalThis.crypto?.randomUUID?.() ||
+            `schedule-${Date.now()}`,
+          name,
+          amount,
+          currency:
+            document.getElementById("schedule-currency")?.value || "¥",
+          billingDay,
+          startMonth:
+            document.getElementById("schedule-start-month")?.value ||
+            selectedMonthKey(),
+          endMonth:
+            existingIndex >= 0
+              ? recurringSchedules[existingIndex].endMonth || ""
+              : "",
+          account:
+            document.getElementById("schedule-account")?.value ||
+            userAccounts[0] ||
+            "💵 現金",
+          projectId:
+            document.getElementById("schedule-project")?.value || "",
+          mainCat:
+            document.getElementById("schedule-category")?.value.trim() ||
+            "固定支出",
+          icon:
+            existingIndex >= 0
+              ? recurringSchedules[existingIndex].icon || "custom:訂閱"
+              : "custom:訂閱",
+          reminderDays: Math.max(
+            0,
+            Math.min(
+              30,
+              Number.parseInt(
+                document.getElementById("schedule-reminder-days")?.value ||
+                  "3",
+                10,
+              ) || 0,
+            ),
+          ),
+          enabled: !!document.getElementById("schedule-enabled")?.checked,
+          updatedAt: new Date().toISOString(),
+        };
+        if (existingIndex >= 0) recurringSchedules[existingIndex] = schedule;
+        else recurringSchedules.push(schedule);
+        persistRecurringSchedules();
+        closeScheduleModal();
+        renderMonthlyReport();
+        showScheduleDueNotifications();
+        showToast(t("scheduleSaved"));
+      }
+
+      function deleteRecurringSchedule() {
+        if (!editingScheduleId || !confirm(t("scheduleConfirmDelete"))) return;
+        recurringSchedules = recurringSchedules.filter(
+          (item) => item.id !== editingScheduleId,
+        );
+        persistRecurringSchedules();
+        closeScheduleModal();
+        renderMonthlyReport();
+        showToast(t("scheduleDeleted"));
+      }
+
+      function markSchedulePaid(scheduleId, occurrenceDate) {
+        const schedule = recurringSchedules.find(
+          (item) => item.id === scheduleId,
+        );
+        if (!schedule) return;
+        const existingIndex = data.findIndex(
+          (item) =>
+            item.scheduleId === scheduleId &&
+            (item.scheduleOccurrenceDate || item.date) === occurrenceDate,
+        );
+        if (existingIndex >= 0) {
+          closeMonthlyReportModal();
+          openRecordDetail(existingIndex);
+          return;
+        }
+        data.push({
+          type: "支出",
+          mainCat: schedule.mainCat || "固定支出",
+          subCatName: schedule.name,
+          subCatIcon: schedule.icon || "custom:訂閱",
+          account: schedule.account || userAccounts[0] || "💵 現金",
+          toAccount: null,
+          date: occurrenceDate,
+          price: schedule.amount,
+          currency: schedule.currency || "¥",
+          name: schedule.name,
+          merchant: "",
+          installmentId: "",
+          installmentIndex: null,
+          installmentCount: null,
+          projectId: schedule.projectId || "",
+          projectName:
+            budgetProjects.find((project) => project.id === schedule.projectId)
+              ?.name || "",
+          scheduleId,
+          scheduleOccurrenceDate: occurrenceDate,
+        });
+        selectedMonthlyCalendarDate = occurrenceDate;
+        refreshAfterRecordChange();
+        showToast(t("schedulePaid"));
+      }
+
+      function setMonthlyCalendarFilter(key, value) {
+        if (!["account", "category", "project"].includes(key)) return;
+        monthlyCalendarFilters[key] = value || "";
+        renderMonthlyReport();
+      }
+
+      function scheduleReminderOccurrences(filters = {}) {
+        const today = todayString();
+        const current = today.slice(0, 7);
+        const nextDate = StatsCore.addMonths(parseLocalDate(`${current}-01`), 1);
+        const next = monthKey(nextDate);
+        const occurrences = [
+          ...MonthlyCore.buildScheduleOccurrences(
+            recurringSchedules,
+            current,
+            data,
+            today,
+          ),
+          ...MonthlyCore.buildScheduleOccurrences(
+            recurringSchedules,
+            next,
+            data,
+            today,
+          ),
+        ];
+        const filtered = MonthlyCore.filterOccurrences(occurrences, filters);
+        return filtered.filter((occurrence) => {
+          const reminderDays = Math.max(
+            0,
+            Number(occurrence.schedule.reminderDays ?? 3),
+          );
+          return MonthlyCore.getScheduleReminders(
+            [occurrence],
+            today,
+            reminderDays,
+          ).length;
+        });
+      }
+
+      async function enableScheduleNotifications() {
+        if (!("Notification" in window)) {
+          showToast(t("scheduleReminderDenied"));
+          return;
+        }
+        const permission = await Notification.requestPermission();
+        if (permission !== "granted") {
+          showToast(t("scheduleReminderDenied"));
+          return;
+        }
+        localStorage.setItem("myScheduleNotifications", "true");
+        showToast(t("scheduleReminderEnabled"));
+        showScheduleDueNotifications();
+        renderMonthlyReport();
+      }
+
+      async function showScheduleDueNotifications() {
+        if (
+          localStorage.getItem("myScheduleNotifications") !== "true" ||
+          !("Notification" in window) ||
+          Notification.permission !== "granted"
+        )
+          return;
+        const reminders = scheduleReminderOccurrences();
+        const registration =
+          "serviceWorker" in navigator
+            ? await navigator.serviceWorker.ready.catch(() => null)
+            : null;
+        reminders.forEach((occurrence) => {
+          const key = `myScheduleNotification:${occurrence.schedule.id}:${occurrence.date}`;
+          if (localStorage.getItem(key)) return;
+          const title = `${occurrence.schedule.name} · ${scheduleStatusLabel(occurrence.status)}`;
+          const body = `${t("scheduleDueOn", occurrence.date)} · ${formatPrivateMoney(occurrence.schedule.amount, occurrence.schedule.currency || "¥")}`;
+          if (registration?.showNotification)
+            registration.showNotification(title, {
+              body,
+              icon: "./icons/icon-192.png",
+              tag: key,
+            });
+          else new Notification(title, { body, tag: key });
+          localStorage.setItem(key, new Date().toISOString());
+        });
+      }
+
+      function createScheduleFromCandidate(index) {
+        const candidates = MonthlyCore.detectRecurringCandidates(
+          data,
+          recurringSchedules,
+        );
+        const candidate = candidates[index];
+        if (!candidate) return;
+        openScheduleModal("", {
+          ...candidate,
+          startMonth: selectedMonthKey(),
+          reminderDays: 3,
+          enabled: true,
+        });
       }
 
       function monthLastDay(monthKeyValue) {
@@ -6473,10 +7187,13 @@
 
       function renderMonthlyPeriodNav(monthKeyValue) {
         return `
-                <div class="flex items-center justify-center gap-3 text-base font-semibold">
-                    <button onclick="shiftEntryMonth(-1)" class="text-gray-500">‹</button>
-                    <span>${monthRangeLabel(monthKeyValue)}</span>
-                    <button onclick="shiftEntryMonth(1)" class="text-gray-500">›</button>
+                <div class="relative flex items-center justify-center min-h-10 text-base font-semibold">
+                    <span class="flex items-center justify-center gap-3">
+                      <button onclick="shiftEntryMonth(-1)" class="text-gray-500">‹</button>
+                      <span>${monthRangeLabel(monthKeyValue)}</span>
+                      <button onclick="shiftEntryMonth(1)" class="text-gray-500">›</button>
+                    </span>
+                    <button type="button" onclick="goToCurrentMonth()" class="absolute right-0 text-xs font-semibold px-3 py-2 rounded-full">${t("monthlyCalendarToday")}</button>
                 </div>
             `;
       }
@@ -6672,6 +7389,344 @@
             `;
       }
 
+      function monthlyCalendarWeekdays() {
+        return currentLang === "ja"
+          ? ["日", "月", "火", "水", "木", "金", "土"]
+          : ["日", "一", "二", "三", "四", "五", "六"];
+      }
+
+      function monthlyCalendarEntry(pair) {
+        const { item } = pair;
+        const label = displayLabel(
+          item.name || item.subCatName || item.mainCat || t("uncategorized"),
+        );
+        const amount = toJPY(item.price, item.currency || "¥");
+        return `
+          <span class="monthly-calendar-entry">
+            <span class="monthly-calendar-entry-icon">${categoryIconHtml(item.subCatIcon || "📝")}</span>
+            <span class="monthly-calendar-entry-copy">
+              <span class="monthly-calendar-entry-name">${escapeHTML(label)}</span>
+              <span class="monthly-calendar-entry-amount">${formatPrivateJPY(amount, "¥")}</span>
+            </span>
+          </span>
+        `;
+      }
+
+      function scheduleStatusLabel(status) {
+        if (status === "paid") return t("scheduleStatusPaid");
+        if (status === "overdue") return t("scheduleStatusOverdue");
+        return t("scheduleStatusScheduled");
+      }
+
+      function monthlyCalendarScheduleEntry(occurrence) {
+        const { schedule, status } = occurrence;
+        return `
+          <span class="monthly-calendar-entry is-${status}">
+            <span class="monthly-calendar-entry-icon">${categoryIconHtml(schedule.icon || "custom:訂閱")}</span>
+            <span class="monthly-calendar-entry-copy">
+              <span class="monthly-calendar-entry-name">${escapeHTML(displayLabel(schedule.name))}</span>
+              <span class="monthly-calendar-entry-amount">${formatPrivateMoney(schedule.amount, schedule.currency || "¥")}</span>
+            </span>
+          </span>
+        `;
+      }
+
+      function monthlyScheduleDetail(occurrence) {
+        const { schedule, status, date, recordIndex } = occurrence;
+        return `
+          <div class="monthly-schedule-panel">
+            <div class="flex items-start justify-between gap-3">
+              <span class="flex items-center gap-3 min-w-0">
+                <span class="monthly-list-icon">${categoryIconHtml(schedule.icon || "custom:訂閱")}</span>
+                <span class="min-w-0">
+                  <strong class="block truncate">${escapeHTML(displayLabel(schedule.name))}</strong>
+                  <span class="block text-xs text-gray-400 truncate">${escapeHTML(displayLabel(schedule.mainCat || "固定支出"))} · ${escapeHTML(displayLabel(schedule.account || ""))}</span>
+                </span>
+              </span>
+              <span class="text-right shrink-0">
+                <strong class="block">${formatPrivateMoney(schedule.amount, schedule.currency || "¥")}</strong>
+                <span class="monthly-schedule-status ${status}">${scheduleStatusLabel(status)}</span>
+              </span>
+            </div>
+            <div class="flex gap-2 mt-3">
+            <button type="button" onclick="openScheduleModal('${escapeHTML(schedule.id)}')" class="flex-1 py-2 rounded-xl text-xs font-semibold">${t("scheduleEditAction")}</button>
+              ${
+                status === "paid"
+                  ? `<button type="button" onclick="closeMonthlyReportModal(); openRecordDetail(${recordIndex})" class="flex-1 py-2 rounded-xl text-xs font-semibold">${t("monthlyTabDetail")}</button>`
+                  : `<button type="button" onclick="markSchedulePaid('${escapeHTML(schedule.id)}', '${date}')" class="flex-1 py-2 rounded-xl text-xs font-semibold bg-gray-900 text-white">${t("scheduleMarkPaid")}</button>`
+              }
+            </div>
+          </div>
+        `;
+      }
+
+      function monthlyCalendarFilterSelect(
+        key,
+        label,
+        allLabel,
+        options,
+      ) {
+        const current = monthlyCalendarFilters[key] || "";
+        return `
+          <label>
+            <span>${escapeHTML(label)}</span>
+            <select onchange="setMonthlyCalendarFilter('${key}', this.value)">
+              <option value="">${escapeHTML(allLabel)}</option>
+              ${options
+                .map(
+                  (option) => `
+                    <option value="${escapeHTML(option.value)}" ${option.value === current ? "selected" : ""}>
+                      ${escapeHTML(displayLabel(option.label))}
+                    </option>
+                  `,
+                )
+                .join("")}
+            </select>
+          </label>
+        `;
+      }
+
+      function renderMonthlyCalendarFilters(expensePairs) {
+        const uniqueOptions = (values) =>
+          [...new Set(values.filter(Boolean))]
+            .sort((a, b) => String(a).localeCompare(String(b)))
+            .map((value) => ({ value, label: value }));
+        const accounts = uniqueOptions([
+          ...userAccounts,
+          ...expensePairs.map(({ item }) => item.account),
+          ...recurringSchedules.map((schedule) => schedule.account),
+        ]);
+        const categories = uniqueOptions([
+          ...expensePairs.map(({ item }) => item.mainCat),
+          ...recurringSchedules.map((schedule) => schedule.mainCat),
+        ]);
+        const projects = budgetProjects.map((project) => ({
+          value: project.id,
+          label: project.name,
+        }));
+        return `
+          <div class="monthly-calendar-filters">
+            ${monthlyCalendarFilterSelect("account", t("scheduleFilterAccount"), t("scheduleFilterAllAccounts"), accounts)}
+            ${monthlyCalendarFilterSelect("category", t("scheduleFilterCategory"), t("scheduleFilterAllCategories"), categories)}
+            ${monthlyCalendarFilterSelect("project", t("scheduleFilterProject"), t("scheduleFilterAllProjects"), projects)}
+          </div>
+        `;
+      }
+
+      function renderScheduleReminderPanel(reminders) {
+        if (!reminders.length) return "";
+        const notificationAvailable = "Notification" in window;
+        const notificationEnabled =
+          notificationAvailable &&
+          Notification.permission === "granted" &&
+          localStorage.getItem("myScheduleNotifications") === "true";
+        return `
+          <section class="schedule-reminder-panel">
+            <div class="flex items-center justify-between gap-3">
+              <h3>${t("scheduleReminderTitle")}</h3>
+              ${
+                notificationEnabled
+                  ? `<span class="text-xs font-semibold text-green-700">${t("scheduleReminderEnabled")}</span>`
+                  : notificationAvailable
+                    ? `<button type="button" onclick="enableScheduleNotifications()" class="px-3 py-2 rounded-xl text-xs font-semibold">${t("scheduleReminderEnable")}</button>`
+                    : ""
+              }
+            </div>
+            ${reminders
+              .slice(0, 5)
+              .map(
+                ({ schedule, date, status }) => `
+                  <div class="flex items-center justify-between gap-3 py-2">
+                    <span class="min-w-0">
+                      <strong class="block truncate">${escapeHTML(displayLabel(schedule.name))}</strong>
+                      <span class="text-xs text-gray-500">${escapeHTML(t("scheduleDueOn", date))}</span>
+                    </span>
+                    <span class="text-right shrink-0">
+                      <strong class="block">${formatPrivateMoney(schedule.amount, schedule.currency || "¥")}</strong>
+                      <span class="monthly-schedule-status ${status}">${scheduleStatusLabel(status)}</span>
+                    </span>
+                  </div>
+                `,
+              )
+              .join("")}
+          </section>
+        `;
+      }
+
+      function renderScheduleSuggestionPanel(candidates) {
+        if (!candidates.length) return "";
+        return `
+          <section class="schedule-suggestion-panel">
+            <h3>${t("scheduleSuggestionTitle")}</h3>
+            <p>${t("scheduleSuggestionHint")}</p>
+            ${candidates
+              .slice(0, 3)
+              .map(
+                (candidate, index) => `
+                  <div class="flex items-center justify-between gap-3 py-2">
+                    <span class="min-w-0">
+                      <strong class="block truncate">${escapeHTML(displayLabel(candidate.name))}</strong>
+                      <span class="text-xs text-gray-500">${t("scheduleSuggestionHistory", candidate.monthCount)}</span>
+                    </span>
+                    <span class="text-right shrink-0">
+                      <strong class="block">${formatPrivateMoney(candidate.amount, candidate.currency || "¥")}</strong>
+                      <button type="button" onclick="createScheduleFromCandidate(${index})" class="mt-1 px-3 py-1.5 rounded-lg text-xs font-semibold">${t("scheduleSuggestionCreate")}</button>
+                    </span>
+                  </div>
+                `,
+              )
+              .join("")}
+          </section>
+        `;
+      }
+
+      function renderMonthlyCalendar(context) {
+        const { monthKeyValue, expensePairs } = context;
+        const filteredExpensePairs = MonthlyCore.filterRecordPairs(
+          expensePairs,
+          monthlyCalendarFilters,
+        );
+        const grouped = MonthlyCore.groupRecordsByDate(filteredExpensePairs);
+        const allOccurrences = MonthlyCore.buildScheduleOccurrences(
+          recurringSchedules,
+          monthKeyValue,
+          data,
+          todayString(),
+        );
+        const occurrences = MonthlyCore.filterOccurrences(
+          allOccurrences,
+          monthlyCalendarFilters,
+        );
+        const occurrencesByDate = occurrences.reduce((groups, occurrence) => {
+          if (!groups[occurrence.date]) groups[occurrence.date] = [];
+          groups[occurrence.date].push(occurrence);
+          return groups;
+        }, {});
+        const pendingOccurrences = occurrences.filter(
+          (occurrence) => occurrence.status !== "paid",
+        );
+        const occurrenceScheduleIds = new Set(
+          occurrences.map((occurrence) => occurrence.schedule.id),
+        );
+        const scheduledTotal = pendingOccurrences.reduce(
+          (sum, occurrence) =>
+            sum +
+            toJPY(
+              occurrence.schedule.amount,
+              occurrence.schedule.currency || "¥",
+            ),
+          0,
+        );
+        const filteredExpense = filteredExpensePairs.reduce(
+          (sum, { item }) =>
+            sum + toJPY(item.price, item.currency || "¥"),
+          0,
+        );
+        const reminders = scheduleReminderOccurrences(monthlyCalendarFilters);
+        const suggestions = MonthlyCore.detectRecurringCandidates(
+          data,
+          recurringSchedules,
+        );
+        const today = todayString();
+        if (selectedMonthlyCalendarDate.slice(0, 7) !== monthKeyValue) {
+          selectedMonthlyCalendarDate = MonthlyCore.defaultSelectedDate(
+            monthKeyValue,
+            { ...grouped, ...occurrencesByDate },
+            today,
+          );
+        }
+        const selectedPairs = grouped[selectedMonthlyCalendarDate] || [];
+        const selectedOccurrences =
+          occurrencesByDate[selectedMonthlyCalendarDate] || [];
+        const calendarCells = MonthlyCore.buildMonthCalendar(monthKeyValue);
+        const selectedLabel = formatEntryDateLabel(selectedMonthlyCalendarDate);
+        return `
+          ${renderMonthlyCalendarFilters(expensePairs)}
+          <div class="monthly-calendar-summary">
+            <div>
+              <div class="text-xs text-gray-400 font-semibold">${t("monthlyCalendarExpense")}</div>
+              <div class="text-2xl font-black tracking-tight">${formatPrivateJPY(filteredExpense, "¥")}</div>
+              <div class="text-[11px] text-gray-400 mt-1">${filteredExpensePairs.length} ${t("monthlyCalendarCount")}</div>
+            </div>
+            <div class="text-right">
+              <div class="text-xs text-gray-400 font-semibold">${t("monthlyCalendarScheduledTotal")}</div>
+              <div class="text-xl font-black">${formatPrivateJPY(scheduledTotal, "¥")}</div>
+              <div class="text-[11px] text-gray-400 mt-1">${pendingOccurrences.length} ${t("monthlyCalendarScheduledCount")}</div>
+            </div>
+          </div>
+          <div class="flex justify-end">
+            <button type="button" onclick="openScheduleModal()" class="px-3 py-2 rounded-xl text-xs font-semibold">${t("scheduleAddButton")}</button>
+          </div>
+          ${renderScheduleReminderPanel(reminders)}
+          <div class="monthly-calendar-weekdays">
+            ${monthlyCalendarWeekdays().map((day) => `<span>${day}</span>`).join("")}
+          </div>
+          <div class="monthly-calendar-grid">
+            ${calendarCells
+              .map((cell) => {
+                const pairs = grouped[cell.date] || [];
+                const unscheduledPairs = pairs.filter(
+                  ({ item }) =>
+                    !item.scheduleId ||
+                    !occurrenceScheduleIds.has(item.scheduleId),
+                );
+                const dayOccurrences = occurrencesByDate[cell.date] || [];
+                const dayEntries = [
+                  ...unscheduledPairs.map((pair) => ({
+                    html: monthlyCalendarEntry(pair),
+                  })),
+                  ...dayOccurrences.map((occurrence) => ({
+                    html: monthlyCalendarScheduleEntry(occurrence),
+                  })),
+                ];
+                const classes = [
+                  "monthly-calendar-day",
+                  cell.inMonth ? "" : "is-outside",
+                  cell.date === selectedMonthlyCalendarDate ? "is-selected" : "",
+                  cell.date === today && cell.inMonth ? "is-today" : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ");
+                return `
+                  <button
+                    type="button"
+                    class="${classes}"
+                    ${cell.inMonth ? `onclick="setMonthlyCalendarDate('${cell.date}')"` : "disabled"}
+                    aria-label="${escapeHTML(cell.date)}${dayEntries.length ? ` · ${dayEntries.length}` : ""}"
+                  >
+                    <span class="monthly-calendar-day-number">${cell.day}</span>
+                    ${dayEntries.slice(0, 2).map((entry) => entry.html).join("")}
+                    ${
+                      dayEntries.length > 2
+                        ? `<span class="monthly-calendar-more">${escapeHTML(t("monthlyCalendarMore", dayEntries.length - 2))}</span>`
+                        : ""
+                    }
+                  </button>
+                `;
+              })
+              .join("")}
+          </div>
+          <div class="monthly-calendar-detail">
+            <div class="flex items-center justify-between gap-3 mb-1">
+              <h3 class="dark-section-title m-0">${escapeHTML(selectedLabel)} · ${t("monthlyCalendarDayRecords")}</h3>
+            </div>
+            ${
+              selectedPairs.length || selectedOccurrences.length
+                ? `${selectedOccurrences.map(monthlyScheduleDetail).join("")}${selectedPairs
+                    .filter(
+                      ({ item }) =>
+                        !item.scheduleId ||
+                        !occurrenceScheduleIds.has(item.scheduleId),
+                    )
+                    .map((pair) => monthlyRecordRow(pair, false))
+                    .join("")}`
+                : `<div class="empty-state">${t("monthlyNoData")}</div>`
+            }
+          </div>
+          ${renderScheduleSuggestionPanel(suggestions)}
+        `;
+      }
+
       function renderMonthlyPlaceholder() {
         return `<div class="empty-state">${t("monthlyUnsupportedTab")}</div>`;
       }
@@ -6794,7 +7849,9 @@
           maxSummary,
         };
         const body =
-          activeMonthlyReportTab === "detail"
+          activeMonthlyReportTab === "calendar"
+            ? renderMonthlyCalendar(context)
+            : activeMonthlyReportTab === "detail"
             ? renderMonthlyDetail(context)
             : activeMonthlyReportTab === "category"
               ? renderMonthlyCategory(context)
@@ -6811,6 +7868,16 @@
       }
 
       window.setMonthlyReportTab = setMonthlyReportTab;
+      window.setMonthlyCalendarDate = setMonthlyCalendarDate;
+      window.goToCurrentMonth = goToCurrentMonth;
+      window.openScheduleModal = openScheduleModal;
+      window.closeScheduleModal = closeScheduleModal;
+      window.saveRecurringSchedule = saveRecurringSchedule;
+      window.deleteRecurringSchedule = deleteRecurringSchedule;
+      window.markSchedulePaid = markSchedulePaid;
+      window.setMonthlyCalendarFilter = setMonthlyCalendarFilter;
+      window.enableScheduleNotifications = enableScheduleNotifications;
+      window.createScheduleFromCandidate = createScheduleFromCandidate;
 
       function refreshAfterRecordChange() {
         localStorage.setItem("myBudget", JSON.stringify(data));
@@ -7329,7 +8396,7 @@
 
       function collectBudgetPayload() {
         return {
-          version: 1,
+          version: 2,
           savedAt: new Date().toISOString(),
           data,
           userAccounts,
@@ -7337,6 +8404,7 @@
           accountCurrencies,
           exchangeRates,
           budgetProjects,
+          recurringSchedules,
           accountGroups,
           accountGroupMap,
           accountGroupCollapsed,
@@ -7391,6 +8459,10 @@
           JSON.stringify(payload.budgetProjects || []),
         );
         localStorage.setItem(
+          "myRecurringSchedulesV1",
+          JSON.stringify(payload.recurringSchedules || []),
+        );
+        localStorage.setItem(
           "myAccountGroups",
           JSON.stringify(payload.accountGroups || defaultAccountGroups),
         );
@@ -7436,7 +8508,7 @@
       const cloudSyncKeys = new Set([
         "myBudget", "myAccounts", "myAccountInitials", "myAccountCurrencies",
         "myExchangeRatesJPY", "myBudgetProjects", "myAccountGroups",
-        "myAccountGroupMap", "myAccountSettingsV1", "myCustomCatsV3",
+        "myRecurringSchedulesV1", "myAccountGroupMap", "myAccountSettingsV1", "myCustomCatsV3",
       ]);
       const originalStorageSetItem = Storage.prototype.setItem;
       const originalLocalStorageSetItem = (key, value) =>
@@ -12276,6 +13348,7 @@
           };
           accountSettings = {};
           budgetProjects = [];
+          recurringSchedules = [];
           amountsHidden = false;
           statsRange = "6m";
           eyeCareMode = false;
@@ -12319,6 +13392,7 @@
             "myBudgetProjects",
             JSON.stringify(budgetProjects),
           );
+          localStorage.removeItem("myRecurringSchedulesV1");
           localStorage.removeItem("myAmountsHidden");
           localStorage.removeItem("myStatsRange");
           localStorage.removeItem("myEyeCareMode");
@@ -12364,7 +13438,7 @@
         showToast(t("toastExported"));
       }
 
-      const APP_VERSION = "20260718-03";
+      const APP_VERSION = "20260726-06";
 
       function bindWebKeyboardShortcuts() {
         document.addEventListener("keydown", (event) => {

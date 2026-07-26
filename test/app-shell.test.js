@@ -23,3 +23,11 @@ test("application libraries do not depend on a CDN", () => {
   assert.match(html, /assets\/vendor\/chart\.umd\.js/);
   assert.match(html, /assets\/vendor\/supabase\.js/);
 });
+
+test("recurring schedules are included in local and cloud persistence", () => {
+  const html = readFileSync(resolve(root, "index.html"), "utf8");
+  assert.match(html, /myRecurringSchedulesV1/);
+  assert.match(html, /function collectBudgetPayload\(\)[\s\S]*?recurringSchedules/);
+  assert.match(html, /function applyBudgetPayload\(payload = \{\}\)[\s\S]*?payload\.recurringSchedules/);
+  assert.match(html, /scheduleOccurrenceDate/);
+});
