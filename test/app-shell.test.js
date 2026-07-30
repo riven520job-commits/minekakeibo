@@ -41,6 +41,18 @@ test("monthly report only exposes implemented tabs", () => {
     assert.doesNotMatch(tabs, new RegExp(`id: "${id}"`));
 });
 
+test("monthly calendar stays summary-only without daily detail or bottom suggestions", () => {
+  const html = readFileSync(resolve(root, "index.html"), "utf8");
+  const calendar =
+    html.match(
+      /function renderMonthlyCalendar\(context\) \{[\s\S]*?\n      \}/,
+    )?.[0] || "";
+  assert.match(calendar, /monthlyCalendarDaySummary\(daySummary\)/);
+  assert.doesNotMatch(calendar, /monthly-calendar-detail/);
+  assert.doesNotMatch(calendar, /renderScheduleSuggestionPanel/);
+  assert.doesNotMatch(calendar, /setMonthlyCalendarDate/);
+});
+
 test("app provides complete backup and accessible modal support", () => {
   const html = readFileSync(resolve(root, "index.html"), "utf8");
   assert.match(html, /function exportFullBackup/);
