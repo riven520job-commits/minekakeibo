@@ -4,9 +4,13 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+      content="width=device-width, initial-scale=1.0"
     />
     <title>家計簿</title>
+    <meta
+      name="description"
+      content="支援多幣別、資產管理、預算專案、月曆與雲端同步的個人家計簿。"
+    />
     <meta name="application-name" content="家計簿" />
     <meta name="apple-mobile-web-app-title" content="家計簿" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -28,6 +32,7 @@
     <link rel="stylesheet" href="assets/app.css" />
     <script src="assets/vendor/chart.umd.js"></script>
     <script src="assets/vendor/supabase.js"></script>
+    <script src="src/storage-core.js"></script>
     <script src="src/stats-core.js"></script>
     <script src="src/monthly-core.js"></script>
     <style>
@@ -2904,6 +2909,7 @@
               <div class="flex items-center gap-2">
                 <button
                   onclick="shiftEntryWeek(-1)"
+                  aria-label="上一週"
                   class="w-10 h-10 rounded-full bg-gray-50 border border-gray-100 text-gray-500 font-bold"
                 >
                   ‹
@@ -2917,6 +2923,7 @@
                 </button>
                 <button
                   onclick="shiftEntryWeek(1)"
+                  aria-label="下一週"
                   class="w-10 h-10 rounded-full bg-gray-50 border border-gray-100 text-gray-500 font-bold"
                 >
                   ›
@@ -2962,7 +2969,7 @@
               <p class="section-label mb-1" data-i18n="projectOverviewKicker">Projects</p>
               <h1 class="text-2xl font-bold tracking-tight" data-i18n="projectOverviewTitle">專案總覽</h1>
             </div>
-            <button onclick="addBudgetProject()" class="asset-top-action text-3xl leading-none">+</button>
+            <button onclick="addBudgetProject()" aria-label="新增預算專案" class="asset-top-action text-3xl leading-none">+</button>
           </div>
           <div class="surface p-4 mb-4">
             <div class="flex items-center justify-between gap-3 mb-4">
@@ -3140,7 +3147,7 @@
               </label>
               <div class="space-y-3 min-w-0">
                 <div class="add-long-field">
-                  <select id="currency" class="add-chip border-0 outline-0">
+                  <select id="currency" aria-label="幣別" class="add-chip border-0 outline-0">
                     <option value="¥">JPY</option>
                     <option value="NT$">TWD</option>
                     <option value="₩">KRW</option>
@@ -3170,6 +3177,7 @@
                   <input
                     type="text"
                     id="name"
+                    aria-label="商品名稱"
                     placeholder="商品名稱"
                     data-i18n-placeholder="itemNamePlaceholder"
                     class="text-right"
@@ -3282,6 +3290,7 @@
                 <input
                   type="checkbox"
                   id="installment-enabled"
+                  aria-label="啟用費用分期"
                   onchange="toggleInstallmentFields()"
                   class="sr-only"
                 />
@@ -3492,6 +3501,31 @@
             <span data-i18n="exportCsv">匯出 CSV 報表</span
             ><span class="text-gray-300">›</span>
           </button>
+          <div class="grid grid-cols-2 gap-2 mb-3">
+            <button
+              type="button"
+              onclick="exportFullBackup()"
+              class="surface p-3 text-sm font-semibold"
+              data-i18n="exportBackup"
+            >
+              匯出完整備份
+            </button>
+            <button
+              type="button"
+              onclick="document.getElementById('backup-import-input').click()"
+              class="surface p-3 text-sm font-semibold"
+              data-i18n="importBackup"
+            >
+              匯入完整備份
+            </button>
+            <input
+              id="backup-import-input"
+              type="file"
+              accept="application/json,.json"
+              class="hidden"
+              onchange="importFullBackup(event)"
+            />
+          </div>
 
           <details class="settings-section surface p-4 mb-3" open>
             <summary class="flex items-center justify-between gap-3">
@@ -3525,6 +3559,7 @@
               </label>
               <button
                 onclick="loginCloudSync()"
+                data-cloud-signed-out
                 class="w-full text-left p-3 rounded-xl bg-blue-50 hover:bg-blue-100 transition flex items-center justify-between"
               >
                 <span
@@ -3536,6 +3571,7 @@
               </button>
               <button
                 onclick="verifyCloudOtp()"
+                data-cloud-signed-out
                 class="w-full text-left p-3 rounded-xl bg-green-50 hover:bg-green-100 transition flex items-center justify-between"
               >
                 <span
@@ -3547,6 +3583,7 @@
               </button>
               <button
                 onclick="syncBudgetNow({ showResult: true })"
+                data-cloud-auth-required
                 class="w-full p-3 rounded-xl bg-sky-50 hover:bg-sky-100 text-sm font-semibold text-sky-700"
               >
                 立即同步
@@ -3556,6 +3593,7 @@
                 <div class="grid grid-cols-2 gap-2 mt-3">
                 <button
                   onclick="uploadBudgetToCloud()"
+                  data-cloud-auth-required
                   class="p-3 rounded-xl bg-gray-50 hover:bg-gray-100 text-xs font-semibold text-gray-700"
                   data-i18n="cloudUpload"
                 >
@@ -3563,6 +3601,7 @@
                 </button>
                 <button
                   onclick="downloadBudgetFromCloud()"
+                  data-cloud-auth-required
                   class="p-3 rounded-xl bg-gray-50 hover:bg-gray-100 text-xs font-semibold text-gray-700"
                   data-i18n="cloudDownload"
                 >
@@ -3572,6 +3611,7 @@
               </details>
               <button
                 onclick="logoutCloudSync()"
+                data-cloud-auth-required
                 class="w-full text-left p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition flex items-center justify-between"
               >
                 <span
@@ -4475,6 +4515,7 @@
       >
         <button
           data-page="dashboard"
+          aria-label="資產總覽"
           onclick="switchPage('dashboard')"
           class="nav-btn p-2 text-xs font-semibold flex flex-col items-center justify-center"
         >
@@ -4482,6 +4523,7 @@
         </button>
         <button
           data-page="projects"
+          aria-label="專案"
           onclick="switchPage('projects')"
           class="nav-btn p-2 text-xs font-semibold flex flex-col items-center justify-center"
         >
@@ -4507,6 +4549,7 @@
         </button>
         <button
           data-page="more"
+          aria-label="設定"
           onclick="switchPage('more')"
           class="nav-btn p-2 text-xs font-semibold flex flex-col items-center justify-center"
         >
@@ -4523,7 +4566,7 @@
       };
 
       // --- 資料與預設值 ---
-      let rawData = JSON.parse(localStorage.getItem("myBudget")) || [];
+      let rawData = StorageCore.readJSON(localStorage, "myBudget", []);
       let data = rawData.map((item) => ({
         ...item,
         type: item.type || "支出",
@@ -4543,19 +4586,26 @@
       }));
       localStorage.setItem("myBudget", JSON.stringify(data));
 
-      let merchantFavorites = JSON.parse(localStorage.getItem("myMerchantFavoritesV1")) || [];
+      let merchantFavorites = StorageCore.readJSON(
+        localStorage,
+        "myMerchantFavoritesV1",
+        [],
+      );
       function persistMerchantFavorites() {
         localStorage.setItem("myMerchantFavoritesV1", JSON.stringify(merchantFavorites));
       }
 
-      let userAccounts = JSON.parse(localStorage.getItem("myAccounts")) || [
+      let userAccounts = StorageCore.readJSON(localStorage, "myAccounts", null) || [
         "💵 現金",
         "💳 信用卡",
         "🪪 交通卡",
         "📱 行動支付",
       ];
-      let accountInitials =
-        JSON.parse(localStorage.getItem("myAccountInitials")) || {};
+      let accountInitials = StorageCore.readJSON(
+        localStorage,
+        "myAccountInitials",
+        {},
+      );
       userAccounts.forEach((acc) => {
         if (accountInitials[acc] === undefined) accountInitials[acc] = 0;
       });
@@ -4566,15 +4616,26 @@
         { symbol: "$", code: "USD", label: "USD" },
         { symbol: "€", code: "EUR", label: "EUR" },
       ];
-      let accountCurrencies =
-        JSON.parse(localStorage.getItem("myAccountCurrencies")) || {};
-      let exchangeRates = JSON.parse(
-        localStorage.getItem("myExchangeRatesJPY"),
-      ) || { "¥": 1, NT$: 4.8, "₩": 0.11, $: 155, "€": 170 };
-      let budgetProjects =
-        JSON.parse(localStorage.getItem("myBudgetProjects")) || [];
-      let recurringSchedules =
-        JSON.parse(localStorage.getItem("myRecurringSchedulesV1")) || [];
+      let accountCurrencies = StorageCore.readJSON(
+        localStorage,
+        "myAccountCurrencies",
+        {},
+      );
+      let exchangeRates = StorageCore.readJSON(
+        localStorage,
+        "myExchangeRatesJPY",
+        { "¥": 1, NT$: 4.8, "₩": 0.11, $: 155, "€": 170 },
+      );
+      let budgetProjects = StorageCore.readJSON(
+        localStorage,
+        "myBudgetProjects",
+        [],
+      );
+      let recurringSchedules = StorageCore.readJSON(
+        localStorage,
+        "myRecurringSchedulesV1",
+        [],
+      );
       let editingScheduleId = "";
       let activeProjectOverviewMonth = monthKey(new Date());
       const defaultAccountGroups = [
@@ -4583,20 +4644,41 @@
         "🪪 交通卡",
         "📱 行動支付",
       ];
-      let accountGroups =
-        JSON.parse(localStorage.getItem("myAccountGroups")) ||
-        defaultAccountGroups;
-      let accountGroupMap =
-        JSON.parse(localStorage.getItem("myAccountGroupMap")) || {};
-      let accountGroupCollapsed =
-        JSON.parse(localStorage.getItem("myAccountGroupCollapsed")) || {};
-      let accountSettings =
-        JSON.parse(localStorage.getItem("myAccountSettingsV1")) || {};
-      let amountsHidden =
-        JSON.parse(localStorage.getItem("myAmountsHidden")) || false;
-      let eyeCareMode =
-        JSON.parse(localStorage.getItem("myEyeCareMode")) || false;
-      let nightMode = JSON.parse(localStorage.getItem("myNightMode")) || false;
+      let accountGroups = StorageCore.readJSON(
+        localStorage,
+        "myAccountGroups",
+        defaultAccountGroups,
+      );
+      let accountGroupMap = StorageCore.readJSON(
+        localStorage,
+        "myAccountGroupMap",
+        {},
+      );
+      let accountGroupCollapsed = StorageCore.readJSON(
+        localStorage,
+        "myAccountGroupCollapsed",
+        {},
+      );
+      let accountSettings = StorageCore.readJSON(
+        localStorage,
+        "myAccountSettingsV1",
+        {},
+      );
+      let amountsHidden = StorageCore.readJSON(
+        localStorage,
+        "myAmountsHidden",
+        false,
+      );
+      let eyeCareMode = StorageCore.readJSON(
+        localStorage,
+        "myEyeCareMode",
+        false,
+      );
+      let nightMode = StorageCore.readJSON(
+        localStorage,
+        "myNightMode",
+        false,
+      );
       let activeAccountPickerType = "from";
       let calculatorExpression = "";
       if (!localStorage.getItem("myWhiteNotionDefaultedV1")) {
@@ -5257,8 +5339,10 @@
       };
       let iconPickerMode = "line";
       let iconPickerTab = "飲食";
-      let customMainCategories = JSON.parse(
-        localStorage.getItem("myCustomMainCatsV1") || "[]",
+      let customMainCategories = StorageCore.readJSON(
+        localStorage,
+        "myCustomMainCatsV1",
+        [],
       );
       let customCategoryEditing = null;
       customMainCategories.forEach((cat) => {
@@ -5273,7 +5357,7 @@
       });
 
       let customCategories =
-        JSON.parse(localStorage.getItem("myCustomCatsV3")) ||
+        StorageCore.readJSON(localStorage, "myCustomCatsV3", null) ||
         (() => {
           let temp = {};
           Object.keys(defaultCategories).forEach((type) => {
@@ -5526,6 +5610,8 @@
           installmentHint: "輸入總金額，系統會從所選日期開始每月建立一筆紀錄。",
           installmentBadge: (index, count) => `分期 ${index}/${count}`,
           photoLabel: "附加照片 (選填)",
+          photoTooLarge: "圖片過大或無法處理，請改用較小的圖片",
+          storageFull: "本機儲存空間不足，請先匯出備份並移除部分照片",
           saveButton: "確認儲存",
           updateButton: "確認更新",
           historyKicker: "History",
@@ -5556,6 +5642,13 @@
           settingsKicker: "Settings",
           settingsTitle: "系統設定",
           exportCsv: "匯出 CSV 報表",
+          exportBackup: "匯出完整備份",
+          importBackup: "匯入完整備份",
+          backupExported: "完整備份已匯出",
+          backupImported: "備份已還原，正在重新整理",
+          backupInvalid: "備份格式不正確，未變更任何資料",
+          confirmImportBackup: "確定要用這份備份覆蓋目前的本機資料嗎？",
+          confirmResetAgain: "此操作無法復原。已自動下載備份，確定繼續清除嗎？",
           cloudSyncTitle: "雲端同步",
           cloudSyncHint: "登入後可在手機與電腦同步資料",
           cloudSignedOut: "尚未登入",
@@ -5937,6 +6030,10 @@
             "合計金額を入力すると、選択した日付から毎月1件ずつ記録します。",
           installmentBadge: (index, count) => `分割 ${index}/${count}`,
           photoLabel: "写真を添付 (任意)",
+          photoTooLarge:
+            "画像が大きすぎるか処理できません。小さい画像を選んでください",
+          storageFull:
+            "端末の保存容量が不足しています。バックアップ後に写真を整理してください",
           saveButton: "保存する",
           updateButton: "更新する",
           historyKicker: "履歴",
@@ -5968,6 +6065,15 @@
           settingsKicker: "設定",
           settingsTitle: "設定",
           exportCsv: "CSV レポートを書き出す",
+          exportBackup: "完全バックアップを書き出す",
+          importBackup: "完全バックアップを読み込む",
+          backupExported: "完全バックアップを書き出しました",
+          backupImported: "バックアップを復元し、再読み込みします",
+          backupInvalid: "バックアップ形式が正しくないため変更しませんでした",
+          confirmImportBackup:
+            "このバックアップで現在のローカルデータを上書きしますか？",
+          confirmResetAgain:
+            "元に戻せません。バックアップは自動保存済みです。削除を続けますか？",
           cloudSyncTitle: "クラウド同期",
           cloudSyncHint: "ログインするとスマホとPCでデータを同期できます",
           cloudSignedOut: "未ログイン",
@@ -6335,6 +6441,20 @@
         document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
           el.placeholder = t(el.dataset.i18nPlaceholder);
         });
+        const navLabels = {
+          dashboard: t("dashboardTitle"),
+          projects: t("navProjects"),
+          record: t("navAdd"),
+          more: t("navMore"),
+        };
+        Object.entries(navLabels).forEach(([page, label]) => {
+          document
+            .querySelector(`.nav-btn[data-page="${page}"]`)
+            ?.setAttribute("aria-label", label);
+        });
+        document
+          .querySelector("[data-monthly-action]")
+          ?.setAttribute("aria-label", t("navMonthly"));
         const langToggle = document.getElementById("lang-toggle");
         if (langToggle) langToggle.textContent = t("langToggle");
         renderAmountVisibilityButton();
@@ -6870,13 +6990,6 @@
           { id: "detail", label: t("monthlyTabDetail") },
           { id: "category", label: t("monthlyTabCategory") },
           { id: "ranking", label: t("monthlyTabRanking") },
-          { id: "account", label: t("monthlyTabAccount") },
-          { id: "project", label: t("monthlyTabProject") },
-          { id: "accountGroup", label: t("monthlyTabAccountGroup") },
-          { id: "name", label: t("monthlyTabName") },
-          { id: "merchant", label: t("monthlyTabMerchant") },
-          { id: "tag", label: t("monthlyTabTag") },
-          { id: "target", label: t("monthlyTabTarget") },
         ];
       }
 
@@ -8424,7 +8537,20 @@
       function renderCloudSyncStatus() {
         const status = document.getElementById("cloud-sync-status");
         if (!status) return;
-        if (!cloudUser?.email) {
+        const signedIn = !!cloudUser?.email;
+        document
+          .querySelectorAll("[data-cloud-auth-required]")
+          .forEach((element) => {
+            element.disabled = !signedIn;
+            element.classList.toggle("opacity-40", !signedIn);
+            element.setAttribute("aria-disabled", String(!signedIn));
+          });
+        document
+          .querySelectorAll("[data-cloud-signed-out]")
+          .forEach((element) => element.classList.toggle("hidden", signedIn));
+        const toggle = document.getElementById("cloud-auto-sync");
+        if (toggle) toggle.disabled = !signedIn;
+        if (!signedIn) {
           status.textContent = t("cloudSignedOut");
           return;
         }
@@ -8522,9 +8648,10 @@
 
       function collectBudgetPayload() {
         return {
-          version: 2,
+          version: 3,
           savedAt: new Date().toISOString(),
           data,
+          merchantFavorites,
           userAccounts,
           accountInitials,
           accountCurrencies,
@@ -8536,6 +8663,7 @@
           accountGroupCollapsed,
           accountSettings,
           customCategories,
+          customMainCategories,
           settings: {
             lang: currentLang,
             statsRange,
@@ -8549,6 +8677,10 @@
       function applyBudgetPayload(payload = {}) {
         cloudSyncApplyingRemote = true;
         localStorage.setItem("myBudget", JSON.stringify(payload.data || []));
+        localStorage.setItem(
+          "myMerchantFavoritesV1",
+          JSON.stringify(payload.merchantFavorites || []),
+        );
         localStorage.setItem(
           "myAccounts",
           JSON.stringify(
@@ -8609,6 +8741,10 @@
           "myCustomCatsV3",
           JSON.stringify(payload.customCategories || {}),
         );
+        localStorage.setItem(
+          "myCustomMainCatsV1",
+          JSON.stringify(payload.customMainCategories || []),
+        );
         if (payload.settings) {
           localStorage.setItem("myBudgetLang", payload.settings.lang || "zh");
           localStorage.setItem(
@@ -8634,7 +8770,8 @@
       const cloudSyncKeys = new Set([
         "myBudget", "myAccounts", "myAccountInitials", "myAccountCurrencies",
         "myExchangeRatesJPY", "myBudgetProjects", "myAccountGroups",
-        "myRecurringSchedulesV1", "myAccountGroupMap", "myAccountSettingsV1", "myCustomCatsV3",
+        "myRecurringSchedulesV1", "myAccountGroupMap", "myAccountSettingsV1",
+        "myCustomCatsV3", "myCustomMainCatsV1", "myMerchantFavoritesV1",
       ]);
       const originalStorageSetItem = Storage.prototype.setItem;
       const originalLocalStorageSetItem = (key, value) =>
@@ -13097,6 +13234,59 @@
         });
       }
 
+      function compressRecordPhoto(file, maxDimension = 1280) {
+        return new Promise((resolve, reject) => {
+          if (!file || !file.type.startsWith("image/")) {
+            reject(new Error("invalid image"));
+            return;
+          }
+          if (file.size > 15 * 1024 * 1024) {
+            reject(new Error("image too large"));
+            return;
+          }
+          const reader = new FileReader();
+          reader.onerror = () => reject(new Error("image read failed"));
+          reader.onload = () => {
+            const image = new Image();
+            image.onerror = () => reject(new Error("image decode failed"));
+            image.onload = () => {
+              const scale = Math.min(
+                1,
+                maxDimension / Math.max(image.width, image.height),
+              );
+              const canvas = document.createElement("canvas");
+              canvas.width = Math.max(1, Math.round(image.width * scale));
+              canvas.height = Math.max(1, Math.round(image.height * scale));
+              canvas
+                .getContext("2d")
+                ?.drawImage(image, 0, 0, canvas.width, canvas.height);
+              const compressed = canvas.toDataURL("image/jpeg", 0.76);
+              if (StorageCore.utf8Bytes(compressed) > 650_000) {
+                reject(new Error("compressed image too large"));
+                return;
+              }
+              const currentUsage = Object.entries(localStorage).reduce(
+                (sum, [key, value]) =>
+                  sum +
+                  StorageCore.utf8Bytes(key) +
+                  StorageCore.utf8Bytes(value),
+                0,
+              );
+              if (
+                currentUsage + StorageCore.utf8Bytes(compressed) >
+                4_200_000
+              ) {
+                reject(new Error("storage quota risk"));
+                return;
+              }
+              resolve(compressed);
+            };
+            image.src = reader.result;
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
       async function addExpense() {
         const committedPrice = commitCalculatorValue();
         const dateInput = document.getElementById("date");
@@ -13180,11 +13370,16 @@
 
         let photoData = null;
         if (file) {
-          photoData = await new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = (e) => resolve(e.target.result);
-            reader.readAsDataURL(file);
-          });
+          try {
+            photoData = await compressRecordPhoto(file);
+          } catch (error) {
+            showToast(
+              error?.message === "storage quota risk"
+                ? t("storageFull")
+                : t("photoTooLarge"),
+            );
+            return;
+          }
         }
 
         const baseRecord = {
@@ -13442,7 +13637,49 @@
         }
       }
 
-      function clearAllData() {
+      function downloadBlob(blob, filename) {
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+        link.download = filename;
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+
+      function exportFullBackup(options = {}) {
+        const payload = collectBudgetPayload();
+        const stamp = todayString().replaceAll("-", "");
+        downloadBlob(
+          new Blob([JSON.stringify(payload, null, 2)], {
+            type: "application/json;charset=utf-8",
+          }),
+          `minekakeibo-backup-${stamp}.json`,
+        );
+        if (!options.quiet) showToast(t("backupExported"));
+      }
+
+      async function importFullBackup(event) {
+        const input = event?.target;
+        const file = input?.files?.[0];
+        if (!file) return;
+        try {
+          const payload = JSON.parse(await file.text());
+          if (!StorageCore.isBudgetPayload(payload)) {
+            showToast(t("backupInvalid"));
+            return;
+          }
+          if (!confirm(t("confirmImportBackup"))) return;
+          applyBudgetPayload(payload);
+          showToast(t("backupImported"));
+          setTimeout(() => location.reload(), 500);
+        } catch {
+          showToast(t("backupInvalid"));
+        } finally {
+          if (input) input.value = "";
+        }
+      }
+
+      function clearAllDataLegacy() {
         if (confirm(t("confirmReset"))) {
           data = [];
           userAccounts = ["💵 現金", "💳 信用卡", "🪪 交通卡", "📱 行動支付"];
@@ -13532,6 +13769,20 @@
         }
       }
 
+      function clearAllData() {
+        if (!confirm(t("confirmReset"))) return;
+        exportFullBackup({ quiet: true });
+        if (!confirm(t("confirmResetAgain"))) return;
+        Object.keys(localStorage)
+          .filter((key) => key.startsWith("my"))
+          .forEach((key) => localStorage.removeItem(key));
+        showToast(t("toastReset"));
+        setTimeout(() => location.reload(), 400);
+      }
+
+      window.exportFullBackup = exportFullBackup;
+      window.importFullBackup = importFullBackup;
+
       function exportData() {
         const csv = [t("csvHeaders").map(escapeCsv).join(",")]
           .concat(
@@ -13557,14 +13808,11 @@
           )
           .join("\n");
         const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = "budget_export.csv";
-        a.click();
+        downloadBlob(blob, "budget_export.csv");
         showToast(t("toastExported"));
       }
 
-      const APP_VERSION = "20260726-08";
+      const APP_VERSION = "20260728-09";
 
       function bindWebKeyboardShortcuts() {
         document.addEventListener("keydown", (event) => {
@@ -13598,7 +13846,92 @@
           const accountDetail = document.getElementById("account-detail-modal");
           if (accountDetail && !accountDetail.classList.contains("hidden"))
             closeAccountDetail();
+          else {
+            const visibleModal = [
+              ...document.querySelectorAll('div[id$="-modal"]'),
+            ]
+              .reverse()
+              .find((modal) => !modal.classList.contains("hidden"));
+            visibleModal
+              ?.querySelector(
+                'button[onclick*="close"], button[aria-label="Close"]',
+              )
+              ?.click();
+          }
         });
+      }
+
+      function initModalAccessibility() {
+        const modals = [...document.querySelectorAll('div[id$="-modal"]')];
+        const focusHistory = new WeakMap();
+        let activeModal = null;
+
+        modals.forEach((modal) => {
+          modal.setAttribute("role", "dialog");
+          modal.setAttribute("aria-modal", "true");
+          modal.setAttribute("tabindex", "-1");
+          const heading = modal.querySelector("h1, h2, h3");
+          if (heading) {
+            if (!heading.id) heading.id = `${modal.id}-heading`;
+            modal.setAttribute("aria-labelledby", heading.id);
+          } else {
+            modal.setAttribute("aria-label", t("addTitle"));
+          }
+        });
+
+        const syncModalState = () => {
+          const visible = modals.filter(
+            (modal) => !modal.classList.contains("hidden"),
+          );
+          const next = visible.at(-1) || null;
+          document.querySelectorAll("[data-modal-inert]").forEach((element) => {
+            element.inert = false;
+            element.removeAttribute("aria-hidden");
+            element.removeAttribute("data-modal-inert");
+          });
+          if (!next) {
+            const previous = activeModal && focusHistory.get(activeModal);
+            if (previous?.isConnected) previous.focus();
+            activeModal = null;
+            return;
+          }
+          if (next !== activeModal) {
+            focusHistory.set(next, document.activeElement);
+            activeModal = next;
+          }
+          let activeBranch = next;
+          while (activeBranch && activeBranch !== document.body) {
+            const parent = activeBranch.parentElement;
+            if (!parent) break;
+            [...parent.children].forEach((element) => {
+              if (
+                element === activeBranch ||
+                ["SCRIPT", "STYLE"].includes(element.tagName) ||
+                ["toast", "error-log"].includes(element.id)
+              )
+                return;
+              element.inert = true;
+              element.setAttribute("aria-hidden", "true");
+              element.setAttribute("data-modal-inert", "true");
+            });
+            activeBranch = parent;
+          }
+          setTimeout(() => {
+            const target = next.querySelector(
+              '[autofocus], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled])',
+            );
+            (target || next).focus();
+          }, 0);
+        };
+
+        const observer = new MutationObserver(syncModalState);
+        modals.forEach((modal) =>
+          observer.observe(modal, {
+            attributes: true,
+            attributeFilter: ["class"],
+          }),
+        );
+        syncModalState();
       }
 
       function registerServiceWorker() {
@@ -13639,6 +13972,7 @@
       // 系統啟動
       registerServiceWorker();
       bindWebKeyboardShortcuts();
+      initModalAccessibility();
       bindNavigationButtons();
       applyAppearance();
       applyLanguage();

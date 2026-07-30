@@ -1,4 +1,19 @@
-const CACHE_NAME = 'minekakeibo-v20260726-08';
+const CACHE_NAME = 'minekakeibo-v20260728-09';
+const CORE_SHELL = [
+  './',
+  './index.html',
+  './manifest.webmanifest',
+  './assets/app.css',
+  './assets/vendor/chart.umd.js',
+  './assets/vendor/supabase.js',
+  './src/storage-core.js',
+  './src/stats-core.js',
+  './src/monthly-core.js',
+  './icons/favicon-32.png',
+  './icons/apple-touch-icon.png',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
+];
 const APP_SHELL = [
   './',
   './index.html',
@@ -7,6 +22,7 @@ const APP_SHELL = [
   './assets/app.css',
   './assets/vendor/chart.umd.js',
   './assets/vendor/supabase.js',
+  './src/storage-core.js',
   './src/stats-core.js',
   './src/monthly-core.js',
   './icons/favicon-32.png',
@@ -148,7 +164,11 @@ const APP_SHELL = [
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(APP_SHELL))
+      .then(async cache => {
+        await cache.addAll(CORE_SHELL);
+        const optional = APP_SHELL.filter(resource => !CORE_SHELL.includes(resource));
+        await Promise.allSettled(optional.map(resource => cache.add(resource)));
+      })
       .then(() => self.skipWaiting())
   );
 });

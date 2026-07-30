@@ -31,3 +31,33 @@ test("recurring schedules are included in local and cloud persistence", () => {
   assert.match(html, /function applyBudgetPayload\(payload = \{\}\)[\s\S]*?payload\.recurringSchedules/);
   assert.match(html, /scheduleOccurrenceDate/);
 });
+
+test("monthly report only exposes implemented tabs", () => {
+  const html = readFileSync(resolve(root, "index.html"), "utf8");
+  const tabs = html.match(/function monthlyReportTabs\(\) \{[\s\S]*?\n      \}/)?.[0] || "";
+  for (const id of ["calendar", "overview", "detail", "category", "ranking"])
+    assert.match(tabs, new RegExp(`id: "${id}"`));
+  for (const id of ["accountGroup", "merchant", "target"])
+    assert.doesNotMatch(tabs, new RegExp(`id: "${id}"`));
+});
+
+test("app provides complete backup and accessible modal support", () => {
+  const html = readFileSync(resolve(root, "index.html"), "utf8");
+  assert.match(html, /function exportFullBackup/);
+  assert.match(html, /function importFullBackup/);
+  assert.match(html, /function initModalAccessibility/);
+  assert.match(html, /role", "dialog"/);
+  assert.doesNotMatch(html, /user-scalable=no/);
+  assert.match(
+    html,
+    /querySelectorAll\('div\[id\$="-modal"\]'\)/,
+    "modal discovery must not include the installment-count-modal input",
+  );
+});
+
+test("service worker separates core and optional app shell resources", () => {
+  const worker = readFileSync(resolve(root, "sw.js"), "utf8");
+  assert.match(worker, /const CORE_SHELL = \[/);
+  assert.match(worker, /Promise\.allSettled/);
+  assert.match(worker, /src\/storage-core\.js/);
+});
