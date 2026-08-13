@@ -1,4 +1,4 @@
-const CACHE_NAME = 'minekakeibo-v20260728-09';
+const CACHE_NAME = 'minekakeibo-v20260809-03';
 const CORE_SHELL = [
   './',
   './index.html',
@@ -6,6 +6,8 @@ const CORE_SHELL = [
   './assets/app.css',
   './assets/vendor/chart.umd.js',
   './assets/vendor/supabase.js',
+  './src/ui-security.js',
+  './src/search-core.js',
   './src/storage-core.js',
   './src/stats-core.js',
   './src/monthly-core.js',
@@ -22,6 +24,8 @@ const APP_SHELL = [
   './assets/app.css',
   './assets/vendor/chart.umd.js',
   './assets/vendor/supabase.js',
+  './src/ui-security.js',
+  './src/search-core.js',
   './src/storage-core.js',
   './src/stats-core.js',
   './src/monthly-core.js',

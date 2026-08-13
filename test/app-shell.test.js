@@ -72,4 +72,54 @@ test("service worker separates core and optional app shell resources", () => {
   assert.match(worker, /const CORE_SHELL = \[/);
   assert.match(worker, /Promise\.allSettled/);
   assert.match(worker, /src\/storage-core\.js/);
+  assert.match(worker, /src\/ui-security\.js/);
+  assert.match(worker, /src\/search-core\.js/);
+});
+
+test("local persistence is centralized without patching browser storage", () => {
+  const html = readFileSync(resolve(root, "index.html"), "utf8");
+  assert.match(html, /function persistLocal\(key, value, options = \{\}\)/);
+  assert.doesNotMatch(html, /Storage\.prototype\.setItem\s*=/);
+  assert.doesNotMatch(html, /localStorage\.setItem\(/);
+});
+
+test("cloud sync stops when local and remote data both changed", () => {
+  const html = readFileSync(resolve(root, "index.html"), "utf8");
+  assert.match(html, /const hasRemoteChanges =/);
+  assert.match(
+    html,
+    /if \(hasRemoteChanges && hasUnsyncedLocalChanges\)[\s\S]*?return;/,
+  );
+});
+
+test("cloud and backup imports validate before transactional application", () => {
+  const html = readFileSync(resolve(root, "index.html"), "utf8");
+  const applyPayload =
+    html.match(/function applyBudgetPayload\(payload = \{\}\) \{[\s\S]*?\n      \}/)?.[0] || "";
+  assert.match(applyPayload, /StorageCore\.validateBudgetPayload/);
+  assert.match(applyPayload, /const previous = new Map/);
+  assert.match(applyPayload, /finally/);
+  assert.match(html, /file\.size > 10_000_000/);
+});
+
+test("dynamic inline values and custom images use the security helpers", () => {
+  const html = readFileSync(resolve(root, "index.html"), "utf8");
+  assert.match(html, /src\/ui-security\.js/);
+  assert.match(html, /function encodeInlineValue/);
+  assert.match(html, /UISecurity\.isSafeDataImage\(icon\)/);
+  assert.doesNotMatch(
+    html,
+    /onclick="[^"]*'\$\{(?:project|preferred)\.id\}'/,
+  );
+  assert.doesNotMatch(html, /escapeHTML\(schedule\.id\)/);
+});
+
+test("monthly detail exposes searchable records", () => {
+  const html = readFileSync(resolve(root, "index.html"), "utf8");
+  assert.match(html, /src\/search-core\.js/);
+  assert.match(html, /id="monthly-detail-search"/);
+  assert.match(html, /SearchCore\.filterRecords/);
+  assert.match(html, /item\.merchant/);
+  assert.match(html, /item\.note/);
+  assert.match(html, /project\?\.name/);
 });

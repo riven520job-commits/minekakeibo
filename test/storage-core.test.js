@@ -21,4 +21,24 @@ test("validates backup payload shape", () => {
   assert.equal(StorageCore.isBudgetPayload({ data: [] }), true);
   assert.equal(StorageCore.isBudgetPayload({ data: {} }), false);
   assert.equal(StorageCore.isBudgetPayload(null), false);
+  assert.equal(
+    StorageCore.isBudgetPayload({ data: [], recurringSchedules: {} }),
+    false,
+  );
+  assert.equal(
+    StorageCore.isBudgetPayload({ data: [{ date: "2026-08-09", price: "1200" }] }),
+    true,
+  );
+  assert.equal(
+    StorageCore.isBudgetPayload({ data: [{ date: "not-a-date", price: "1200" }] }),
+    false,
+  );
+  assert.equal(
+    StorageCore.isBudgetPayload({ data: [{ date: "2026-02-30", price: "1200" }] }),
+    false,
+  );
+  assert.equal(
+    StorageCore.isBudgetPayload({ data: [{ date: "2026-08-09", price: "abc" }] }),
+    false,
+  );
 });

@@ -32,6 +32,8 @@
     <link rel="stylesheet" href="assets/app.css" />
     <script src="assets/vendor/chart.umd.js"></script>
     <script src="assets/vendor/supabase.js"></script>
+    <script src="src/ui-security.js"></script>
+    <script src="src/search-core.js"></script>
     <script src="src/storage-core.js"></script>
     <script src="src/stats-core.js"></script>
     <script src="src/monthly-core.js"></script>
@@ -4566,6 +4568,24 @@
       };
 
       // --- 資料與預設值 ---
+      const nativeStorageSetItem = Storage.prototype.setItem;
+      let cloudTrackedKeys = null;
+      function persistLocal(key, value, options = {}) {
+        nativeStorageSetItem.call(localStorage, key, value);
+        if (
+          options.track !== false &&
+          cloudTrackedKeys?.has(String(key)) &&
+          !cloudSyncApplyingRemote
+        ) {
+          nativeStorageSetItem.call(
+            localStorage,
+            "myLastDataChangeAt",
+            new Date().toISOString(),
+          );
+          scheduleCloudSync();
+        }
+      }
+
       let rawData = StorageCore.readJSON(localStorage, "myBudget", []);
       let data = rawData.map((item) => ({
         ...item,
@@ -4584,7 +4604,7 @@
         installmentIndex: item.installmentIndex || null,
         installmentCount: item.installmentCount || null,
       }));
-      localStorage.setItem("myBudget", JSON.stringify(data));
+      persistLocal("myBudget", JSON.stringify(data));
 
       let merchantFavorites = StorageCore.readJSON(
         localStorage,
@@ -4592,7 +4612,7 @@
         [],
       );
       function persistMerchantFavorites() {
-        localStorage.setItem("myMerchantFavoritesV1", JSON.stringify(merchantFavorites));
+        persistLocal("myMerchantFavoritesV1", JSON.stringify(merchantFavorites));
       }
 
       let userAccounts = StorageCore.readJSON(localStorage, "myAccounts", null) || [
@@ -4683,15 +4703,15 @@
       let calculatorExpression = "";
       if (!localStorage.getItem("myWhiteNotionDefaultedV1")) {
         nightMode = false;
-        localStorage.setItem("myNightMode", JSON.stringify(false));
-        localStorage.setItem("myWhiteNotionDefaultedV1", "true");
+        persistLocal("myNightMode", JSON.stringify(false));
+        persistLocal("myWhiteNotionDefaultedV1", "true");
       }
       if (!localStorage.getItem("myWhiteNotionDefaultedV2")) {
         eyeCareMode = false;
         nightMode = false;
-        localStorage.setItem("myEyeCareMode", JSON.stringify(false));
-        localStorage.setItem("myNightMode", JSON.stringify(false));
-        localStorage.setItem("myWhiteNotionDefaultedV2", "true");
+        persistLocal("myEyeCareMode", JSON.stringify(false));
+        persistLocal("myNightMode", JSON.stringify(false));
+        persistLocal("myWhiteNotionDefaultedV2", "true");
       }
       const legacyAccountGroups = ["日常資金", "卡片與支付"];
       function isPrimaryAccount(acc) {
@@ -4758,21 +4778,21 @@
           if (legacyAccountGroups.includes(accountGroupMap[acc]))
             accountGroupMap[acc] = isPrimaryAccount(acc) ? acc : "💵 現金";
         });
-        localStorage.setItem("myAccounts", JSON.stringify(userAccounts));
-        localStorage.setItem(
+        persistLocal("myAccounts", JSON.stringify(userAccounts));
+        persistLocal(
           "myAccountInitials",
           JSON.stringify(accountInitials),
         );
-        localStorage.setItem(
+        persistLocal(
           "myAccountCurrencies",
           JSON.stringify(accountCurrencies),
         );
-        localStorage.setItem("myAccountGroups", JSON.stringify(accountGroups));
-        localStorage.setItem(
+        persistLocal("myAccountGroups", JSON.stringify(accountGroups));
+        persistLocal(
           "myAccountGroupMap",
           JSON.stringify(accountGroupMap),
         );
-        localStorage.setItem(
+        persistLocal(
           "myAccountGroupCollapsed",
           JSON.stringify(accountGroupCollapsed),
         );
@@ -4805,7 +4825,7 @@
         return accountSettings[acc];
       }
       function persistAccountSettings() {
-        localStorage.setItem(
+        persistLocal(
           "myAccountSettingsV1",
           JSON.stringify(accountSettings),
         );
@@ -4814,11 +4834,11 @@
       persistAccountSettings();
       if (!localStorage.getItem("myAccountCollapseDefaultedV2")) {
         accountGroups.forEach((group) => (accountGroupCollapsed[group] = true));
-        localStorage.setItem(
+        persistLocal(
           "myAccountGroupCollapsed",
           JSON.stringify(accountGroupCollapsed),
         );
-        localStorage.setItem("myAccountCollapseDefaultedV2", "true");
+        persistLocal("myAccountCollapseDefaultedV2", "true");
       }
 
       const defaultCategories = {
@@ -5352,7 +5372,7 @@
           defaultCategories[cat.type][cat.name] = [];
         mainCategoryMeta[cat.name] = {
           icon: cat.icon || "•••",
-          color: cat.color || "#f3f4f6",
+          color: UISecurity.safeCategoryColor(cat.color),
         };
       });
 
@@ -5403,6 +5423,8 @@
         localStorage.getItem("mySelectedEntryDate") || todayString();
       let dailyRecordsExpanded = false;
       let activeMonthlyReportTab = "calendar";
+      let monthlyDetailSearchQuery = "";
+      let monthlyDetailSearchSource = [];
       let selectedMonthlyCalendarDate = "";
       let monthlyCalendarFilters = {
         account: "",
@@ -5710,6 +5732,9 @@
           monthlyNoData: "這個月份還沒有支出紀錄",
           monthlyDailyExpense: "每日支出曲線",
           monthlyRecordsBelow: "當月紀錄",
+          monthlySearchPlaceholder: "搜尋商家、品名、分類、帳戶或備註",
+          monthlySearchCount: (shown, total) => `顯示 ${shown} / ${total} 筆`,
+          monthlySearchEmpty: "找不到符合搜尋條件的紀錄",
           monthlyCategoryShare: "支出類別佔比",
           monthlyRankingTitle: "消費排行",
           monthlyCalendarExpense: "本月支出",
@@ -6143,6 +6168,9 @@
           monthlyNoData: "この月の支出記録はまだありません",
           monthlyDailyExpense: "日別支出グラフ",
           monthlyRecordsBelow: "月内記録",
+          monthlySearchPlaceholder: "店舗、品名、カテゴリ、口座、メモを検索",
+          monthlySearchCount: (shown, total) => `${shown} / ${total} 件を表示`,
+          monthlySearchEmpty: "検索条件に一致する記録はありません",
           monthlyCategoryShare: "支出カテゴリ比率",
           monthlyRankingTitle: "支出ランキング",
           monthlyCalendarExpense: "今月の支出",
@@ -6511,7 +6539,7 @@
 
       function toggleLanguage() {
         currentLang = currentLang === "zh" ? "ja" : "zh";
-        localStorage.setItem("myBudgetLang", currentLang);
+        persistLocal("myBudgetLang", currentLang);
         applyLanguage();
         renderTypes();
         renderAccounts();
@@ -6543,6 +6571,10 @@
               "'": "&#039;",
             })[char],
         );
+      }
+
+      function encodeInlineValue(value = "") {
+        return UISecurity.encodeInlineValue(value);
       }
 
       function todayString() {
@@ -6683,7 +6715,7 @@
         if (!dateString) return;
         selectedEntryDate = dateString;
         dailyRecordsExpanded = false;
-        localStorage.setItem("mySelectedEntryDate", selectedEntryDate);
+        persistLocal("mySelectedEntryDate", selectedEntryDate);
         renderDashboardDatePicker();
         renderDailyRecords();
         if (
@@ -6754,7 +6786,7 @@
         const remaining = budget - spent;
         const ratio = budget > 0 ? Math.min(Math.max(spent / budget, 0), 1) : 0;
         container.innerHTML = `
-                <button type="button" onclick="openBudgetProjectRecords('${preferred.id}')" class="daily-project-card w-full text-left tap-target">
+                <button type="button" onclick="openBudgetProjectRecords(decodeURIComponent('${encodeInlineValue(preferred.id)}'))" class="daily-project-card w-full text-left tap-target">
                     <span class="daily-project-icon">${categoryIconHtml("💰")}</span>
                     <span class="min-w-0">
                         <span class="block text-lg font-semibold truncate">${escapeHTML(preferred.name)}</span>
@@ -6977,7 +7009,7 @@
         const date = parseLocalDate(selectedEntryDate);
         date.setMonth(date.getMonth() + direction);
         selectedEntryDate = formatLocalDate(date);
-        localStorage.setItem("mySelectedEntryDate", selectedEntryDate);
+        persistLocal("mySelectedEntryDate", selectedEntryDate);
         renderDashboardDatePicker();
         renderDailyRecords();
         renderMonthlyReport();
@@ -7007,14 +7039,14 @@
       function goToCurrentMonth() {
         selectedEntryDate = todayString();
         selectedMonthlyCalendarDate = selectedEntryDate;
-        localStorage.setItem("mySelectedEntryDate", selectedEntryDate);
+        persistLocal("mySelectedEntryDate", selectedEntryDate);
         renderDashboardDatePicker();
         renderDailyRecords();
         renderMonthlyReport();
       }
 
       function persistRecurringSchedules() {
-        localStorage.setItem(
+        persistLocal(
           "myRecurringSchedulesV1",
           JSON.stringify(recurringSchedules),
         );
@@ -7268,7 +7300,7 @@
           showToast(t("scheduleReminderDenied"));
           return;
         }
-        localStorage.setItem("myScheduleNotifications", "true");
+        persistLocal("myScheduleNotifications", "true");
         showToast(t("scheduleReminderEnabled"));
         showScheduleDueNotifications();
         renderMonthlyReport();
@@ -7298,7 +7330,7 @@
               tag: key,
             });
           else new Notification(title, { body, tag: key });
-          localStorage.setItem(key, new Date().toISOString());
+          persistLocal(key, new Date().toISOString());
         });
       }
 
@@ -7344,9 +7376,7 @@
       function monthlyRecordRow(pair, showDate = true) {
         const { item, index } = pair;
         const safeIcon = item.subCatIcon || "📝";
-        const iconHtml = safeIcon.startsWith("data:image")
-          ? `<img src="${safeIcon}" class="w-full h-full object-cover">`
-          : escapeHTML(safeIcon);
+        const iconHtml = categoryIconHtml(safeIcon);
         const jpy = toJPY(item.price, item.currency || "¥");
         return `
                 <button onclick="closeMonthlyReportModal(); openRecordDetail(${index})" class="monthly-list-row w-full text-left">
@@ -7524,16 +7554,82 @@
 
       function renderMonthlyDetail(context) {
         const { monthKeyValue, expensePairs } = context;
+        monthlyDetailSearchSource = expensePairs;
+        const filteredPairs = filterMonthlyDetailPairs(expensePairs);
         return `
                 <div>
                     <h3 class="dark-section-title">${t("monthlyDailyExpense")}</h3>
                     ${renderMonthlyLineChart(monthKeyValue, expensePairs)}
                 </div>
                 <div>
-                    <h3 class="dark-section-title">${t("monthlyRecordsBelow")}</h3>
-                    ${expensePairs.length ? expensePairs.map((pair) => monthlyRecordRow(pair)).join("") : `<div class="empty-state">${t("monthlyNoData")}</div>`}
+                    <div class="flex items-center justify-between gap-3">
+                      <h3 class="dark-section-title">${t("monthlyRecordsBelow")}</h3>
+                      <span id="monthly-detail-search-count" class="text-[11px] text-gray-400 shrink-0">${escapeHTML(t("monthlySearchCount", filteredPairs.length, expensePairs.length))}</span>
+                    </div>
+                    <input
+                      id="monthly-detail-search"
+                      type="search"
+                      value="${escapeHTML(monthlyDetailSearchQuery)}"
+                      placeholder="${escapeHTML(t("monthlySearchPlaceholder"))}"
+                      aria-label="${escapeHTML(t("monthlySearchPlaceholder"))}"
+                      class="notion-input mb-3"
+                      oninput="updateMonthlyDetailSearch(this.value)"
+                    >
+                    <div id="monthly-detail-search-results">
+                      ${monthlyDetailRowsHtml(filteredPairs, expensePairs.length)}
+                    </div>
                 </div>
             `;
+      }
+
+      function monthlyDetailSearchFields(pair) {
+        const item = pair?.item || {};
+        const project = resolveRecordProject(item);
+        return [
+          item.merchant,
+          item.name,
+          item.note,
+          item.mainCat,
+          item.subCatName,
+          item.account,
+          item.toAccount,
+          item.type,
+          item.currency,
+          project?.name,
+          item.projectName,
+        ];
+      }
+
+      function filterMonthlyDetailPairs(source = monthlyDetailSearchSource) {
+        return SearchCore.filterRecords(
+          source,
+          monthlyDetailSearchQuery,
+          monthlyDetailSearchFields,
+        );
+      }
+
+      function monthlyDetailRowsHtml(filteredPairs, totalCount) {
+        if (filteredPairs.length)
+          return filteredPairs.map((pair) => monthlyRecordRow(pair)).join("");
+        return `<div class="empty-state">${t(totalCount ? "monthlySearchEmpty" : "monthlyNoData")}</div>`;
+      }
+
+      function updateMonthlyDetailSearch(value) {
+        monthlyDetailSearchQuery = String(value || "").slice(0, 120);
+        const filteredPairs = filterMonthlyDetailPairs();
+        const results = document.getElementById("monthly-detail-search-results");
+        const count = document.getElementById("monthly-detail-search-count");
+        if (results)
+          results.innerHTML = monthlyDetailRowsHtml(
+            filteredPairs,
+            monthlyDetailSearchSource.length,
+          );
+        if (count)
+          count.textContent = t(
+            "monthlySearchCount",
+            filteredPairs.length,
+            monthlyDetailSearchSource.length,
+          );
       }
 
       function renderMonthlyCategory(context) {
@@ -7652,11 +7748,11 @@
               </span>
             </div>
             <div class="flex gap-2 mt-3">
-            <button type="button" onclick="openScheduleModal('${escapeHTML(schedule.id)}')" class="flex-1 py-2 rounded-xl text-xs font-semibold">${t("scheduleEditAction")}</button>
+            <button type="button" onclick="openScheduleModal(decodeURIComponent('${encodeInlineValue(schedule.id)}'))" class="flex-1 py-2 rounded-xl text-xs font-semibold">${t("scheduleEditAction")}</button>
               ${
                 status === "paid"
                   ? `<button type="button" onclick="closeMonthlyReportModal(); openRecordDetail(${recordIndex})" class="flex-1 py-2 rounded-xl text-xs font-semibold">${t("monthlyTabDetail")}</button>`
-                  : `<button type="button" onclick="markSchedulePaid('${escapeHTML(schedule.id)}', '${date}')" class="flex-1 py-2 rounded-xl text-xs font-semibold bg-gray-900 text-white">${t("scheduleMarkPaid")}</button>`
+                  : `<button type="button" onclick="markSchedulePaid(decodeURIComponent('${encodeInlineValue(schedule.id)}'), '${date}')" class="flex-1 py-2 rounded-xl text-xs font-semibold bg-gray-900 text-white">${t("scheduleMarkPaid")}</button>`
               }
             </div>
           </div>
@@ -8062,6 +8158,7 @@
       }
 
       window.setMonthlyReportTab = setMonthlyReportTab;
+      window.updateMonthlyDetailSearch = updateMonthlyDetailSearch;
       window.setMonthlyCalendarDate = setMonthlyCalendarDate;
       window.goToCurrentMonth = goToCurrentMonth;
       window.openScheduleModal = openScheduleModal;
@@ -8074,7 +8171,7 @@
       window.createScheduleFromCandidate = createScheduleFromCandidate;
 
       function refreshAfterRecordChange() {
-        localStorage.setItem("myBudget", JSON.stringify(data));
+        persistLocal("myBudget", JSON.stringify(data));
         renderDailyRecords();
         if (
           !document
@@ -8265,22 +8362,22 @@
       function toggleEyeCareMode() {
         eyeCareMode = !eyeCareMode;
         if (eyeCareMode) nightMode = false;
-        localStorage.setItem("myEyeCareMode", JSON.stringify(eyeCareMode));
-        localStorage.setItem("myNightMode", JSON.stringify(nightMode));
+        persistLocal("myEyeCareMode", JSON.stringify(eyeCareMode));
+        persistLocal("myNightMode", JSON.stringify(nightMode));
         applyAppearance();
       }
 
       function toggleNightMode() {
         nightMode = !nightMode;
         if (nightMode) eyeCareMode = false;
-        localStorage.setItem("myNightMode", JSON.stringify(nightMode));
-        localStorage.setItem("myEyeCareMode", JSON.stringify(eyeCareMode));
+        persistLocal("myNightMode", JSON.stringify(nightMode));
+        persistLocal("myEyeCareMode", JSON.stringify(eyeCareMode));
         applyAppearance();
       }
 
       function toggleAmountVisibility() {
         amountsHidden = !amountsHidden;
-        localStorage.setItem("myAmountsHidden", JSON.stringify(amountsHidden));
+        persistLocal("myAmountsHidden", JSON.stringify(amountsHidden));
         renderAmountVisibilityButton();
         updateBalances();
         renderList();
@@ -8434,7 +8531,7 @@
 
       function setStatsRange(value) {
         statsRange = value;
-        localStorage.setItem("myStatsRange", statsRange);
+        persistLocal("myStatsRange", statsRange);
         renderCharts();
       }
 
@@ -8549,7 +8646,7 @@
           localStorage.getItem("myCloudLoginEmail") || "",
         );
         if (!email || !email.trim()) return;
-        localStorage.setItem("myCloudLoginEmail", email.trim());
+        persistLocal("myCloudLoginEmail", email.trim());
         const redirectTo =
           location.hostname === "localhost" || location.hostname === "127.0.0.1"
             ? location.href
@@ -8585,7 +8682,7 @@
           showToast(error.message);
           return;
         }
-        localStorage.setItem("myCloudLoginEmail", email.trim());
+        persistLocal("myCloudLoginEmail", email.trim());
         cloudUser = data.user || null;
         renderCloudSyncStatus();
         showToast(t("cloudOtpVerified"));
@@ -8630,34 +8727,26 @@
       }
 
       function applyBudgetPayload(payload = {}) {
-        cloudSyncApplyingRemote = true;
-        localStorage.setItem("myBudget", JSON.stringify(payload.data || []));
-        localStorage.setItem(
-          "myMerchantFavoritesV1",
-          JSON.stringify(payload.merchantFavorites || []),
-        );
-        localStorage.setItem(
-          "myAccounts",
-          JSON.stringify(
+        const validation = StorageCore.validateBudgetPayload(payload);
+        if (!validation.valid)
+          throw new Error(`Invalid backup fields: ${validation.errors.join(", ")}`);
+        const nextAccountSettings = payload.accountSettings || {};
+        const writes = [
+          ["myBudget", payload.data || []],
+          ["myMerchantFavoritesV1", payload.merchantFavorites || []],
+          [
+            "myAccounts",
             payload.userAccounts || [
               "💵 現金",
               "💳 信用卡",
               "🪪 交通卡",
               "📱 行動支付",
             ],
-          ),
-        );
-        localStorage.setItem(
-          "myAccountInitials",
-          JSON.stringify(payload.accountInitials || {}),
-        );
-        localStorage.setItem(
-          "myAccountCurrencies",
-          JSON.stringify(payload.accountCurrencies || {}),
-        );
-        localStorage.setItem(
-          "myExchangeRatesJPY",
-          JSON.stringify(
+          ],
+          ["myAccountInitials", payload.accountInitials || {}],
+          ["myAccountCurrencies", payload.accountCurrencies || {}],
+          [
+            "myExchangeRatesJPY",
             payload.exchangeRates || {
               "¥": 1,
               NT$: 4.8,
@@ -8665,79 +8754,65 @@
               $: 155,
               "€": 170,
             },
-          ),
-        );
-        localStorage.setItem(
-          "myBudgetProjects",
-          JSON.stringify(payload.budgetProjects || []),
-        );
-        localStorage.setItem(
-          "myRecurringSchedulesV1",
-          JSON.stringify(payload.recurringSchedules || []),
-        );
-        localStorage.setItem(
-          "myAccountGroups",
-          JSON.stringify(payload.accountGroups || defaultAccountGroups),
-        );
-        localStorage.setItem(
-          "myAccountGroupMap",
-          JSON.stringify(payload.accountGroupMap || {}),
-        );
-        localStorage.setItem(
-          "myAccountGroupCollapsed",
-          JSON.stringify(payload.accountGroupCollapsed || {}),
-        );
-        accountSettings = payload.accountSettings || {};
-        localStorage.setItem(
-          "myAccountSettingsV1",
-          JSON.stringify(accountSettings),
-        );
-        localStorage.setItem(
-          "myCustomCatsV3",
-          JSON.stringify(payload.customCategories || {}),
-        );
-        localStorage.setItem(
-          "myCustomMainCatsV1",
-          JSON.stringify(payload.customMainCategories || []),
-        );
+          ],
+          ["myBudgetProjects", payload.budgetProjects || []],
+          ["myRecurringSchedulesV1", payload.recurringSchedules || []],
+          ["myAccountGroups", payload.accountGroups || defaultAccountGroups],
+          ["myAccountGroupMap", payload.accountGroupMap || {}],
+          ["myAccountGroupCollapsed", payload.accountGroupCollapsed || {}],
+          ["myAccountSettingsV1", nextAccountSettings],
+          ["myCustomCatsV3", payload.customCategories || {}],
+          ["myCustomMainCatsV1", payload.customMainCategories || []],
+        ];
         if (payload.settings) {
-          localStorage.setItem("myBudgetLang", payload.settings.lang || "zh");
-          localStorage.setItem(
-            "myStatsRange",
-            payload.settings.statsRange || "6m",
-          );
-          localStorage.setItem(
-            "myAmountsHidden",
-            JSON.stringify(!!payload.settings.amountsHidden),
-          );
-          localStorage.setItem(
-            "myEyeCareMode",
-            JSON.stringify(!!payload.settings.eyeCareMode),
-          );
-          localStorage.setItem(
-            "myNightMode",
-            JSON.stringify(!!payload.settings.nightMode),
+          writes.push(
+            ["myBudgetLang", payload.settings.lang || "zh", false],
+            ["myStatsRange", payload.settings.statsRange || "6m", false],
+            ["myAmountsHidden", !!payload.settings.amountsHidden],
+            ["myEyeCareMode", !!payload.settings.eyeCareMode],
+            ["myNightMode", !!payload.settings.nightMode],
           );
         }
-        cloudSyncApplyingRemote = false;
+        const previous = new Map(
+          writes.map(([key]) => [key, localStorage.getItem(key)]),
+        );
+        cloudSyncApplyingRemote = true;
+        try {
+          writes.forEach(([key, value, asJson = true]) =>
+            persistLocal(key, asJson ? JSON.stringify(value) : String(value), {
+              track: false,
+            }),
+          );
+          accountSettings = nextAccountSettings;
+        } catch (error) {
+          previous.forEach((value, key) => {
+            try {
+              if (value === null) localStorage.removeItem(key);
+              else nativeStorageSetItem.call(localStorage, key, value);
+            } catch {
+              // Keep the original write error; recovery is best effort.
+            }
+          });
+          throw error;
+        } finally {
+          cloudSyncApplyingRemote = false;
+        }
       }
 
-      const cloudSyncKeys = new Set([
+      cloudTrackedKeys = new Set([
         "myBudget", "myAccounts", "myAccountInitials", "myAccountCurrencies",
         "myExchangeRatesJPY", "myBudgetProjects", "myAccountGroups",
         "myRecurringSchedulesV1", "myAccountGroupMap", "myAccountSettingsV1",
         "myCustomCatsV3", "myCustomMainCatsV1", "myMerchantFavoritesV1",
       ]);
-      const originalStorageSetItem = Storage.prototype.setItem;
-      const originalLocalStorageSetItem = (key, value) =>
-        originalStorageSetItem.call(localStorage, key, value);
-
       function cloudAutoSyncEnabled() {
         return localStorage.getItem("myCloudAutoSync") !== "false";
       }
 
       function toggleCloudAutoSync(enabled) {
-        originalLocalStorageSetItem("myCloudAutoSync", enabled ? "true" : "false");
+        persistLocal("myCloudAutoSync", enabled ? "true" : "false", {
+          track: false,
+        });
         if (enabled) scheduleCloudSync(150);
         else if (cloudSyncTimer) clearTimeout(cloudSyncTimer);
       }
@@ -8747,14 +8822,6 @@
         clearTimeout(cloudSyncTimer);
         cloudSyncTimer = setTimeout(() => syncBudgetNow(), delay);
       }
-
-      Storage.prototype.setItem = function (key, value) {
-        originalStorageSetItem.call(this, key, value);
-        if (this === localStorage && !cloudSyncApplyingRemote && cloudSyncKeys.has(String(key))) {
-          originalLocalStorageSetItem("myLastDataChangeAt", new Date().toISOString());
-          scheduleCloudSync();
-        }
-      };
 
       async function syncBudgetNow(options = {}) {
         if (cloudSyncBusy) return;
@@ -8780,14 +8847,19 @@
           const cloudChangedAt = Date.parse(row?.updated_at || row?.payload?.savedAt || "0");
           const hasMeaningfulLocalData = data.length > 0 || budgetProjects.length > 0 || Object.keys(customCategories || {}).length > 0;
           const hasUnsyncedLocalChanges = localChangedAt > lastSyncedAt || (!lastSyncedAt && hasMeaningfulLocalData);
-          if (!lastSyncedAt && row?.payload && hasMeaningfulLocalData) {
+          const hasRemoteChanges = !!row?.payload && cloudChangedAt > lastSyncedAt;
+          if (hasRemoteChanges && hasUnsyncedLocalChanges) {
             if (status) status.textContent = "本機與雲端都有資料，請從手動備份工具選擇保留版本";
             if (options.showResult) showToast("請選擇上傳本機或下載雲端資料");
             return;
           }
-          if (row?.payload && cloudChangedAt > lastSyncedAt && !hasUnsyncedLocalChanges) {
+          if (hasRemoteChanges && !hasUnsyncedLocalChanges) {
             applyBudgetPayload(row.payload);
-            originalLocalStorageSetItem("myLastCloudSyncAt", new Date().toISOString());
+            const downloadedAt = new Date().toISOString();
+            persistLocal("myLastCloudSyncAt", downloadedAt, {
+              track: false,
+            });
+            persistLocal("myLastDataChangeAt", downloadedAt, { track: false });
             if (options.showResult) showToast("已下載最新雲端資料");
             setTimeout(() => location.reload(), 300);
             return;
@@ -8800,9 +8872,11 @@
               updated_at: updatedAt,
             });
             if (writeError) throw writeError;
-            originalLocalStorageSetItem("myLastCloudSyncAt", updatedAt);
+            persistLocal("myLastCloudSyncAt", updatedAt, { track: false });
           } else {
-            originalLocalStorageSetItem("myLastCloudSyncAt", new Date().toISOString());
+            persistLocal("myLastCloudSyncAt", new Date().toISOString(), {
+              track: false,
+            });
           }
           renderCloudSyncStatus();
           if (options.showResult) showToast("資料已同步");
@@ -8841,7 +8915,7 @@
           showToast(error.message);
           return;
         }
-        originalLocalStorageSetItem("myLastCloudSyncAt", payload.savedAt);
+        persistLocal("myLastCloudSyncAt", payload.savedAt, { track: false });
         renderCloudSyncStatus();
         showToast(t("cloudUploaded"));
       }
@@ -8868,10 +8942,21 @@
           showToast(t("cloudNoData"));
           return;
         }
-        applyBudgetPayload(row.payload);
-        originalLocalStorageSetItem("myLastCloudSyncAt", row.updated_at || new Date().toISOString());
-        showToast(t("cloudDownloaded"));
-        setTimeout(() => location.reload(), 800);
+        try {
+          applyBudgetPayload(row.payload);
+          const downloadedAt = row.updated_at || new Date().toISOString();
+          persistLocal(
+            "myLastCloudSyncAt",
+            downloadedAt,
+            { track: false },
+          );
+          persistLocal("myLastDataChangeAt", downloadedAt, { track: false });
+          showToast(t("cloudDownloaded"));
+          setTimeout(() => location.reload(), 800);
+        } catch (applyError) {
+          showToast(t("backupInvalid"));
+          console.warn("Cloud payload rejected", applyError);
+        }
       }
 
       function monthDaysForStatsRange(rangeConfig) {
@@ -9331,14 +9416,14 @@
                     const creditMetaHtml = creditOverviewMetaHtml(acc, accCurrency);
                     const dueHtml = creditOverviewDueHtml(acc);
                     return `
-                            <div onclick="openAccountDetail(decodeURIComponent('${encodeURIComponent(acc)}'))" class="account-overview-child cursor-pointer hover:bg-gray-50 transition group">
+                            <div onclick="openAccountDetail(decodeURIComponent('${encodeInlineValue(acc)}'))" class="account-overview-child cursor-pointer hover:bg-gray-50 transition group">
                                 <div class="min-w-0 pr-3">
                                     <span class="font-semibold text-sm block truncate">${escapeHTML(displayLabel(acc))}</span>
                                     ${creditMetaHtml}
                                 </div>
                                 <div class="flex items-start gap-2 shrink-0">
-                                    <button onclick="event.stopPropagation(); setAccountGroup(decodeURIComponent('${encodeURIComponent(acc)}'))" class="text-[10px] text-blue-600 bg-blue-50 px-2 py-1 rounded-lg opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition">${t("classify")}</button>
-                                    <button onclick="event.stopPropagation(); deleteSubAccount(decodeURIComponent('${encodeURIComponent(acc)}'))" class="text-[10px] text-red-500 bg-red-50 px-2 py-1 rounded-lg opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition">${t("deleteSubAccount")}</button>
+                                    <button onclick="event.stopPropagation(); setAccountGroup(decodeURIComponent('${encodeInlineValue(acc)}'))" class="text-[10px] text-blue-600 bg-blue-50 px-2 py-1 rounded-lg opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition">${t("classify")}</button>
+                                    <button onclick="event.stopPropagation(); deleteSubAccount(decodeURIComponent('${encodeInlineValue(acc)}'))" class="text-[10px] text-red-500 bg-red-50 px-2 py-1 rounded-lg opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition">${t("deleteSubAccount")}</button>
                                     <span class="account-overview-side">
                                       <span class="font-bold tracking-tight ${isNegative ? "text-red-500" : "text-gray-500"}">${formatPrivateMoney(currentBalances[acc], accCurrency)}</span>
                                       ${dueHtml}
@@ -9353,11 +9438,11 @@
             return `
                         <div class="account-overview-group">
                             <div class="flex items-center gap-2">
-                                <button onclick="toggleAccountGroup(decodeURIComponent('${encodeURIComponent(group)}'))" class="account-overview-header">
+                                <button onclick="toggleAccountGroup(decodeURIComponent('${encodeInlineValue(group)}'))" class="account-overview-header">
                                     <span class="min-w-0 text-lg font-semibold truncate">${isCollapsed ? "+ " : "− "}${escapeHTML(displayLabel(group))} <span class="text-base text-gray-500">(${groupedAccounts[group].length})</span></span>
                                     <span class="account-overview-amount ${groupNegative ? "text-red-500" : ""}">${amountsHidden ? `¥${t("hiddenAmount")}` : `${groupTotal < 0 ? "-" : "+"}¥${Math.round(Math.abs(groupTotal)).toLocaleString()}`}</span>
                                 </button>
-                                <button onclick="addSubAccount(decodeURIComponent('${encodeURIComponent(group)}'))" class="text-[10px] font-semibold text-gray-500 bg-gray-50 px-2 py-1 rounded-lg shrink-0">${t("addSubAccount")}</button>
+                                <button onclick="addSubAccount(decodeURIComponent('${encodeInlineValue(group)}'))" class="text-[10px] font-semibold text-gray-500 bg-gray-50 px-2 py-1 rounded-lg shrink-0">${t("addSubAccount")}</button>
                             </div>
                             <div class="${isCollapsed ? "hidden" : ""}">${accountCards}</div>
                         </div>
@@ -9398,7 +9483,7 @@
         );
         if (newVal !== null && !isNaN(parseInt(newVal))) {
           accountInitials[acc] = parseInt(newVal);
-          localStorage.setItem(
+          persistLocal(
             "myAccountInitials",
             JSON.stringify(accountInitials),
           );
@@ -9957,7 +10042,7 @@
             `${a.date || ""} ${a.time || ""}`,
           ),
         );
-        localStorage.setItem("myBudget", JSON.stringify(data));
+        persistLocal("myBudget", JSON.stringify(data));
         closeBalanceAdjustModal();
         renderAccountDetail();
         updateBalances();
@@ -10037,17 +10122,17 @@
         else closeAccountSettingModal();
       }
       function saveAccountMeta() {
-        localStorage.setItem("myAccounts", JSON.stringify(userAccounts));
-        localStorage.setItem(
+        persistLocal("myAccounts", JSON.stringify(userAccounts));
+        persistLocal(
           "myAccountInitials",
           JSON.stringify(accountInitials),
         );
-        localStorage.setItem(
+        persistLocal(
           "myAccountCurrencies",
           JSON.stringify(accountCurrencies),
         );
-        localStorage.setItem("myAccountGroups", JSON.stringify(accountGroups));
-        localStorage.setItem(
+        persistLocal("myAccountGroups", JSON.stringify(accountGroups));
+        persistLocal(
           "myAccountGroupMap",
           JSON.stringify(accountGroupMap),
         );
@@ -10086,7 +10171,7 @@
               if (item.account === acc) item.account = next;
               if (item.toAccount === acc) item.toAccount = next;
             });
-            localStorage.setItem("myBudget", JSON.stringify(data));
+            persistLocal("myBudget", JSON.stringify(data));
             activeAccountDetail.account = next;
             saveAccountMeta();
             closeAccountSettingModal();
@@ -10211,7 +10296,7 @@
           accountGroups
             .map(
               (group) =>
-                `<button class="account-setting-option ${group === current ? "active" : ""}" onclick="setAccountGroupFromPicker(decodeURIComponent('${encodeURIComponent(group)}'))"><span class="font-bold">${escapeHTML(displayLabel(group))}</span><span>${group === current ? "✓" : "›"}</span></button>`,
+                `<button class="account-setting-option ${group === current ? "active" : ""}" onclick="setAccountGroupFromPicker(decodeURIComponent('${encodeInlineValue(group)}'))"><span class="font-bold">${escapeHTML(displayLabel(group))}</span><span>${group === current ? "✓" : "›"}</span></button>`,
             )
             .join("") +
             `<button class="account-setting-option" onclick="addAccountGroupFromPicker()"><span class="font-bold">＋ 新增分組</span><span>›</span></button>`,
@@ -10283,7 +10368,7 @@
           choices
             .map(
               (item) =>
-                `<button class="account-setting-option ${item === (setting.primaryAccount || "") ? "active" : ""}" onclick="setPrimaryAccountFromPicker(decodeURIComponent('${encodeURIComponent(item)}'))"><span class="font-bold">${item ? escapeHTML(displayLabel(item)) : "無"}</span><span>${item === (setting.primaryAccount || "") ? "✓" : "›"}</span></button>`,
+                `<button class="account-setting-option ${item === (setting.primaryAccount || "") ? "active" : ""}" onclick="setPrimaryAccountFromPicker(decodeURIComponent('${encodeInlineValue(item)}'))"><span class="font-bold">${item ? escapeHTML(displayLabel(item)) : "無"}</span><span>${item === (setting.primaryAccount || "") ? "✓" : "›"}</span></button>`,
             )
             .join(""),
         );
@@ -10389,19 +10474,19 @@
           return;
         }
         accountGroups.push(trimmed);
-        localStorage.setItem("myAccountGroups", JSON.stringify(accountGroups));
+        persistLocal("myAccountGroups", JSON.stringify(accountGroups));
         renderAccountGroupSettings();
         updateBalances();
         showToast(t("toastGroupAdded"));
       }
 
       function persistAccountGroupState() {
-        localStorage.setItem("myAccountGroups", JSON.stringify(accountGroups));
-        localStorage.setItem(
+        persistLocal("myAccountGroups", JSON.stringify(accountGroups));
+        persistLocal(
           "myAccountGroupMap",
           JSON.stringify(accountGroupMap),
         );
-        localStorage.setItem(
+        persistLocal(
           "myAccountGroupCollapsed",
           JSON.stringify(accountGroupCollapsed),
         );
@@ -10459,12 +10544,12 @@
         delete accountInitials[group];
         delete accountCurrencies[group];
         delete accountSettings[group];
-        localStorage.setItem("myAccounts", JSON.stringify(userAccounts));
-        localStorage.setItem(
+        persistLocal("myAccounts", JSON.stringify(userAccounts));
+        persistLocal(
           "myAccountInitials",
           JSON.stringify(accountInitials),
         );
-        localStorage.setItem(
+        persistLocal(
           "myAccountCurrencies",
           JSON.stringify(accountCurrencies),
         );
@@ -10478,7 +10563,7 @@
 
       function toggleAccountGroup(group) {
         accountGroupCollapsed[group] = !accountGroupCollapsed[group];
-        localStorage.setItem(
+        persistLocal(
           "myAccountGroupCollapsed",
           JSON.stringify(accountGroupCollapsed),
         );
@@ -10489,7 +10574,7 @@
         accountGroups.forEach(
           (group) => (accountGroupCollapsed[group] = collapsed),
         );
-        localStorage.setItem(
+        persistLocal(
           "myAccountGroupCollapsed",
           JSON.stringify(accountGroupCollapsed),
         );
@@ -10779,20 +10864,20 @@
         accountGroupMap[accountName] = group;
         accountSettings[accountName] = defaultAccountSetting(accountName);
         accountGroupCollapsed[group] = false;
-        localStorage.setItem("myAccounts", JSON.stringify(userAccounts));
-        localStorage.setItem(
+        persistLocal("myAccounts", JSON.stringify(userAccounts));
+        persistLocal(
           "myAccountInitials",
           JSON.stringify(accountInitials),
         );
-        localStorage.setItem(
+        persistLocal(
           "myAccountCurrencies",
           JSON.stringify(accountCurrencies),
         );
-        localStorage.setItem(
+        persistLocal(
           "myAccountGroupMap",
           JSON.stringify(accountGroupMap),
         );
-        localStorage.setItem(
+        persistLocal(
           "myAccountGroupCollapsed",
           JSON.stringify(accountGroupCollapsed),
         );
@@ -10837,7 +10922,7 @@
 
       function setAccountCurrency(acc, currency) {
         accountCurrencies[acc] = currency;
-        localStorage.setItem(
+        persistLocal(
           "myAccountCurrencies",
           JSON.stringify(accountCurrencies),
         );
@@ -10867,16 +10952,16 @@
           document.getElementById("selected-account").value = "";
         if (document.getElementById("selected-to-account").value === acc)
           document.getElementById("selected-to-account").value = "";
-        localStorage.setItem("myAccounts", JSON.stringify(userAccounts));
-        localStorage.setItem(
+        persistLocal("myAccounts", JSON.stringify(userAccounts));
+        persistLocal(
           "myAccountInitials",
           JSON.stringify(accountInitials),
         );
-        localStorage.setItem(
+        persistLocal(
           "myAccountCurrencies",
           JSON.stringify(accountCurrencies),
         );
-        localStorage.setItem(
+        persistLocal(
           "myAccountGroupMap",
           JSON.stringify(accountGroupMap),
         );
@@ -10906,13 +10991,13 @@
             : internalLabel(trimmed);
         if (!accountGroups.includes(nextGroup)) {
           accountGroups.push(nextGroup);
-          localStorage.setItem(
+          persistLocal(
             "myAccountGroups",
             JSON.stringify(accountGroups),
           );
         }
         accountGroupMap[acc] = nextGroup;
-        localStorage.setItem(
+        persistLocal(
           "myAccountGroupMap",
           JSON.stringify(accountGroupMap),
         );
@@ -10954,20 +11039,20 @@
                                 <div class="text-[11px] text-gray-400">${t("currentPrefix")}${escapeHTML(displayLabel(accGroup))}</div>
                             </div>
                             <div class="flex items-center gap-2 shrink-0">
-                                <button onclick="setAccountGroup(decodeURIComponent('${encodeURIComponent(acc)}'))" class="text-xs font-semibold text-gray-600 bg-gray-100 px-3 py-2 rounded-xl">${t("change")}</button>
-                                <button onclick="deleteSubAccount(decodeURIComponent('${encodeURIComponent(acc)}'))" class="text-xs font-semibold text-red-500 bg-red-50 px-3 py-2 rounded-xl">${t("deleteSubAccount")}</button>
+                                <button onclick="setAccountGroup(decodeURIComponent('${encodeInlineValue(acc)}'))" class="text-xs font-semibold text-gray-600 bg-gray-100 px-3 py-2 rounded-xl">${t("change")}</button>
+                                <button onclick="deleteSubAccount(decodeURIComponent('${encodeInlineValue(acc)}'))" class="text-xs font-semibold text-red-500 bg-red-50 px-3 py-2 rounded-xl">${t("deleteSubAccount")}</button>
                             </div>
                           </div>
                           <label class="mt-2 flex items-center justify-between gap-3 text-xs text-gray-500">
                               <span>${t("currencyLabel")}</span>
-                              <select onchange="setAccountCurrency(decodeURIComponent('${encodeURIComponent(acc)}'), this.value)" class="notion-input max-w-[120px] py-2 text-xs">${currencyOptions}</select>
+                              <select onchange="setAccountCurrency(decodeURIComponent('${encodeInlineValue(acc)}'), this.value)" class="notion-input max-w-[120px] py-2 text-xs">${currencyOptions}</select>
                           </label>
                         </div>
                     `;
                   })
                   .join("")
               : `<div class="text-xs text-gray-400 border-t border-gray-100 pt-3">${t("emptySubAccounts")}</div>`;
-            const safeGroup = encodeURIComponent(group);
+            const safeGroup = encodeInlineValue(group);
             return `
                     <div class="border-t border-gray-100 pt-3 first:border-t-0 first:pt-0">
                         <div class="flex items-start justify-between gap-3 mb-3">
@@ -11130,7 +11215,7 @@
             changed = true;
           }
         });
-        if (changed) localStorage.setItem("myBudgetProjects", JSON.stringify(budgetProjects));
+        if (changed) persistLocal("myBudgetProjects", JSON.stringify(budgetProjects));
         return changed;
       }
 
@@ -11152,7 +11237,7 @@
             changed = true;
           }
         });
-        if (changed) localStorage.setItem("myBudget", JSON.stringify(data));
+        if (changed) persistLocal("myBudget", JSON.stringify(data));
         return changed;
       }
 
@@ -11292,7 +11377,7 @@
           const badge = project.recurring === "monthly" ? t("projectRecurringMonthly") : t("projectOneTime");
           return `
             <article class="project-overview-card">
-              <button type="button" onclick="openBudgetProjectRecords('${project.id}', '${activeProjectOverviewMonth}')" class="w-full text-left">
+              <button type="button" onclick="openBudgetProjectRecords(decodeURIComponent('${encodeInlineValue(project.id)}'), '${activeProjectOverviewMonth}')" class="w-full text-left">
                 <div class="flex items-start justify-between gap-3 mb-3">
                   <div class="min-w-0">
                     <div class="font-black text-base truncate">${escapeHTML(project.name)}</div>
@@ -11307,9 +11392,9 @@
                 <div class="h-2 bg-gray-100 rounded-full overflow-hidden"><div class="h-full ${over ? "bg-red-500" : "bg-gray-900"}" style="width:${Math.round(ratio * 100)}%"></div></div>
               </button>
               <div class="grid grid-cols-3 gap-2 mt-3">
-                <button type="button" onclick="openBudgetProjectRecords('${project.id}', '${activeProjectOverviewMonth}')" class="p-3 rounded-xl bg-gray-50 text-xs font-bold">${t("projectRecordsButton")}</button>
-                <button type="button" onclick="editBudgetProject('${project.id}')" class="p-3 rounded-xl bg-gray-50 text-xs font-bold">${t("change")}</button>
-                <button type="button" onclick="deleteBudgetProject('${project.id}')" class="p-3 rounded-xl bg-red-50 text-xs font-bold text-red-500">${t("delete")}</button>
+                <button type="button" onclick="openBudgetProjectRecords(decodeURIComponent('${encodeInlineValue(project.id)}'), '${activeProjectOverviewMonth}')" class="p-3 rounded-xl bg-gray-50 text-xs font-bold">${t("projectRecordsButton")}</button>
+                <button type="button" onclick="editBudgetProject(decodeURIComponent('${encodeInlineValue(project.id)}'))" class="p-3 rounded-xl bg-gray-50 text-xs font-bold">${t("change")}</button>
+                <button type="button" onclick="deleteBudgetProject(decodeURIComponent('${encodeInlineValue(project.id)}'))" class="p-3 rounded-xl bg-red-50 text-xs font-bold text-red-500">${t("delete")}</button>
               </div>
             </article>
           `;
@@ -11405,7 +11490,7 @@
             const activeClass = isActive
               ? "bg-gray-900 text-white shadow-sm"
               : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50";
-            return `<button onclick="selectProject('${project.id}')" class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium transition ${activeClass}">${escapeHTML(project.name)}</button>`;
+            return `<button onclick="selectProject(decodeURIComponent('${encodeInlineValue(project.id)}'))" class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium transition ${activeClass}">${escapeHTML(project.name)}</button>`;
           })
           .join("");
         html += `<button onclick="addBudgetProject()" class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium bg-gray-50 text-gray-400 border border-dashed border-gray-300 hover:bg-gray-100 transition">${t("addProjectShort")}</button>`;
@@ -11462,7 +11547,7 @@
           ...budgetProjects.map((project) => {
             const isActive = project.id === currentId;
             return `
-                    <button type="button" onclick="selectProject('${project.id}'); closeProjectPicker();" class="account-choice ${isActive ? "active" : ""}">
+                    <button type="button" onclick="selectProject(decodeURIComponent('${encodeInlineValue(project.id)}')); closeProjectPicker();" class="account-choice ${isActive ? "active" : ""}">
                         <span>
                             <span class="block text-sm font-semibold">${escapeHTML(project.name)}</span>
                             <span class="block text-[11px] text-gray-400 mt-1">${formatPrivateMoney(project.budget || 0, project.currency || "¥")}</span>
@@ -11520,8 +11605,8 @@
                             <div class="text-[11px] text-gray-400">${formatPrivateMoney(project.budget, project.currency)} · ${formatPrivateJPY(spent, "¥")} / ${formatPrivateJPY(budget, "¥")} · ${project.recurring === "monthly" ? t("projectRecurringMonthly") : t("projectOneTime")}</div>
                         </div>
                         <div class="flex items-center gap-2 shrink-0">
-                            <button onclick="editBudgetProject('${project.id}')" class="text-xs font-semibold text-gray-600 bg-gray-100 px-3 py-2 rounded-xl">${t("change")}</button>
-                            <button onclick="deleteBudgetProject('${project.id}')" class="text-xs font-semibold text-red-500 bg-red-50 px-3 py-2 rounded-xl">${t("delete")}</button>
+                            <button onclick="editBudgetProject(decodeURIComponent('${encodeInlineValue(project.id)}'))" class="text-xs font-semibold text-gray-600 bg-gray-100 px-3 py-2 rounded-xl">${t("change")}</button>
+                            <button onclick="deleteBudgetProject(decodeURIComponent('${encodeInlineValue(project.id)}'))" class="text-xs font-semibold text-red-500 bg-red-50 px-3 py-2 rounded-xl">${t("delete")}</button>
                         </div>
                     </div>
                 `;
@@ -11564,7 +11649,7 @@
           recurring: recurring ? "monthly" : "none",
           lastRefreshMonth: recurring ? monthKey(new Date()) : "",
         });
-        localStorage.setItem(
+        persistLocal(
           "myBudgetProjects",
           JSON.stringify(budgetProjects),
         );
@@ -11621,8 +11706,8 @@
             item.projectName = project.name;
           }
         });
-        localStorage.setItem("myBudget", JSON.stringify(data));
-        localStorage.setItem(
+        persistLocal("myBudget", JSON.stringify(data));
+        persistLocal(
           "myBudgetProjects",
           JSON.stringify(budgetProjects),
         );
@@ -11655,8 +11740,8 @@
         budgetProjects = budgetProjects.filter((item) => item.id !== projectId);
         const selectedProjectInput = document.getElementById("selected-project-id");
         if (selectedProjectInput?.value === projectId) selectedProjectInput.value = "";
-        localStorage.setItem("myBudget", JSON.stringify(data));
-        localStorage.setItem(
+        persistLocal("myBudget", JSON.stringify(data));
+        persistLocal(
           "myBudgetProjects",
           JSON.stringify(budgetProjects),
         );
@@ -11676,7 +11761,7 @@
         if (!rate || rate <= 0) return;
         exchangeRates[currency] = rate;
         exchangeRates["¥"] = 1;
-        localStorage.setItem(
+        persistLocal(
           "myExchangeRatesJPY",
           JSON.stringify(exchangeRates),
         );
@@ -11696,7 +11781,7 @@
               exchangeRates[curr.symbol] = 1 / payload.rates[curr.code];
             }
           });
-          localStorage.setItem(
+          persistLocal(
             "myExchangeRatesJPY",
             JSON.stringify(exchangeRates),
           );
@@ -11744,7 +11829,7 @@
             const activeClass = isActive
               ? "bg-gray-900 text-white shadow-md"
               : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50";
-            return `<button onclick="selectAccountGroup(decodeURIComponent('${encodeURIComponent(group)}'), 'from')" class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium transition ${activeClass}">${escapeHTML(displayLabel(group))}</button>`;
+            return `<button onclick="selectAccountGroup(decodeURIComponent('${encodeInlineValue(group)}'), 'from')" class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium transition ${activeClass}">${escapeHTML(displayLabel(group))}</button>`;
           })
           .join("");
         containerFrom.innerHTML = htmlFrom;
@@ -11756,11 +11841,11 @@
                 const activeClass = isActive
                   ? "bg-gray-900 text-white shadow-sm"
                   : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50";
-                return `<button onclick="selectAccount(decodeURIComponent('${encodeURIComponent(acc)}'), 'from')" class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium transition ${activeClass}">${escapeHTML(displayLabel(acc))}</button>`;
+                return `<button onclick="selectAccount(decodeURIComponent('${encodeInlineValue(acc)}'), 'from')" class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium transition ${activeClass}">${escapeHTML(displayLabel(acc))}</button>`;
               })
               .join("")
           : `<span class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium bg-gray-50 text-gray-400 border border-dashed border-gray-200">${t("noSubAccount")}</span>`;
-        containerFromSub.innerHTML += `<button onclick="addSubAccount(decodeURIComponent('${encodeURIComponent(currentGroup)}'))" class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium bg-gray-50 text-gray-400 border border-dashed border-gray-300 hover:bg-gray-100 transition">${t("addSubAccount")}</button>`;
+        containerFromSub.innerHTML += `<button onclick="addSubAccount(decodeURIComponent('${encodeInlineValue(currentGroup)}'))" class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium bg-gray-50 text-gray-400 border border-dashed border-gray-300 hover:bg-gray-100 transition">${t("addSubAccount")}</button>`;
 
         let htmlTo = accountGroups
           .map((group) => {
@@ -11768,7 +11853,7 @@
             const activeClass = isActive
               ? "bg-gray-900 text-white shadow-sm"
               : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50";
-            return `<button onclick="selectAccountGroup(decodeURIComponent('${encodeURIComponent(group)}'), 'to')" class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium transition ${activeClass}">${escapeHTML(displayLabel(group))}</button>`;
+            return `<button onclick="selectAccountGroup(decodeURIComponent('${encodeInlineValue(group)}'), 'to')" class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium transition ${activeClass}">${escapeHTML(displayLabel(group))}</button>`;
           })
           .join("");
         containerTo.innerHTML = htmlTo;
@@ -11780,11 +11865,11 @@
                 const activeClass = isActive
                   ? "bg-gray-900 text-white shadow-sm"
                   : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50";
-                return `<button onclick="selectAccount(decodeURIComponent('${encodeURIComponent(acc)}'), 'to')" class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium transition ${activeClass}">${escapeHTML(displayLabel(acc))}</button>`;
+                return `<button onclick="selectAccount(decodeURIComponent('${encodeInlineValue(acc)}'), 'to')" class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium transition ${activeClass}">${escapeHTML(displayLabel(acc))}</button>`;
               })
               .join("")
           : `<span class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium bg-gray-50 text-gray-400 border border-dashed border-gray-200">${t("noSubAccount")}</span>`;
-        containerToSub.innerHTML += `<button onclick="addSubAccount(decodeURIComponent('${encodeURIComponent(currentToGroup)}'))" class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium bg-gray-50 text-gray-400 border border-dashed border-gray-300 hover:bg-gray-100 transition">${t("addSubAccount")}</button>`;
+        containerToSub.innerHTML += `<button onclick="addSubAccount(decodeURIComponent('${encodeInlineValue(currentToGroup)}'))" class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium bg-gray-50 text-gray-400 border border-dashed border-gray-300 hover:bg-gray-100 transition">${t("addSubAccount")}</button>`;
         renderAccountSummaries();
         if (
           !document
@@ -11866,7 +11951,7 @@
                     const isActive = acc === currentAcc;
                     const currency = getAccountCurrency(acc);
                     return `
-                        <button type="button" onclick="selectAccountGroup(decodeURIComponent('${encodeURIComponent(group)}'), '${type}'); selectAccount(decodeURIComponent('${encodeURIComponent(acc)}'), '${type}'); closeAccountPicker();" class="account-choice ${isActive ? "active" : ""}">
+                        <button type="button" onclick="selectAccountGroup(decodeURIComponent('${encodeInlineValue(group)}'), '${type}'); selectAccount(decodeURIComponent('${encodeInlineValue(acc)}'), '${type}'); closeAccountPicker();" class="account-choice ${isActive ? "active" : ""}">
                             <span>
                                 <span class="block text-sm font-semibold">${escapeHTML(displayLabel(acc))}</span>
                                 <span class="block text-[11px] text-gray-400 mt-1">${escapeHTML(displayLabel(group))} · ${escapeHTML(currencyCodeFromSymbol(currency))}</span>
@@ -11881,7 +11966,7 @@
                     <div class="space-y-2">
                         <div class="flex items-center justify-between gap-3">
                             <div class="text-xs font-bold uppercase tracking-[.12em] text-gray-400">${escapeHTML(displayLabel(group))}</div>
-                            <button type="button" onclick="addSubAccount(decodeURIComponent('${encodeURIComponent(group)}')); renderAccountPicker();" class="text-xs font-semibold text-blue-600">${t("addSubAccount")}</button>
+                            <button type="button" onclick="addSubAccount(decodeURIComponent('${encodeInlineValue(group)}')); renderAccountPicker();" class="text-xs font-semibold text-blue-600">${t("addSubAccount")}</button>
                         </div>
                         ${childHtml}
                     </div>
@@ -11909,7 +11994,7 @@
         const list = merchantFavorites.slice(0, 12);
         row.classList.toggle("hidden", list.length === 0);
         row.innerHTML = list
-          .map((name) => `<button type="button" onpointerdown="event.preventDefault(); selectMerchantFavorite(decodeURIComponent('${encodeURIComponent(name)}'))">${escapeHTML(name)}</button>`)
+          .map((name) => `<button type="button" onpointerdown="event.preventDefault(); selectMerchantFavorite(decodeURIComponent('${encodeInlineValue(name)}'))">${escapeHTML(name)}</button>`)
           .join("");
       }
 
@@ -12194,20 +12279,20 @@
           if (!accountGroups.includes(trimmedGroup))
             accountGroups.push(trimmedGroup);
           accountGroupMap[accountName] = trimmedGroup;
-          localStorage.setItem("myAccounts", JSON.stringify(userAccounts));
-          localStorage.setItem(
+          persistLocal("myAccounts", JSON.stringify(userAccounts));
+          persistLocal(
             "myAccountInitials",
             JSON.stringify(accountInitials),
           );
-          localStorage.setItem(
+          persistLocal(
             "myAccountCurrencies",
             JSON.stringify(accountCurrencies),
           );
-          localStorage.setItem(
+          persistLocal(
             "myAccountGroups",
             JSON.stringify(accountGroups),
           );
-          localStorage.setItem(
+          persistLocal(
             "myAccountGroupMap",
             JSON.stringify(accountGroupMap),
           );
@@ -12534,9 +12619,9 @@
         const iconKey = String(icon);
         const assetSrc = categoryIconAssets[iconKey] || categoryIconAssets[`ph:${iconNameFromLegacyIcon(iconKey)}`] || "";
         if (assetSrc)
-          return `<img src="${assetSrc}" class="notion-icon-img" alt="" loading="lazy" onerror="this.replaceWith(document.createRange().createContextualFragment(notionIconSvg('${escapeHTML(String(icon))}')).firstElementChild)">`;
-        if (icon.startsWith?.("data:image"))
-          return `<img src="${icon}" class="w-8 h-8 rounded-full object-cover" alt="">`;
+          return `<img src="${assetSrc}" class="notion-icon-img" alt="" loading="lazy" onerror="this.replaceWith(document.createRange().createContextualFragment(notionIconSvg(decodeURIComponent('${encodeInlineValue(icon)}'))).firstElementChild)">`;
+        if (UISecurity.isSafeDataImage(icon))
+          return `<img src="${escapeHTML(icon)}" class="w-8 h-8 rounded-full object-cover" alt="">`;
         return notionIconSvg(icon);
       }
       function getMainCategoryMeta(name) {
@@ -12603,9 +12688,9 @@
         const items = suggestedCategoryItems();
         container.className = "grid mb-6";
         container.innerHTML = items.map((cat) => {
-          const safeMain = encodeURIComponent(cat.mainCat);
-          const safeName = encodeURIComponent(cat.name);
-          const safeIcon = encodeURIComponent(cat.icon || "•••");
+          const safeMain = encodeInlineValue(cat.mainCat);
+          const safeName = encodeInlineValue(cat.name);
+          const safeIcon = encodeInlineValue(cat.icon || "•••");
           return `<button type="button" onclick="applySuggestedCategory(decodeURIComponent('${safeMain}'), decodeURIComponent('${safeName}'), decodeURIComponent('${safeIcon}'))" class="sub-category-select flex flex-col items-center justify-center min-h-[82px] p-3 rounded-2xl border-2 border-transparent bg-white hover:bg-gray-50 transition"><div class="subcategory-icon-shell mb-1">${categoryIconHtml(cat.icon)}</div><span class="text-[11px] font-semibold text-gray-600">${escapeHTML(displayLabel(cat.name))}</span></button>`;
         }).join("");
       }
@@ -12650,7 +12735,7 @@
               .map((m) => {
                 const meta = getMainCategoryMeta(m);
                 const isActive = m === currentMainCat;
-                const safeName = encodeURIComponent(m);
+                const safeName = encodeInlineValue(m);
                 const baseButton = `<button type="button" onclick="selectMainCat(decodeURIComponent('${safeName}'))" class="main-category-btn ${isActive ? "active" : ""}"><span class="main-category-icon" style="background:${meta.color}">${categoryIconHtml(meta.icon)}</span><span>${escapeHTML(displayLabel(m))}</span></button>`;
                 if (!isCustomMainCategory(currentType, m)) return baseButton;
                 return `<div class="category-tile-wrap">${baseButton}<button type="button" class="category-manage-button" aria-label="管理類別" onclick="event.stopPropagation(); openCustomCategoryEditor('main', decodeURIComponent('${safeName}'))">⋯</button></div>`;
@@ -12674,8 +12759,8 @@
               : "border-transparent bg-white hover:bg-gray-50";
             const safeIcon = cat.icon || "📝";
             const iconHtml = `<div class="subcategory-icon-shell mb-1">${categoryIconHtml(safeIcon)}</div>`;
-            const safeName = encodeURIComponent(cat.name);
-            const selectButton = `<button type="button" onclick="selectSubCat(decodeURIComponent('${safeName}'), decodeURIComponent('${encodeURIComponent(safeIcon)}'))" class="sub-category-select relative flex flex-col items-center justify-center min-h-[82px] p-3 rounded-2xl border-2 transition ${isActive ? "is-selected" : ""} ${activeClass}">${iconHtml}<span class="text-[11px] font-semibold ${isActive ? "text-slate-700" : "text-gray-600"}">${escapeHTML(displayLabel(cat.name))}</span></button>`;
+            const safeName = encodeInlineValue(cat.name);
+            const selectButton = `<button type="button" onclick="selectSubCat(decodeURIComponent('${safeName}'), decodeURIComponent('${encodeInlineValue(safeIcon)}'))" class="sub-category-select relative flex flex-col items-center justify-center min-h-[82px] p-3 rounded-2xl border-2 transition ${isActive ? "is-selected" : ""} ${activeClass}">${iconHtml}<span class="text-[11px] font-semibold ${isActive ? "text-slate-700" : "text-gray-600"}">${escapeHTML(displayLabel(cat.name))}</span></button>`;
             if (!isCustomSubCategory(currentType, currentMainCat, cat.name))
               return selectButton;
             return `<div class="category-tile-wrap">${selectButton}<button type="button" class="category-manage-button" aria-label="管理類別" onclick="event.stopPropagation(); openCustomCategoryEditor('sub', decodeURIComponent('${safeName}'))">⋯</button></div>`;
@@ -12720,7 +12805,7 @@
           name: cleanName,
           icon: cleanIcon,
         });
-        localStorage.setItem(
+        persistLocal(
           "myCustomCatsV3",
           JSON.stringify(customCategories),
         );
@@ -12799,7 +12884,7 @@
         }
         box.innerHTML = `<div class="text-xs font-bold text-gray-500 border-t border-gray-100 pt-3">${title}</div><div class="custom-manager-list">${list
           .map((cat) => {
-            const safeName = encodeURIComponent(cat.name);
+            const safeName = encodeInlineValue(cat.name);
             const icon = cat.icon || "📝";
             return `<div class="custom-manager-row"><span class="w-8 h-8 rounded-xl bg-white border border-gray-100 grid place-items-center">${categoryIconHtml(icon)}</span><span class="truncate text-sm font-semibold">${escapeHTML(cat.name)}</span><button type="button" onclick="editCustomCategory('${cat.mode}', decodeURIComponent('${safeName}'))">修改</button><button type="button" class="danger" onclick="deleteCustomCategory('${cat.mode}', decodeURIComponent('${safeName}'))">刪除</button></div>`;
           })
@@ -12877,7 +12962,7 @@
         document.getElementById("icon-picker-grid").innerHTML = list
           .map((icon) => {
             const active = customMainDraft.icon === icon;
-            return `<button type="button" onclick="chooseCategoryIcon(decodeURIComponent('${encodeURIComponent(icon)}'))" class="icon-choice ${active ? "active" : ""}">${categoryIconHtml(icon)}</button>`;
+            return `<button type="button" onclick="chooseCategoryIcon(decodeURIComponent('${encodeInlineValue(icon)}'))" class="icon-choice ${active ? "active" : ""}">${categoryIconHtml(icon)}</button>`;
           })
           .join("");
       }
@@ -12968,11 +13053,11 @@
             document.getElementById("selected-sub-cat-icon").value = "";
           }
         }
-        localStorage.setItem(
+        persistLocal(
           "myCustomMainCatsV1",
           JSON.stringify(customMainCategories),
         );
-        localStorage.setItem(
+        persistLocal(
           "myCustomCatsV3",
           JSON.stringify(customCategories),
         );
@@ -13021,7 +13106,7 @@
                   if (item.name === oldName) item.name = name;
                 }
               });
-              localStorage.setItem("myBudget", JSON.stringify(data));
+              persistLocal("myBudget", JSON.stringify(data));
             }
           } else {
             const exists = customCategories[currentType][currentMainCat].some(
@@ -13033,7 +13118,7 @@
                 icon: customMainDraft.icon,
               });
           }
-          localStorage.setItem(
+          persistLocal(
             "myCustomCatsV3",
             JSON.stringify(customCategories),
           );
@@ -13057,7 +13142,7 @@
             if (item.type === currentType && item.mainCat === oldName)
               item.mainCat = name;
           });
-          localStorage.setItem("myBudget", JSON.stringify(data));
+          persistLocal("myBudget", JSON.stringify(data));
         } else if (!defaultCategories[currentType][name]) {
           defaultCategories[currentType][name] = [];
         }
@@ -13074,14 +13159,14 @@
           icon: customMainDraft.icon,
           color: customMainDraft.color,
         });
-        localStorage.setItem(
+        persistLocal(
           "myCustomMainCatsV1",
           JSON.stringify(customMainCategories),
         );
         if (!customCategories[currentType]) customCategories[currentType] = {};
         if (!customCategories[currentType][name])
           customCategories[currentType][name] = [];
-        localStorage.setItem(
+        persistLocal(
           "myCustomCatsV3",
           JSON.stringify(customCategories),
         );
@@ -13393,10 +13478,10 @@
             };
           }
           data.sort((a, b) => new Date(b.date) - new Date(a.date));
-          localStorage.setItem("myBudget", JSON.stringify(data));
+          persistLocal("myBudget", JSON.stringify(data));
           selectedEntryDate = date;
           dailyRecordsExpanded = true;
-          localStorage.setItem("mySelectedEntryDate", selectedEntryDate);
+          persistLocal("mySelectedEntryDate", selectedEntryDate);
           nameInput.value = "";
           nameInput.dataset.rawValue = "";
           nameInput.dataset.autoFilled = "true";
@@ -13442,10 +13527,10 @@
           data.push(baseRecord);
         }
         data.sort((a, b) => new Date(b.date) - new Date(a.date));
-        localStorage.setItem("myBudget", JSON.stringify(data));
+        persistLocal("myBudget", JSON.stringify(data));
         selectedEntryDate = date;
         dailyRecordsExpanded = true;
-        localStorage.setItem("mySelectedEntryDate", selectedEntryDate);
+        persistLocal("mySelectedEntryDate", selectedEntryDate);
 
         nameInput.value = "";
         nameInput.dataset.rawValue = "";
@@ -13582,7 +13667,7 @@
       function deleteItem(index) {
         if (confirm(t("confirmDelete"))) {
           data.splice(index, 1);
-          localStorage.setItem("myBudget", JSON.stringify(data));
+          persistLocal("myBudget", JSON.stringify(data));
           renderList();
           renderDailyRecords();
           updateBalances();
@@ -13618,6 +13703,10 @@
         const file = input?.files?.[0];
         if (!file) return;
         try {
+          if (file.size > 10_000_000) {
+            showToast(t("backupInvalid"));
+            return;
+          }
           const payload = JSON.parse(await file.text());
           if (!StorageCore.isBudgetPayload(payload)) {
             showToast(t("backupInvalid"));
@@ -13682,31 +13771,31 @@
           localStorage.removeItem("myBudget");
           localStorage.removeItem("myAccounts");
           localStorage.removeItem("myAccountInitials");
-          localStorage.setItem(
+          persistLocal(
             "myAccountCurrencies",
             JSON.stringify(accountCurrencies),
           );
-          localStorage.setItem(
+          persistLocal(
             "myExchangeRatesJPY",
             JSON.stringify(exchangeRates),
           );
-          localStorage.setItem(
+          persistLocal(
             "myAccountGroups",
             JSON.stringify(accountGroups),
           );
-          localStorage.setItem(
+          persistLocal(
             "myAccountGroupMap",
             JSON.stringify(accountGroupMap),
           );
-          localStorage.setItem(
+          persistLocal(
             "myAccountGroupCollapsed",
             JSON.stringify(accountGroupCollapsed),
           );
-          localStorage.setItem(
+          persistLocal(
             "myCustomCatsV3",
             JSON.stringify(customCategories),
           );
-          localStorage.setItem(
+          persistLocal(
             "myBudgetProjects",
             JSON.stringify(budgetProjects),
           );
@@ -13767,7 +13856,7 @@
         showToast(t("toastExported"));
       }
 
-      const APP_VERSION = "20260728-09";
+      const APP_VERSION = "20260809-03";
 
       function bindWebKeyboardShortcuts() {
         document.addEventListener("keydown", (event) => {

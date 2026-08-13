@@ -10,6 +10,8 @@
 - Budget project management
 - CSV export
 - Cloud sync
+- Conflict-safe cloud sync that stops before overwriting concurrent changes
+- Validated, rollback-safe full backup import
 - Spending analytics
 - Installment expense records
 
