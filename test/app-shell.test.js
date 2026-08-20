@@ -123,3 +123,15 @@ test("monthly detail exposes searchable records", () => {
   assert.match(html, /item\.note/);
   assert.match(html, /project\?\.name/);
 });
+
+test("mobile monthly calendar stacks and preserves daily amounts", () => {
+  const html = readFileSync(resolve(root, "index.html"), "utf8");
+  assert.match(
+    html,
+    /\.monthly-calendar-day-total \{[\s\S]*?display: grid;[\s\S]*?grid-template-columns: minmax\(0, 1fr\)/,
+  );
+  assert.match(html, /font-variant-numeric: tabular-nums/);
+  assert.match(html, /function monthlyCalendarAmountLabel/);
+  assert.match(html, /monthly-calendar-day-total is-expense" aria-label=/);
+  assert.match(html, /monthly-calendar-day-total is-income" aria-label=/);
+});
