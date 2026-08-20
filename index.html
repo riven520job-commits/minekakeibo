@@ -1472,7 +1472,25 @@
         font-weight: 700;
       }
       .monthly-calendar-detail {
-        padding: 4px 0 16px;
+        padding: 14px 0 16px;
+        scroll-margin-top: 12px;
+      }
+      .monthly-calendar-detail-section {
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--panel);
+      }
+      .monthly-calendar-detail-section + .monthly-calendar-detail-section {
+        margin-top: 10px;
+      }
+      .monthly-calendar-detail-section.is-expense
+        .monthly-calendar-detail-title {
+        color: #a55252;
+      }
+      .monthly-calendar-detail-section.is-income
+        .monthly-calendar-detail-title {
+        color: #3f7b56;
       }
       .monthly-calendar-detail-heading {
         display: flex;
@@ -2886,6 +2904,122 @@
           border-color: #d1d5db;
         }
       }
+
+      /* Ergonomic interaction baseline */
+      .notion-input,
+      button:not(.monthly-calendar-day),
+      [role="button"],
+      .tap-target {
+        min-height: 44px;
+      }
+      .icon-round-action,
+      .add-modal-action,
+      .account-detail-action,
+      .record-detail-action,
+      .asset-top-action {
+        min-width: 44px;
+        min-height: 44px;
+      }
+      nav .nav-btn span[data-i18n] {
+        display: block;
+        max-width: 64px;
+        overflow: hidden;
+        color: currentColor;
+        font-size: 0.64rem;
+        line-height: 1.05;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .nav-btn {
+        gap: 2px;
+        padding-block: 6px;
+      }
+      .nav-fab + span,
+      .nav-btn.nav-fab span[data-i18n] {
+        display: none;
+      }
+      .danger,
+      button.text-red-500,
+      button.text-red-600,
+      button[class*="text-red-"] {
+        color: #b4232f !important;
+        background: #fff0f1 !important;
+        border-color: #f4c7cc !important;
+      }
+      body.night-mode .danger,
+      body.night-mode button[class*="text-red-"] {
+        color: #ff9aa4 !important;
+        background: #3a2024 !important;
+        border-color: #6d343b !important;
+      }
+      .monthly-tabs {
+        position: relative;
+        scroll-snap-type: x proximity;
+        scrollbar-width: thin;
+        scrollbar-color: var(--line) transparent;
+      }
+      .monthly-tabs button {
+        min-height: 44px;
+        scroll-snap-align: center;
+      }
+      .monthly-tabs::after {
+        content: "›";
+        position: sticky;
+        right: 0;
+        display: grid;
+        place-items: center;
+        width: 24px;
+        min-width: 24px;
+        color: var(--muted);
+        background: linear-gradient(90deg, transparent, var(--panel) 55%);
+        pointer-events: none;
+      }
+      @media (max-width: 370px) {
+        .monthly-calendar-day-total {
+          font-size: 0.5rem;
+        }
+        .monthly-calendar-day-total strong {
+          font-size: 0.58rem;
+        }
+      }
+      @media (min-width: 768px) {
+        .page {
+          max-width: 780px;
+        }
+        #page-record.active,
+        #page-projects.active,
+        #page-dashboard.active,
+        #page-more.active,
+        #page-report.active {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          align-items: start;
+          gap: 18px 20px;
+        }
+        #page-dashboard.active {
+          display: block;
+        }
+        #page-record.active > :first-child,
+        #page-projects.active > :first-child,
+        #page-dashboard.active > :first-child,
+        #page-more.active > :first-child,
+        #page-report.active > :first-child {
+          grid-column: 1 / -1;
+        }
+        #page-dashboard #account-balances-list,
+        #page-projects #project-overview-list {
+          margin-bottom: 0;
+        }
+        #page-dashboard #account-balances-list {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          align-items: start;
+          gap: 14px;
+        }
+        #page-record.active > :last-child {
+          grid-column: 1 / -1;
+        }
+      }
     </style>
   </head>
   <body class="max-w-md mx-auto pb-24">
@@ -3895,7 +4029,7 @@
             <button
               onclick="closeAddModal()"
               class="add-modal-action"
-              aria-label="Close"
+              data-i18n-aria="a11yClose" aria-label="關閉"
             >
               ×
             </button>
@@ -3911,7 +4045,7 @@
             <button
               onclick="addExpense()"
               class="add-modal-action add-modal-check"
-              aria-label="Save"
+              data-i18n-aria="a11ySave" aria-label="儲存"
             >
               ✓
             </button>
@@ -3927,7 +4061,7 @@
               type="button"
               onclick="closeInstallmentModal()"
               class="icon-round-action"
-              aria-label="Close"
+              data-i18n-aria="a11yClose" aria-label="關閉"
             >
               ×
             </button>
@@ -3941,7 +4075,7 @@
               type="button"
               onclick="confirmInstallmentModal()"
               class="icon-round-action add-modal-check"
-              aria-label="Save"
+              data-i18n-aria="a11ySave" aria-label="儲存"
             >
               ✓
             </button>
@@ -4006,7 +4140,7 @@
               type="button"
               onclick="closeIconSourceModal()"
               class="icon-round-action"
-              aria-label="Close"
+              data-i18n-aria="a11yClose" aria-label="關閉"
             >
               ×
             </button>
@@ -4041,7 +4175,7 @@
               type="button"
               onclick="closeIconPicker()"
               class="icon-round-action"
-              aria-label="Close"
+              data-i18n-aria="a11yClose" aria-label="關閉"
             >
               ×
             </button>
@@ -4050,7 +4184,7 @@
               type="button"
               onclick="closeIconPicker()"
               class="icon-round-action add-modal-check"
-              aria-label="Done"
+              data-i18n-aria="a11yDone" aria-label="完成"
             >
               ✓
             </button>
@@ -4069,7 +4203,7 @@
               type="button"
               onclick="closeCustomMainCategoryModal()"
               class="icon-round-action"
-              aria-label="Close"
+              data-i18n-aria="a11yClose" aria-label="關閉"
             >
               ×
             </button>
@@ -4078,7 +4212,7 @@
               type="button"
               onclick="saveCustomMainCategory()"
               class="icon-round-action add-modal-check"
-              aria-label="Save"
+              data-i18n-aria="a11ySave" aria-label="儲存"
             >
               ✓
             </button>
@@ -4118,7 +4252,7 @@
               type="button"
               onclick="closeProjectRecordModal()"
               class="icon-round-action"
-              aria-label="Close"
+              data-i18n-aria="a11yClose" aria-label="關閉"
             >
               ×
             </button>
@@ -4138,7 +4272,7 @@
               type="button"
               onclick="closeProjectRecordModal()"
               class="icon-round-action add-modal-check"
-              aria-label="Done"
+              data-i18n-aria="a11yDone" aria-label="完成"
             >
               ✓
             </button>
@@ -4172,7 +4306,7 @@
             <button
               onclick="closeAccountDetail()"
               class="account-detail-action"
-              aria-label="Back"
+              data-i18n-aria="a11yBack" aria-label="返回"
             >
               ‹
             </button>
@@ -4186,14 +4320,14 @@
               <button
                 onclick="setAccountDetailTab('info')"
                 class="account-detail-action text-xl"
-                aria-label="Info"
+                data-i18n-aria="a11yInfo" aria-label="資訊"
               >
                 <svg class="notion-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14"/><path d="M5 12h14"/><path d="M5 18h10"/><circle cx="18" cy="18" r="1.5"/></svg>
               </button>
               <button
                 onclick="openAccountMoreMenu()"
                 class="account-detail-action text-xl"
-                aria-label="More"
+                data-i18n-aria="a11yMore" aria-label="更多"
               >
                 <svg class="notion-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14"/><path d="M5 12h14"/><path d="M5 17h14"/></svg>
               </button>
@@ -4310,7 +4444,7 @@
             <button
               onclick="closeBalanceAdjustModal()"
               class="account-detail-action text-3xl"
-              aria-label="Close"
+              data-i18n-aria="a11yClose" aria-label="關閉"
             >
               ×
             </button>
@@ -4323,7 +4457,7 @@
             <button
               onclick="saveBalanceAdjustment()"
               class="account-detail-action text-2xl"
-              aria-label="Save"
+              data-i18n-aria="a11ySave" aria-label="儲存"
             >
               ✓
             </button>
@@ -4342,7 +4476,7 @@
               type="button"
               onclick="closeAccountSettingModal()"
               class="icon-round-action"
-              aria-label="Close"
+              data-i18n-aria="a11yClose" aria-label="關閉"
             >
               ×
             </button>
@@ -4356,7 +4490,7 @@
               type="button"
               onclick="confirmAccountSettingModal()"
               class="icon-round-action add-modal-check"
-              aria-label="Save"
+              data-i18n-aria="a11ySave" aria-label="儲存"
             >
               ✓
             </button>
@@ -4386,7 +4520,9 @@
           <div class="px-5 py-5 flex items-center justify-between gap-3">
             <button
               onclick="closeMonthlyReportModal()"
-              class="w-10 h-10 rounded-full border border-gray-100 bg-gray-50 text-gray-500 text-xl"
+              class="w-11 h-11 rounded-full border border-gray-100 bg-gray-50 text-gray-500 text-xl"
+              data-i18n-aria="a11yBack"
+              aria-label="返回"
             >
               ‹
             </button>
@@ -4403,9 +4539,11 @@
             </div>
             <button
               onclick="closeMonthlyReportModal()"
-              class="w-10 h-10 rounded-full border border-gray-100 bg-gray-50 text-gray-500 text-xl"
+              class="w-11 h-11 rounded-full border border-gray-100 bg-gray-50 text-gray-500 text-xl font-bold"
+              data-i18n-aria="a11yClose"
+              aria-label="關閉"
             >
-              <svg class="notion-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14"/><path d="M5 12h14"/><path d="M5 17h14"/></svg>
+              ×
             </button>
           </div>
           <div
@@ -4427,7 +4565,7 @@
               <p class="section-label mb-1" data-i18n="scheduleKicker">Recurring</p>
               <h2 id="schedule-modal-title" class="text-xl font-bold" data-i18n="scheduleAddTitle">新增定期扣款</h2>
             </div>
-            <button type="button" onclick="closeScheduleModal()" class="w-10 h-10 rounded-full bg-gray-100 text-gray-500 font-bold">×</button>
+            <button type="button" onclick="closeScheduleModal()" class="w-11 h-11 rounded-full bg-gray-100 text-gray-500 font-bold" data-i18n-aria="a11yClose" aria-label="關閉">×</button>
           </div>
           <div class="px-5 py-5 space-y-4 max-h-[76vh] overflow-y-auto">
             <label class="block">
@@ -5726,6 +5864,12 @@
           navReport: "省錢",
           navMonthly: "月曆",
           navMore: "設定",
+          a11yClose: "關閉",
+          a11ySave: "儲存",
+          a11yDone: "完成",
+          a11yBack: "返回",
+          a11yInfo: "帳戶資訊",
+          a11yMore: "更多功能",
           monthlyReportTitle: "每月報表",
           monthlyIncome: "本月收入",
           monthlyExpense: "本月支出",
@@ -5752,6 +5896,10 @@
           monthlyRankingTitle: "消費排行",
           monthlyCalendarExpense: "本月支出",
           monthlyCalendarCount: "筆數",
+          monthlyCalendarSelectedTitle: (date) => `${date} 的收支項目`,
+          monthlyCalendarExpenseItems: "支出項目",
+          monthlyCalendarIncomeItems: "收入項目",
+          monthlyCalendarNoItems: "這一天沒有支出或收入紀錄",
           monthlyCalendarToday: "本月",
           monthlyCalendarDayRecords: "當日收支紀錄",
           monthlyCalendarNoDayRecords: "這一天沒有符合條件的收支紀錄",
@@ -6162,6 +6310,12 @@
           navReport: "節約",
           navMonthly: "カレンダー",
           navMore: "設定",
+          a11yClose: "閉じる",
+          a11ySave: "保存",
+          a11yDone: "完了",
+          a11yBack: "戻る",
+          a11yInfo: "口座情報",
+          a11yMore: "その他の機能",
           monthlyReportTitle: "月次レポート",
           monthlyIncome: "今月の収入",
           monthlyExpense: "今月の支出",
@@ -6188,6 +6342,10 @@
           monthlyRankingTitle: "支出ランキング",
           monthlyCalendarExpense: "今月の支出",
           monthlyCalendarCount: "件数",
+          monthlyCalendarSelectedTitle: (date) => `${date} の収支項目`,
+          monthlyCalendarExpenseItems: "支出項目",
+          monthlyCalendarIncomeItems: "収入項目",
+          monthlyCalendarNoItems: "この日の支出・収入記録はありません",
           monthlyCalendarToday: "今月",
           monthlyCalendarDayRecords: "当日の収支記録",
           monthlyCalendarNoDayRecords: "この日に条件に合う収支記録はありません",
@@ -6481,6 +6639,9 @@
         });
         document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
           el.placeholder = t(el.dataset.i18nPlaceholder);
+        });
+        document.querySelectorAll("[data-i18n-aria]").forEach((el) => {
+          el.setAttribute("aria-label", t(el.dataset.i18nAria));
         });
         const navLabels = {
           dashboard: t("dashboardTitle"),
@@ -6946,7 +7107,7 @@
           : "";
         content.innerHTML = `
                 <div class="record-detail-hero p-5 min-h-[180px] relative">
-                    <button onclick="closeRecordDetail()" class="record-detail-action absolute top-4 left-4 w-10 h-10 rounded-full text-3xl leading-none" aria-label="Close">×</button>
+                    <button onclick="closeRecordDetail()" class="record-detail-action absolute top-4 left-4 w-10 h-10 rounded-full text-3xl leading-none" data-i18n-aria="a11yClose" aria-label="關閉">×</button>
                     <div class="absolute top-4 right-4 flex gap-2">
                         <button onclick="duplicateRecord(${index})" class="record-detail-action w-10 h-10 rounded-full text-lg" aria-label="${escapeHTML(t("duplicateRecord"))}">⧉</button>
                         <button onclick="editRecord(${index})" class="record-detail-action w-10 h-10 rounded-full text-lg" aria-label="${escapeHTML(t("editRecord"))}">✎</button>
@@ -7047,6 +7208,11 @@
         if (!/^\d{4}-\d{2}-\d{2}$/.test(date || "")) return;
         selectedMonthlyCalendarDate = date;
         renderMonthlyReport();
+        requestAnimationFrame(() =>
+          document
+            .getElementById("monthly-calendar-selected-detail")
+            ?.scrollIntoView({ behavior: "smooth", block: "nearest" }),
+        );
       }
 
       function goToCurrentMonth() {
@@ -7423,7 +7589,7 @@
                     ${monthlyReportTabs()
                       .map(
                         (tab) => `
-                        <button type="button" onclick="setMonthlyReportTab('${tab.id}')" class="${activeMonthlyReportTab === tab.id ? "active" : ""}">${escapeHTML(tab.label)}</button>
+                        <button type="button" data-monthly-tab="${tab.id}" onclick="setMonthlyReportTab('${tab.id}')" class="${activeMonthlyReportTab === tab.id ? "active" : ""}">${escapeHTML(tab.label)}</button>
                     `,
                       )
                       .join("")}
@@ -7934,6 +8100,51 @@
         `;
       }
 
+      function renderMonthlyCalendarDayDetail(date, pairs = []) {
+        const expenses = pairs.filter(({ item }) =>
+          ["支出", "應付帳款", "系統"].includes(item?.type),
+        );
+        const incomes = pairs.filter(({ item }) =>
+          ["收入", "應收帳款"].includes(item?.type),
+        );
+        const sections = [
+          ["monthlyCalendarExpenseItems", expenses, "is-expense"],
+          ["monthlyCalendarIncomeItems", incomes, "is-income"],
+        ]
+          .filter(([, records]) => records.length)
+          .map(
+            ([labelKey, records, tone]) => `
+              <section class="monthly-calendar-detail-section ${tone}">
+                <div class="monthly-calendar-detail-heading">
+                  <h3 class="monthly-calendar-detail-title">${escapeHTML(t(labelKey))}</h3>
+                  <span class="monthly-calendar-detail-count">${records.length}</span>
+                </div>
+                <div class="mt-2">
+                  ${records.map((pair) => monthlyRecordRow(pair, false)).join("")}
+                </div>
+              </section>
+            `,
+          )
+          .join("");
+        return `
+          <div id="monthly-calendar-selected-detail" class="monthly-calendar-detail" aria-live="polite">
+            <div class="flex items-center justify-between gap-3 mb-3">
+              <h3 class="monthly-calendar-detail-title">${escapeHTML(t("monthlyCalendarSelectedTitle", formatEntryDateLabel(date)))}</h3>
+              <button type="button" onclick="openAddModalForDate('${date}')" class="px-3 py-2 rounded-xl text-xs font-semibold bg-gray-900 text-white">＋</button>
+            </div>
+            ${sections || `<div class="empty-state">${escapeHTML(t("monthlyCalendarNoItems"))}</div>`}
+          </div>
+        `;
+      }
+
+      function openAddModalForDate(date) {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(date || "")) return;
+        selectedEntryDate = date;
+        persistLocal("mySelectedEntryDate", selectedEntryDate);
+        closeMonthlyReportModal();
+        openAddModal();
+      }
+
       function renderMonthlyCalendar(context) {
         const { monthKeyValue, monthRecords, expensePairs } = context;
         const filteredMonthRecords = MonthlyCore.filterRecordPairs(
@@ -7985,6 +8196,13 @@
         const reminders = scheduleReminderOccurrences(monthlyCalendarFilters);
         const today = todayString();
         const calendarCells = MonthlyCore.buildMonthCalendar(monthKeyValue);
+        if (selectedMonthlyCalendarDate.slice(0, 7) !== monthKeyValue)
+          selectedMonthlyCalendarDate = MonthlyCore.defaultSelectedDate(
+            monthKeyValue,
+            grouped,
+            today,
+          );
+        const selectedDatePairs = grouped[selectedMonthlyCalendarDate] || [];
         return `
           ${renderMonthlyCalendarFilters(monthRecords)}
           <div class="monthly-calendar-summary">
@@ -8020,21 +8238,29 @@
                   "monthly-calendar-day",
                   cell.inMonth ? "" : "is-outside",
                   cell.date === today && cell.inMonth ? "is-today" : "",
+                  cell.date === selectedMonthlyCalendarDate && cell.inMonth
+                    ? "is-selected"
+                    : "",
                 ]
                   .filter(Boolean)
                   .join(" ");
                 return `
-                  <div
+                  <button
+                    type="button"
                     class="${classes}"
+                    onclick="setMonthlyCalendarDate('${cell.date}')"
+                    ${cell.inMonth ? "" : "disabled"}
+                    aria-pressed="${cell.date === selectedMonthlyCalendarDate && cell.inMonth}"
                     aria-label="${escapeHTML(cell.date)}${dayRecordCount ? ` · ${dayRecordCount} ${t("monthlyCalendarCount")}` : ""}${pendingScheduleCount ? ` · ${t("monthlyCalendarScheduleShort", pendingScheduleCount)}` : ""}"
                   >
                     <span class="monthly-calendar-day-number">${cell.day}</span>
                     ${monthlyCalendarDaySummary(daySummary)}
-                  </div>
+                  </button>
                 `;
               })
               .join("")}
           </div>
+          ${renderMonthlyCalendarDayDetail(selectedMonthlyCalendarDate, selectedDatePairs)}
         `;
       }
 
@@ -8176,11 +8402,17 @@
                 ${renderMonthlyTabs()}
                 ${body}
             `;
+        requestAnimationFrame(() =>
+          container
+            .querySelector(`[data-monthly-tab="${activeMonthlyReportTab}"]`)
+            ?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" }),
+        );
       }
 
       window.setMonthlyReportTab = setMonthlyReportTab;
       window.updateMonthlyDetailSearch = updateMonthlyDetailSearch;
       window.setMonthlyCalendarDate = setMonthlyCalendarDate;
+      window.openAddModalForDate = openAddModalForDate;
       window.goToCurrentMonth = goToCurrentMonth;
       window.openScheduleModal = openScheduleModal;
       window.closeScheduleModal = closeScheduleModal;
@@ -13877,7 +14109,7 @@
         showToast(t("toastExported"));
       }
 
-      const APP_VERSION = "20260821-01";
+      const APP_VERSION = "20260821-03";
 
       function bindWebKeyboardShortcuts() {
         document.addEventListener("keydown", (event) => {
@@ -13919,7 +14151,7 @@
               .find((modal) => !modal.classList.contains("hidden"));
             visibleModal
               ?.querySelector(
-                'button[onclick*="close"], button[aria-label="Close"]',
+                'button[onclick*="close"], button[data-i18n-aria="a11yClose" aria-label="關閉"]',
               )
               ?.click();
           }
@@ -13996,6 +14228,33 @@
             attributeFilter: ["class"],
           }),
         );
+        document.addEventListener("keydown", (event) => {
+          if (event.key !== "Tab" || !activeModal) return;
+          const focusable = [
+            ...activeModal.querySelectorAll(
+              'button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+            ),
+          ].filter(
+            (element) =>
+              !element.hidden &&
+              element.getAttribute("aria-hidden") !== "true" &&
+              element.getClientRects().length,
+          );
+          if (!focusable.length) {
+            event.preventDefault();
+            activeModal.focus();
+            return;
+          }
+          const first = focusable[0];
+          const last = focusable.at(-1);
+          if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+          } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+          }
+        });
         syncModalState();
       }
 

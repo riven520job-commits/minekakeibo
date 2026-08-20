@@ -41,16 +41,22 @@ test("monthly report only exposes implemented tabs", () => {
     assert.doesNotMatch(tabs, new RegExp(`id: "${id}"`));
 });
 
-test("monthly calendar stays summary-only without daily detail or bottom suggestions", () => {
+test("monthly calendar opens daily income and expense details", () => {
   const html = readFileSync(resolve(root, "index.html"), "utf8");
   const calendar =
     html.match(
       /function renderMonthlyCalendar\(context\) \{[\s\S]*?\n      \}/,
     )?.[0] || "";
   assert.match(calendar, /monthlyCalendarDaySummary\(daySummary\)/);
-  assert.doesNotMatch(calendar, /monthly-calendar-detail/);
+  assert.match(calendar, /setMonthlyCalendarDate\('\$\{cell\.date\}'\)/);
+  assert.match(calendar, /is-selected/);
+  assert.match(calendar, /renderMonthlyCalendarDayDetail/);
+  assert.match(html, /monthly-calendar-selected-detail/);
+  assert.match(html, /scrollIntoView/);
   assert.doesNotMatch(calendar, /renderScheduleSuggestionPanel/);
-  assert.doesNotMatch(calendar, /setMonthlyCalendarDate/);
+  assert.match(html, /function renderMonthlyCalendarDayDetail/);
+  assert.match(html, /monthlyCalendarExpenseItems/);
+  assert.match(html, /monthlyCalendarIncomeItems/);
 });
 
 test("app provides complete backup and accessible modal support", () => {
@@ -134,4 +140,23 @@ test("mobile monthly calendar stacks and preserves daily amounts", () => {
   assert.match(html, /function monthlyCalendarAmountLabel/);
   assert.match(html, /monthly-calendar-day-total is-expense" aria-label=/);
   assert.match(html, /monthly-calendar-day-total is-income" aria-label=/);
+});
+
+test("ergonomic UI keeps labels, touch targets, danger cues, and desktop columns", () => {
+  const html = readFileSync(resolve(root, "index.html"), "utf8");
+  assert.match(html, /nav \.nav-btn span\[data-i18n\] \{[\s\S]*?display: block/);
+  assert.match(html, /button:not\(\.monthly-calendar-day\)[\s\S]*?min-height: 44px/);
+  assert.match(html, /button\[class\*="text-red-"\][\s\S]*?color: #b4232f !important/);
+  assert.match(html, /scroll-snap-type: x proximity/);
+  assert.match(html, /grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
+});
+
+test("modal accessibility translates actions and traps keyboard focus", () => {
+  const html = readFileSync(resolve(root, "index.html"), "utf8");
+  assert.match(html, /data-i18n-aria="a11yClose"/);
+  assert.match(html, /querySelectorAll\("\[data-i18n-aria\]"\)/);
+  assert.match(html, /event\.key !== "Tab" \|\| !activeModal/);
+  assert.match(html, /document\.activeElement === last/);
+  assert.match(html, /data-monthly-tab=/);
+  assert.match(html, /inline: "center"/);
 });
