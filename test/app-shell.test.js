@@ -140,6 +140,13 @@ test("mobile monthly calendar stacks and preserves daily amounts", () => {
   assert.match(html, /function monthlyCalendarAmountLabel/);
   assert.match(html, /monthly-calendar-day-total is-expense" aria-label=/);
   assert.match(html, /monthly-calendar-day-total is-income" aria-label=/);
+  assert.match(html, /#monthly-report-content\.calendar-focus/);
+  assert.match(html, /monthly-calendar-tools/);
+  const daySummary =
+    html.match(/function monthlyCalendarDaySummary\(summary\) \{[\s\S]*?\n      \}/)?.[0] || "";
+  assert.match(daySummary, /aria-hidden="true">−</);
+  assert.match(daySummary, /aria-hidden="true">＋</);
+  assert.doesNotMatch(daySummary, /monthly-calendar-schedule-count/);
 });
 
 test("ergonomic UI keeps labels, touch targets, danger cues, and desktop columns", () => {
@@ -159,4 +166,31 @@ test("modal accessibility translates actions and traps keyboard focus", () => {
   assert.match(html, /document\.activeElement === last/);
   assert.match(html, /data-monthly-tab=/);
   assert.match(html, /inline: "center"/);
+});
+
+test("credit card payments link a debit account without duplicating expenses", () => {
+  const html = readFileSync(resolve(root, "index.html"), "utf8");
+  assert.match(html, /function openCreditPaymentModal/);
+  assert.match(html, /function saveCreditPayment/);
+  assert.match(html, /creditPayment: true/);
+  assert.match(html, /type: "轉帳"/);
+  assert.match(html, /setting\.primaryAccount = debitAccount/);
+  assert.match(
+    html,
+    /setting\.pendingBillAmount = Math\.max\([\s\S]*?pendingBillAmount[\s\S]*?- amount/,
+  );
+  assert.doesNotMatch(
+    html.match(/function saveCreditPayment[\s\S]*?\n      \}/)?.[0] || "",
+    /type: "支出"/,
+  );
+});
+
+test("credit card due dates support fixed, offset, and manual modes", () => {
+  const html = readFileSync(resolve(root, "index.html"), "utf8");
+  assert.match(html, /paymentDueMode: "fixed_day"/);
+  assert.match(html, /value="after_statement"/);
+  assert.match(html, /value="manual"/);
+  assert.match(html, /function accountPaymentDueDate/);
+  assert.match(html, /paymentDueOffsetDays/);
+  assert.match(html, /manualDueStatementMonth === statementMonth/);
 });

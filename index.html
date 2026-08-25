@@ -1296,25 +1296,71 @@
       }
       .monthly-calendar-summary {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         align-items: center;
-        gap: 16px;
-        padding: 16px;
-        border: 1px solid var(--line);
-        border-radius: 18px;
-        background: var(--panel);
+        gap: 8px;
+        padding: 2px 0 10px;
+      }
+      .monthly-calendar-summary-item {
+        min-width: 0;
+        padding: 10px 12px;
+        border-radius: 14px;
+        background: var(--soft);
+      }
+      .monthly-calendar-summary-item.is-expense strong {
+        color: #a0444d;
+      }
+      .monthly-calendar-summary-item.is-income strong {
+        color: #28734a;
+      }
+      .monthly-calendar-summary-item strong {
+        display: block;
+        margin-top: 2px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: clamp(0.95rem, 4vw, 1.2rem);
+        font-variant-numeric: tabular-nums;
+      }
+      .monthly-calendar-tools {
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 8px;
+      }
+      .monthly-calendar-tools summary {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 800;
+        cursor: pointer;
+        list-style: none;
+      }
+      .monthly-calendar-tools summary::-webkit-details-marker {
+        display: none;
+      }
+      .monthly-calendar-tools summary::after {
+        content: "＋";
+        font-size: 1rem;
+      }
+      .monthly-calendar-tools[open] summary::after {
+        content: "−";
       }
       .monthly-calendar-weekdays,
       .monthly-calendar-grid {
         display: grid;
         grid-template-columns: repeat(7, minmax(0, 1fr));
       }
+      #monthly-report-content.calendar-focus {
+        padding-inline: 12px;
+      }
       .monthly-calendar-weekdays {
         color: var(--muted);
         font-size: 0.7rem;
         font-weight: 800;
         text-align: center;
-        padding: 0 2px;
+        padding: 4px 2px 0;
       }
       .monthly-calendar-weekdays span {
         padding: 7px 0;
@@ -1335,8 +1381,8 @@
       .report-modal .monthly-calendar-day {
         position: relative;
         min-width: 0;
-        min-height: 86px;
-        padding: 6px 4px;
+        min-height: 90px;
+        padding: 7px 5px;
         border: 0 !important;
         border-radius: 0 !important;
         background: var(--panel) !important;
@@ -1361,45 +1407,46 @@
         place-items: center;
         width: 22px;
         height: 22px;
-        margin-bottom: 3px;
+        margin-bottom: 7px;
         border-radius: 9999px;
         font-size: 0.72rem;
         font-weight: 800;
       }
       .monthly-calendar-day-summary {
         display: grid;
-        gap: 3px;
+        gap: 5px;
         min-width: 0;
       }
       .monthly-calendar-day-total {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr);
-        align-content: start;
-        gap: 0;
+        display: flex;
+        align-items: baseline;
+        gap: 1px;
         min-width: 0;
-        font-size: 0.5rem;
-        line-height: 1.08;
+        font-size: 0.62rem;
+        line-height: 1.15;
         font-weight: 800;
         white-space: nowrap;
       }
       .monthly-calendar-day-total > span {
-        opacity: 0.72;
+        flex: 0 0 auto;
+        font-size: 0.7rem;
+        font-weight: 950;
       }
       .monthly-calendar-day-total strong {
-        display: block;
+        display: inline-block;
         min-width: 0;
         overflow: hidden;
         text-overflow: ellipsis;
-        font-size: clamp(0.52rem, 2.25vw, 0.64rem);
+        font-size: clamp(0.58rem, 2.45vw, 0.72rem);
         line-height: 1.15;
         font-variant-numeric: tabular-nums;
         letter-spacing: -0.035em;
       }
       .monthly-calendar-day-total.is-expense {
-        color: #a55252;
+        color: #a0444d;
       }
       .monthly-calendar-day-total.is-income {
-        color: #3f7b56;
+        color: #28734a;
       }
       .monthly-calendar-schedule-count {
         display: inline-flex;
@@ -1606,14 +1653,14 @@
       }
       @media (max-width: 370px) {
         .report-modal .monthly-calendar-day {
-          min-height: 82px;
-          padding: 5px 2px;
+          min-height: 84px;
+          padding: 6px 3px;
         }
         .monthly-calendar-day-total {
-          font-size: 0.46rem;
+          font-size: 0.56rem;
         }
         .monthly-calendar-day-total strong {
-          font-size: 0.52rem;
+          font-size: 0.57rem;
         }
       }
 
@@ -2976,10 +3023,10 @@
       }
       @media (max-width: 370px) {
         .monthly-calendar-day-total {
-          font-size: 0.5rem;
+          font-size: 0.56rem;
         }
         .monthly-calendar-day-total strong {
-          font-size: 0.58rem;
+          font-size: 0.57rem;
         }
       }
       @media (min-width: 768px) {
@@ -4957,6 +5004,11 @@
           isCredit: group.includes("信用卡"),
           statementDay: 0,
           paymentDueDays: 27,
+          paymentDueMode: "fixed_day",
+          paymentDueDay: 27,
+          paymentDueOffsetDays: 10,
+          manualDueDate: "",
+          manualDueStatementMonth: "",
           creditLimit: 0,
           sharedLimitAccounts: [],
           primaryAccount: "",
@@ -4971,8 +5023,23 @@
         };
       }
       function ensureAccountSetting(acc) {
-        if (!accountSettings[acc])
+        if (!accountSettings[acc]) {
           accountSettings[acc] = defaultAccountSetting(acc);
+        } else {
+          const legacy = accountSettings[acc];
+          const defaults = defaultAccountSetting(acc);
+          const hadPaymentDueMode = !!legacy.paymentDueMode;
+          Object.keys(defaults).forEach((key) => {
+            if (legacy[key] === undefined) legacy[key] = defaults[key];
+          });
+          if (!hadPaymentDueMode) {
+            legacy.paymentDueMode = "fixed_day";
+            legacy.paymentDueDay = Math.max(
+              1,
+              Math.min(31, Number(legacy.paymentDueDays) || 27),
+            );
+          }
+        }
         return accountSettings[acc];
       }
       function persistAccountSettings() {
@@ -8083,17 +8150,12 @@
           <span class="monthly-calendar-day-summary">
             ${
               summary.expense
-                ? `<span class="monthly-calendar-day-total is-expense" aria-label="${escapeHTML(monthlyCalendarAmountLabel(t("monthlyCalendarExpenseShort"), summary.expense))}"><span aria-hidden="true">${t("monthlyCalendarExpenseShort")}</span><strong aria-hidden="true">${monthlyCalendarCompactJPY(summary.expense)}</strong></span>`
+                ? `<span class="monthly-calendar-day-total is-expense" aria-label="${escapeHTML(monthlyCalendarAmountLabel(t("monthlyCalendarExpenseShort"), summary.expense))}"><span aria-hidden="true">−</span><strong aria-hidden="true">${monthlyCalendarCompactJPY(summary.expense)}</strong></span>`
                 : ""
             }
             ${
               summary.income
-                ? `<span class="monthly-calendar-day-total is-income" aria-label="${escapeHTML(monthlyCalendarAmountLabel(t("monthlyCalendarIncomeShort"), summary.income))}"><span aria-hidden="true">${t("monthlyCalendarIncomeShort")}</span><strong aria-hidden="true">${monthlyCalendarCompactJPY(summary.income)}</strong></span>`
-                : ""
-            }
-            ${
-              summary.scheduleCount
-                ? `<span class="monthly-calendar-schedule-count ${summary.overdueCount ? "is-overdue" : ""}">${t("monthlyCalendarScheduleShort", summary.scheduleCount)}</span>`
+                ? `<span class="monthly-calendar-day-total is-income" aria-label="${escapeHTML(monthlyCalendarAmountLabel(t("monthlyCalendarIncomeShort"), summary.income))}"><span aria-hidden="true">＋</span><strong aria-hidden="true">${monthlyCalendarCompactJPY(summary.income)}</strong></span>`
                 : ""
             }
           </span>
@@ -8193,6 +8255,13 @@
             sum + toJPY(item.price, item.currency || "¥"),
           0,
         );
+        const filteredIncome = filteredMonthRecords.reduce(
+          (sum, { item }) =>
+            ["收入", "應收帳款"].includes(item?.type)
+              ? sum + toJPY(item.price, item.currency || "¥")
+              : sum,
+          0,
+        );
         const reminders = scheduleReminderOccurrences(monthlyCalendarFilters);
         const today = todayString();
         const calendarCells = MonthlyCore.buildMonthCalendar(monthKeyValue);
@@ -8204,23 +8273,26 @@
           );
         const selectedDatePairs = grouped[selectedMonthlyCalendarDate] || [];
         return `
-          ${renderMonthlyCalendarFilters(monthRecords)}
           <div class="monthly-calendar-summary">
-            <div>
-              <div class="text-xs text-gray-400 font-semibold">${t("monthlyCalendarExpense")}</div>
-              <div class="text-2xl font-black tracking-tight">${formatPrivateJPY(filteredExpense, "¥")}</div>
-              <div class="text-[11px] text-gray-400 mt-1">${filteredExpensePairs.length} ${t("monthlyCalendarCount")}</div>
+            <div class="monthly-calendar-summary-item is-expense">
+              <span class="text-[11px] text-gray-400 font-semibold">− ${t("monthlyCalendarExpenseShort")}</span>
+              <strong>${formatPrivateJPY(filteredExpense, "¥")}</strong>
             </div>
-            <div class="text-right">
-              <div class="text-xs text-gray-400 font-semibold">${t("monthlyCalendarScheduledTotal")}</div>
-              <div class="text-xl font-black">${formatPrivateJPY(scheduledTotal, "¥")}</div>
-              <div class="text-[11px] text-gray-400 mt-1">${pendingOccurrences.length} ${t("monthlyCalendarScheduledCount")}</div>
+            <div class="monthly-calendar-summary-item is-income">
+              <span class="text-[11px] text-gray-400 font-semibold">＋ ${t("monthlyCalendarIncomeShort")}</span>
+              <strong>${formatPrivateJPY(filteredIncome, "¥")}</strong>
             </div>
           </div>
-          <div class="flex justify-end">
-            <button type="button" onclick="openScheduleModal()" class="px-3 py-2 rounded-xl text-xs font-semibold">${t("scheduleAddButton")}</button>
-          </div>
-          ${renderScheduleReminderPanel(reminders)}
+          <details class="monthly-calendar-tools">
+            <summary>篩選與固定支出</summary>
+            <div class="pb-3">
+              ${renderMonthlyCalendarFilters(monthRecords)}
+              <div class="flex items-center justify-between gap-3 mt-3 text-xs text-gray-400">
+                <span>${t("monthlyCalendarScheduledTotal")} ${formatPrivateJPY(scheduledTotal, "¥")} · ${pendingOccurrences.length} ${t("monthlyCalendarScheduledCount")}</span>
+                <button type="button" onclick="openScheduleModal()" class="px-3 py-2 rounded-xl font-semibold shrink-0">${t("scheduleAddButton")}</button>
+              </div>
+            </div>
+          </details>
           <div class="monthly-calendar-weekdays">
             ${monthlyCalendarWeekdays().map((day) => `<span>${day}</span>`).join("")}
           </div>
@@ -8261,6 +8333,7 @@
               .join("")}
           </div>
           ${renderMonthlyCalendarDayDetail(selectedMonthlyCalendarDate, selectedDatePairs)}
+          ${renderScheduleReminderPanel(reminders)}
         `;
       }
 
@@ -8397,6 +8470,10 @@
                 : activeMonthlyReportTab === "overview"
                   ? renderMonthlyOverview(context)
                   : renderMonthlyPlaceholder(context);
+        container.classList.toggle(
+          "calendar-focus",
+          activeMonthlyReportTab === "calendar",
+        );
         container.innerHTML = `
                 ${renderMonthlyPeriodNav(monthKeyValue)}
                 ${renderMonthlyTabs()}
@@ -8438,6 +8515,14 @@
 
       function deleteRecordFromDetail(index) {
         if (!confirm(t("confirmDelete"))) return;
+        const removed = data[index];
+        if (removed?.creditPayment && removed.cardAccount) {
+          const setting = ensureAccountSetting(removed.cardAccount);
+          setting.pendingBillAmount =
+            (Number(setting.pendingBillAmount) || 0) +
+            (Number(removed.price) || 0);
+          persistAccountSettings();
+        }
         data.splice(index, 1);
         closeRecordDetail();
         refreshAfterRecordChange();
@@ -8447,6 +8532,14 @@
       function duplicateRecord(index) {
         const item = data[index];
         if (!item || !confirm(t("confirmDuplicateRecord"))) return;
+        if (item.creditPayment && item.cardAccount) {
+          const setting = ensureAccountSetting(item.cardAccount);
+          setting.pendingBillAmount = Math.max(
+            0,
+            (Number(setting.pendingBillAmount) || 0) - (Number(item.price) || 0),
+          );
+          persistAccountSettings();
+        }
         data.push({
           ...item,
           date: selectedEntryDate,
@@ -9597,14 +9690,10 @@
 
       function creditOverviewDueHtml(acc) {
         if (!isCreditOverviewAccount(acc)) return "";
-        const setting = ensureAccountSetting(acc);
-        const days = Number(setting.paymentDueDays || 0);
-        const current = new Date(`${monthKey(new Date())}-01`);
-        current.setMonth(current.getMonth() + 1);
-        current.setDate(
-          Math.max(1, Math.min(days || 27, monthLastDay(monthKey(current)))),
-        );
-        const dueLabel = formatLocalDate(current).replace(/-/g, "/");
+        const dueLabel = accountPaymentDueDate(
+          acc,
+          monthKey(new Date()),
+        ).replace(/-/g, "/");
         return `<span class="account-overview-due">截止 ${escapeHTML(dueLabel)}</span>`;
       }
 
@@ -9987,16 +10076,45 @@
       }
 
       function accountPaymentDueLabel(acc) {
+        return accountPaymentDueDate(
+          acc,
+          activeAccountDetail.month || monthKey(new Date()),
+        ).replace(/-/g, "/");
+      }
+
+      function accountPaymentDueDate(acc, statementMonth) {
         const setting = ensureAccountSetting(acc);
-        const days = Number(setting.paymentDueDays || 0);
-        const current = new Date(
-          `${activeAccountDetail.month || monthKey(new Date())}-01`,
+        if (
+          setting.paymentDueMode === "manual" &&
+          setting.manualDueStatementMonth === statementMonth &&
+          /^\d{4}-\d{2}-\d{2}$/.test(setting.manualDueDate || "")
+        ) {
+          return setting.manualDueDate;
+        }
+        const statementDay = Number(setting.statementDay || 0);
+        const statementDate = new Date(`${statementMonth}-01T12:00:00`);
+        statementDate.setDate(
+          statementDay > 0
+            ? Math.min(statementDay, monthLastDay(statementMonth))
+            : monthLastDay(statementMonth),
         );
-        current.setMonth(current.getMonth() + 1);
-        current.setDate(
-          Math.max(1, Math.min(days || 27, monthLastDay(monthKey(current)))),
+        if (setting.paymentDueMode === "after_statement") {
+          statementDate.setDate(
+            statementDate.getDate() +
+              Math.max(1, Number(setting.paymentDueOffsetDays) || 10),
+          );
+          return formatLocalDate(statementDate);
+        }
+        const dueDate = new Date(`${statementMonth}-01T12:00:00`);
+        dueDate.setMonth(dueDate.getMonth() + 1);
+        const dueMonth = monthKey(dueDate);
+        dueDate.setDate(
+          Math.min(
+            Math.max(1, Number(setting.paymentDueDay) || 27),
+            monthLastDay(dueMonth),
+          ),
         );
-        return formatLocalDate(current).replace(/-/g, "/");
+        return formatLocalDate(dueDate);
       }
 
       function accountCreditMembers(acc) {
@@ -10045,7 +10163,10 @@
             </div>
             <div class="flex items-center justify-between gap-3 mt-4 pt-4 border-t border-gray-100">
               <div><span class="block text-xs text-gray-400">待繳帳款</span><strong class="text-lg">${formatPrivateMoney(setting.pendingBillAmount || 0, currency)}</strong></div>
-              <button type="button" class="px-3 py-2 rounded-xl bg-gray-100 font-bold text-sm" onclick="openPendingBillEditor()">設定金額</button>
+              <div class="flex gap-2">
+                <button type="button" class="px-3 py-2 rounded-xl bg-gray-100 font-bold text-sm" onclick="openPendingBillEditor()">調整</button>
+                <button type="button" class="px-3 py-2 rounded-xl bg-gray-900 text-white font-bold text-sm" onclick="openCreditPaymentModal()">繳卡費</button>
+              </div>
             </div>
           </div>
         `;
@@ -10118,7 +10239,7 @@
               true,
             ),
             accountInfoButton(
-              "－ 主帳戶",
+              "－ 預設扣款銀行",
               setting.primaryAccount
                 ? displayLabel(setting.primaryAccount)
                 : t("uncategorized"),
@@ -10515,6 +10636,94 @@
         );
         setTimeout(() => document.getElementById("account-setting-input")?.focus(), 80);
       }
+      function openCreditPaymentModal() {
+        const cardAccount = activeAccountDetail.account;
+        if (!cardAccount) return;
+        const setting = ensureAccountSetting(cardAccount);
+        const cardCurrency = getAccountCurrency(cardAccount);
+        const balances = computeAccountBalances(todayString());
+        const outstanding = Math.max(0, -(Number(balances[cardAccount]) || 0));
+        const pending = Math.max(0, Number(setting.pendingBillAmount) || 0);
+        const suggestedAmount = pending || outstanding;
+        const debitAccounts = userAccounts.filter(
+          (item) => item !== cardAccount && !isCreditOverviewAccount(item),
+        );
+        if (!debitAccounts.length) {
+          showToast("請先新增可扣款的銀行或現金帳戶");
+          return;
+        }
+        const selectedDebit = debitAccounts.includes(setting.primaryAccount)
+          ? setting.primaryAccount
+          : debitAccounts[0];
+        openAccountSettingModal(
+          "繳交信用卡費",
+          `<div class="space-y-4">
+            <div class="rounded-2xl bg-gray-50 p-4 grid grid-cols-2 gap-3 text-sm">
+              <div><span class="block text-gray-400">信用卡</span><strong>${escapeHTML(displayLabel(cardAccount))}</strong></div>
+              <div class="text-right"><span class="block text-gray-400">本期待繳</span><strong>${formatPrivateMoney(pending, cardCurrency)}</strong></div>
+              <div><span class="block text-gray-400">帳戶負債</span><strong>${formatPrivateMoney(outstanding, cardCurrency)}</strong></div>
+              <div class="text-right"><span class="block text-gray-400">截止日</span><strong>${escapeHTML(accountPaymentDueLabel(cardAccount))}</strong></div>
+            </div>
+            <label class="block"><span class="block mb-2 font-bold">扣款銀行／帳戶</span><select id="credit-payment-debit" class="account-setting-input text-left">${debitAccounts.map((item) => `<option value="${escapeHTML(item)}" ${item === selectedDebit ? "selected" : ""}>${escapeHTML(displayLabel(item))}</option>`).join("")}</select></label>
+            <label class="block"><span class="block mb-2 font-bold">還款金額（${escapeHTML(currencyCodeFromSymbol(cardCurrency))}）</span><input id="credit-payment-amount" type="number" min="0.01" step="any" inputmode="decimal" class="account-setting-input" value="${suggestedAmount || ""}"></label>
+            <label class="block"><span class="block mb-2 font-bold">還款日期</span><input id="credit-payment-date" type="date" class="account-setting-input" value="${todayString()}"></label>
+            <p class="account-setting-help">這筆紀錄會從扣款帳戶轉入信用卡，只降低負債，不會再次列入支出。</p>
+          </div>`,
+          () => saveCreditPayment(cardAccount),
+          true,
+        );
+      }
+
+      function saveCreditPayment(cardAccount) {
+        const setting = ensureAccountSetting(cardAccount);
+        const debitAccount = document.getElementById("credit-payment-debit")?.value || "";
+        const amount = Number(document.getElementById("credit-payment-amount")?.value);
+        const paymentDate = document.getElementById("credit-payment-date")?.value || "";
+        if (!debitAccount || debitAccount === cardAccount) {
+          showToast("請選擇有效的扣款帳戶");
+          return;
+        }
+        if (!Number.isFinite(amount) || amount <= 0) {
+          showToast("請輸入有效的還款金額");
+          return;
+        }
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(paymentDate)) {
+          showToast("請選擇還款日期");
+          return;
+        }
+        data.push({
+          type: "轉帳",
+          mainCat: "儲值",
+          subCatName: "信用卡還款",
+          subCatIcon: "icon:repayment",
+          account: debitAccount,
+          toAccount: cardAccount,
+          cardAccount,
+          creditPayment: true,
+          date: paymentDate,
+          time: new Date().toTimeString().slice(0, 5),
+          note: `信用卡還款｜截止 ${accountPaymentDueLabel(cardAccount)}`,
+          name: `${displayLabel(cardAccount)} 還款`,
+          merchant: "",
+          price: amount,
+          currency: getAccountCurrency(cardAccount),
+          projectId: "",
+          projectName: "",
+        });
+        data.sort((a, b) =>
+          `${b.date || ""} ${b.time || ""}`.localeCompare(`${a.date || ""} ${a.time || ""}`),
+        );
+        setting.primaryAccount = debitAccount;
+        setting.pendingBillAmount = Math.max(
+          0,
+          (Number(setting.pendingBillAmount) || 0) - amount,
+        );
+        persistAccountSettings();
+        closeAccountSettingModal();
+        refreshAfterRecordChange();
+        renderAccountDetail();
+        showToast("信用卡還款已記錄，不列入支出");
+      }
       function openAccountCurrencyPicker() {
         const acc = activeAccountDetail.account;
         const current = accountCurrencies[acc] || "¥";
@@ -10593,31 +10802,65 @@
         const setting = ensureAccountSetting(acc);
         openAccountSettingModal(
           "繳款期限",
-          `<button class="account-setting-option" onclick="setPaymentDueMode(27)"><span class="font-bold">每月固定第幾日</span><span>›</span></button><button class="account-setting-option" onclick="setPaymentDueMode(10)"><span class="font-bold">結帳日後第幾日</span><span>›</span></button><input id="account-payment-days" type="number" min="1" max="31" class="account-setting-input mt-4" value="${setting.paymentDueDays || 27}">`,
+          `<p class="account-setting-help">設定信用卡每期帳單的截止日；若銀行臨時調整，可選擇手動日期。</p>
+          <label class="block mt-4 font-bold">計算方式</label>
+          <select id="account-payment-mode" class="account-setting-input mt-2 text-left" onchange="syncPaymentDueModeFields()">
+            <option value="fixed_day" ${setting.paymentDueMode === "fixed_day" ? "selected" : ""}>下個月固定日期</option>
+            <option value="after_statement" ${setting.paymentDueMode === "after_statement" ? "selected" : ""}>結帳日後幾天</option>
+            <option value="manual" ${setting.paymentDueMode === "manual" ? "selected" : ""}>本期手動指定日期</option>
+          </select>
+          <label id="payment-fixed-field" class="block mt-4"><span class="block mb-2 font-bold">每月繳款日（1–31）</span><input id="account-payment-day" type="number" min="1" max="31" class="account-setting-input" value="${setting.paymentDueDay || setting.paymentDueDays || 27}"></label>
+          <label id="payment-offset-field" class="block mt-4"><span class="block mb-2 font-bold">結帳日後天數（1–60）</span><input id="account-payment-offset" type="number" min="1" max="60" class="account-setting-input" value="${setting.paymentDueOffsetDays || 10}"></label>
+          <label id="payment-manual-field" class="block mt-4"><span class="block mb-2 font-bold">本期截止日</span><input id="account-payment-manual" type="date" class="account-setting-input" value="${escapeHTML(setting.manualDueDate || accountPaymentDueDate(acc, monthKey(new Date())))}"></label>`,
           () => {
-            setting.paymentDueDays = parseInt(
-              document.getElementById("account-payment-days")?.value || "27",
-              10,
-            );
+            const mode = document.getElementById("account-payment-mode")?.value || "fixed_day";
+            const fixedDay = parseInt(document.getElementById("account-payment-day")?.value || "27", 10);
+            const offsetDays = parseInt(document.getElementById("account-payment-offset")?.value || "10", 10);
+            const manualDate = document.getElementById("account-payment-manual")?.value || "";
+            if (mode === "fixed_day" && (fixedDay < 1 || fixedDay > 31)) {
+              showToast("繳款日請輸入 1 到 31");
+              return;
+            }
+            if (mode === "after_statement" && (offsetDays < 1 || offsetDays > 60)) {
+              showToast("結帳後天數請輸入 1 到 60");
+              return;
+            }
+            if (mode === "manual" && !/^\d{4}-\d{2}-\d{2}$/.test(manualDate)) {
+              showToast("請選擇本期截止日");
+              return;
+            }
+            setting.paymentDueMode = mode;
+            setting.paymentDueDay = fixedDay;
+            setting.paymentDueOffsetDays = offsetDays;
+            setting.manualDueDate = manualDate;
+            setting.manualDueStatementMonth =
+              activeAccountDetail.month || monthKey(new Date());
+            setting.paymentDueDays = mode === "fixed_day" ? fixedDay : offsetDays;
             persistAccountSettings();
             closeAccountSettingModal();
+            updateBalances();
             renderAccountDetail();
           },
           true,
         );
+        syncPaymentDueModeFields();
       }
-      function setPaymentDueMode(day) {
-        const input = document.getElementById("account-payment-days");
-        if (input) input.value = day;
+      function syncPaymentDueModeFields() {
+        const mode = document.getElementById("account-payment-mode")?.value || "fixed_day";
+        document.getElementById("payment-fixed-field")?.classList.toggle("hidden", mode !== "fixed_day");
+        document.getElementById("payment-offset-field")?.classList.toggle("hidden", mode !== "after_statement");
+        document.getElementById("payment-manual-field")?.classList.toggle("hidden", mode !== "manual");
       }
       function openPrimaryAccountPicker() {
         const acc = activeAccountDetail.account;
         const setting = ensureAccountSetting(acc);
         const choices = [""].concat(
-          userAccounts.filter((item) => item !== acc),
+          userAccounts.filter(
+            (item) => item !== acc && !isCreditOverviewAccount(item),
+          ),
         );
         openAccountSettingModal(
-          "主帳戶",
+          "預設扣款銀行",
           choices
             .map(
               (item) =>
@@ -10701,6 +10944,7 @@
       window.openAccountTextSetting = openAccountTextSetting;
       window.openAccountNumberEditor = openAccountNumberEditor;
       window.openPendingBillEditor = openPendingBillEditor;
+      window.openCreditPaymentModal = openCreditPaymentModal;
       window.openAccountCurrencyPicker = openAccountCurrencyPicker;
       window.setAccountCurrencyFromPicker = setAccountCurrencyFromPicker;
       window.openAccountGroupPicker = openAccountGroupPicker;
@@ -10708,7 +10952,7 @@
       window.addAccountGroupFromPicker = addAccountGroupFromPicker;
       window.openStatementPeriodEditor = openStatementPeriodEditor;
       window.openPaymentDueEditor = openPaymentDueEditor;
-      window.setPaymentDueMode = setPaymentDueMode;
+      window.syncPaymentDueModeFields = syncPaymentDueModeFields;
       window.openPrimaryAccountPicker = openPrimaryAccountPicker;
       window.setPrimaryAccountFromPicker = setPrimaryAccountFromPicker;
       window.openSharedLimitPicker = openSharedLimitPicker;
@@ -13721,6 +13965,17 @@
               baseDate,
             );
           } else {
+            if (original.creditPayment && original.cardAccount) {
+              const paymentSetting = ensureAccountSetting(original.cardAccount);
+              paymentSetting.pendingBillAmount = Math.max(
+                0,
+                (Number(paymentSetting.pendingBillAmount) || 0) +
+                  (Number(original.price) || 0) -
+                  (Number(baseRecord.price) || 0),
+              );
+              paymentSetting.primaryAccount = baseRecord.account;
+              persistAccountSettings();
+            }
             data[editingRecordIndex] = {
               ...original,
               ...baseRecord,
