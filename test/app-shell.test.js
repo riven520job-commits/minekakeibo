@@ -156,6 +156,15 @@ test("ergonomic UI keeps labels, touch targets, danger cues, and desktop columns
   assert.match(html, /button\[class\*="text-red-"\][\s\S]*?color: #b4232f !important/);
   assert.match(html, /scroll-snap-type: x proximity/);
   assert.match(html, /grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
+  assert.match(
+    html,
+    /function handleCenterAction\(\) \{\s*openAddWithSelectedDate\(\);/,
+    "the center add button should open the form from every page",
+  );
+  assert.match(html, /data-i18n="paymentMethod">付款帳戶/);
+  assert.match(html, /id="record-time"\s+aria-label="交易時間"/);
+  assert.doesNotMatch(html, /<div class="add-tags">/);
+  assert.doesNotMatch(html, /calculatorPointerQuick\(event, (?:538|1299|587|2026|799|868)\)/);
 });
 
 test("modal accessibility translates actions and traps keyboard focus", () => {

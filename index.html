@@ -3271,13 +3271,6 @@
               >
                 全部折疊
               </button>
-              <button
-                onclick="addAccountGroup()"
-                class="text-[10px] font-semibold normal-case monochrome-action px-2 py-1 rounded-lg"
-                data-i18n="addGroupShort"
-              >
-                ＋新增小分類
-              </button>
             </span>
           </h3>
           <div id="account-balances-list" class="space-y-3 mb-8"></div>
@@ -3390,11 +3383,12 @@
 
             <div class="add-field-grid">
               <div class="add-field-tile">
-                <button
-                  type="button"
-                  onclick="openAccountPicker('from')"
-                  class="add-summary-tile"
-                >
+              <button
+                type="button"
+                onclick="openAccountPicker('from')"
+                class="add-summary-tile"
+              >
+                  <span class="add-summary-label" data-i18n="paymentMethod">付款帳戶</span>
                   <span id="selected-account-summary" class="add-summary-value"
                     >Paypay</span
                   >
@@ -3435,9 +3429,10 @@
               <div class="add-field-tile">
                 <button
                   type="button"
-                  onclick="openProjectPicker()"
-                  class="add-summary-tile"
-                >
+                onclick="openProjectPicker()"
+                class="add-summary-tile"
+              >
+                  <span class="add-summary-label" data-i18n="budgetProjectLabel">預算專案</span>
                   <span id="selected-project-summary" class="add-summary-value"
                     >省錢大作戰</span
                   >
@@ -3525,6 +3520,7 @@
                 <input
                   type="time"
                   id="record-time"
+                  aria-label="交易時間"
                   class="add-summary-tile text-center text-lg font-semibold text-gray-800"
                 />
               </div>
@@ -3555,7 +3551,6 @@
                 <div id="project-picker-content" class="space-y-2"></div>
               </div>
             </div>
-            <div class="add-tags">#標籤 / 紅利回饋</div>
             <textarea
               id="note"
               class="add-note"
@@ -3578,26 +3573,6 @@
                   class="calculator-readout-value"
                   >0</span
                 >
-              </div>
-              <div class="quick-amounts no-scrollbar">
-                <button type="button" onpointerdown="calculatorPointerQuick(event, 538)" onclick="if(event.detail===0) calculatorQuick(538)">
-                  538
-                </button>
-                <button type="button" onpointerdown="calculatorPointerQuick(event, 1299)" onclick="if(event.detail===0) calculatorQuick(1299)">
-                  1,299
-                </button>
-                <button type="button" onpointerdown="calculatorPointerQuick(event, 587)" onclick="if(event.detail===0) calculatorQuick(587)">
-                  587
-                </button>
-                <button type="button" onpointerdown="calculatorPointerQuick(event, 2026)" onclick="if(event.detail===0) calculatorQuick(2026)">
-                  2,026
-                </button>
-                <button type="button" onpointerdown="calculatorPointerQuick(event, 799)" onclick="if(event.detail===0) calculatorQuick(799)">
-                  799
-                </button>
-                <button type="button" onpointerdown="calculatorPointerQuick(event, 868)" onclick="if(event.detail===0) calculatorQuick(868)">
-                  868
-                </button>
               </div>
               <div
                 id="calculator-expression"
@@ -3723,7 +3698,7 @@
             />
           </div>
 
-          <details class="settings-section surface p-4 mb-3" open>
+          <details class="settings-section surface p-4 mb-3">
             <summary class="flex items-center justify-between gap-3">
               <div>
                 <div class="font-semibold text-sm" data-i18n="cloudSyncTitle">
@@ -13741,12 +13716,7 @@
       window.switchPage = switchPage;
 
       function handleCenterAction() {
-        const activePage = document.querySelector(".page.active")?.id;
-        if (activePage === "page-record") {
-          openAddWithSelectedDate();
-          return;
-        }
-        switchPage("record");
+        openAddWithSelectedDate();
       }
 
       window.handleCenterAction = handleCenterAction;
@@ -13877,7 +13847,8 @@
           10,
         );
 
-        if (!price) {
+        const numericPrice = Number(price);
+        if (!Number.isFinite(numericPrice) || numericPrice <= 0) {
           showToast(t("toastEnterAmount"));
           document.getElementById("price").focus();
           return;
