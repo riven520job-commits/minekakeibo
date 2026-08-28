@@ -118,6 +118,14 @@ test("dynamic inline values and custom images use the security helpers", () => {
     /onclick="[^"]*'\$\{(?:project|preferred)\.id\}'/,
   );
   assert.doesNotMatch(html, /escapeHTML\(schedule\.id\)/);
+  assert.match(html, /capture="environment"/);
+  assert.match(html, /function applyCustomCategoryEmoji/);
+  assert.match(html, /UISecurity\.isSafeDataImage\(imageData\)/);
+  assert.match(html, /png\|jpeg\|webp\|gif/);
+  assert.doesNotMatch(
+    html,
+    /onclick="triggerMainCategoryUpload\(\)">\s*(?:相簿圖片|檔案圖片|拍照)/,
+  );
 });
 
 test("monthly detail exposes searchable records", () => {
@@ -184,14 +192,39 @@ test("credit card payments link a debit account without duplicating expenses", (
   assert.match(html, /creditPayment: true/);
   assert.match(html, /type: "轉帳"/);
   assert.match(html, /setting\.primaryAccount = debitAccount/);
+  assert.match(html, /pendingBillAppliedAmount/);
   assert.match(
     html,
-    /setting\.pendingBillAmount = Math\.max\([\s\S]*?pendingBillAmount[\s\S]*?- amount/,
+    /setting\.pendingBillAmount = Math\.max\([\s\S]*?pendingBillAmount[\s\S]*?- pendingBillAppliedAmount/,
   );
   assert.doesNotMatch(
     html.match(/function saveCreditPayment[\s\S]*?\n      \}/)?.[0] || "",
     /type: "支出"/,
   );
+});
+
+test("deleting linked accounts and projects preserves relational data", () => {
+  const html = readFileSync(resolve(root, "index.html"), "utf8");
+  const deleteAccount =
+    html.match(/function deleteSubAccount\(acc\) \{[\s\S]*?\n      \}/)?.[0] || "";
+  assert.match(deleteAccount, /recurringSchedules\.some/);
+  assert.match(deleteAccount, /setting\?\.primaryAccount === acc/);
+  assert.match(deleteAccount, /sharedLimitAccounts/);
+  const deleteProject =
+    html.match(/function deleteBudgetProject\(projectId\) \{[\s\S]*?\n      \}/)?.[0] || "";
+  assert.match(deleteProject, /recurringSchedules\.forEach/);
+  assert.match(deleteProject, /persistRecurringSchedules\(\)/);
+  assert.doesNotMatch(deleteProject, /renderDailyLedger|renderMonthReport/);
+});
+
+test("project dates reject invalid and reversed ranges", () => {
+  const html = readFileSync(resolve(root, "index.html"), "utf8");
+  assert.match(html, /function isValidProjectDate/);
+  assert.match(html, /formatLocalDate\(parsed\) === value/);
+  const addProject =
+    html.match(/function addBudgetProject\(\) \{[\s\S]*?\n      \}/)?.[0] || "";
+  assert.match(addProject, /!isValidProjectDate\(start\)/);
+  assert.match(addProject, /end < start/);
 });
 
 test("credit card due dates support fixed, offset, and manual modes", () => {

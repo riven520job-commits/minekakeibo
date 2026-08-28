@@ -2521,13 +2521,36 @@
         display: grid;
         gap: 12px;
       }
-      .icon-source-options button {
+      .icon-source-options button,
+      .icon-source-button {
         border-radius: 12px;
         background: var(--soft);
         border: 1px solid var(--line);
         color: var(--ink);
         font-weight: 700;
         padding: 13px 16px;
+      }
+      .icon-source-button {
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+      .icon-emoji-input {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px;
+      }
+      .icon-emoji-input input {
+        min-width: 0;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--panel);
+        padding: 12px 14px;
+        text-align: center;
+        font-size: 1.35rem;
+        outline: none;
       }
       html:has(body.modal-open) {
         overflow: hidden;
@@ -4174,17 +4197,24 @@
               內建圖示
             </button>
             <button type="button" onclick="openBuiltInIconPicker('color')">
-              彩色圖示
+              Emoji 圖示
             </button>
-            <button type="button" onclick="triggerMainCategoryUpload()">
-              相簿圖片
-            </button>
-            <button type="button" onclick="triggerMainCategoryUpload()">
-              檔案圖片
-            </button>
-            <button type="button" onclick="triggerMainCategoryUpload()">
-              拍照
-            </button>
+            <div class="icon-emoji-input">
+              <input id="custom-category-emoji" type="text" inputmode="text" maxlength="16" placeholder="貼上 Emoji" aria-label="貼上 Emoji">
+              <button type="button" onclick="applyCustomCategoryEmoji()">使用</button>
+            </div>
+            <label class="icon-source-button">
+              從相簿選擇
+              <input type="file" accept="image/*" class="sr-only" onchange="handleMainCategoryImageUpload(event)">
+            </label>
+            <label class="icon-source-button">
+              選擇圖片檔案
+              <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="sr-only" onchange="handleMainCategoryImageUpload(event)">
+            </label>
+            <label class="icon-source-button">
+              使用相機拍照
+              <input type="file" accept="image/*" capture="environment" class="sr-only" onchange="handleMainCategoryImageUpload(event)">
+            </label>
             <button type="button" onclick="closeIconSourceModal()">取消</button>
           </div>
         </div>
@@ -8495,7 +8525,7 @@
           const setting = ensureAccountSetting(removed.cardAccount);
           setting.pendingBillAmount =
             (Number(setting.pendingBillAmount) || 0) +
-            (Number(removed.price) || 0);
+            (Number(removed.pendingBillAppliedAmount ?? removed.price) || 0);
           persistAccountSettings();
         }
         data.splice(index, 1);
@@ -8507,11 +8537,16 @@
       function duplicateRecord(index) {
         const item = data[index];
         if (!item || !confirm(t("confirmDuplicateRecord"))) return;
+        let duplicatedPendingAmount = item.pendingBillAppliedAmount;
         if (item.creditPayment && item.cardAccount) {
           const setting = ensureAccountSetting(item.cardAccount);
+          duplicatedPendingAmount = Math.min(
+            Number(setting.pendingBillAmount) || 0,
+            Number(item.price) || 0,
+          );
           setting.pendingBillAmount = Math.max(
             0,
-            (Number(setting.pendingBillAmount) || 0) - (Number(item.price) || 0),
+            (Number(setting.pendingBillAmount) || 0) - duplicatedPendingAmount,
           );
           persistAccountSettings();
         }
@@ -8519,6 +8554,7 @@
           ...item,
           date: selectedEntryDate,
           photoData: item.photoData || null,
+          pendingBillAppliedAmount: duplicatedPendingAmount,
         });
         data.sort((a, b) => new Date(b.date) - new Date(a.date));
         closeRecordDetail();
@@ -10666,6 +10702,10 @@
           showToast("請選擇還款日期");
           return;
         }
+        const pendingBillAppliedAmount = Math.min(
+          Number(setting.pendingBillAmount) || 0,
+          amount,
+        );
         data.push({
           type: "轉帳",
           mainCat: "儲值",
@@ -10675,6 +10715,7 @@
           toAccount: cardAccount,
           cardAccount,
           creditPayment: true,
+          pendingBillAppliedAmount,
           date: paymentDate,
           time: new Date().toTimeString().slice(0, 5),
           note: `信用卡還款｜截止 ${accountPaymentDueLabel(cardAccount)}`,
@@ -10691,7 +10732,7 @@
         setting.primaryAccount = debitAccount;
         setting.pendingBillAmount = Math.max(
           0,
-          (Number(setting.pendingBillAmount) || 0) - amount,
+          (Number(setting.pendingBillAmount) || 0) - pendingBillAppliedAmount,
         );
         persistAccountSettings();
         closeAccountSettingModal();
@@ -11407,10 +11448,19 @@
       }
 
       function deleteSubAccount(acc) {
-        const hasHistory = data.some(
+        const hasRecordHistory = data.some(
           (item) => item.account === acc || item.toAccount === acc,
         );
-        if (hasHistory) {
+        const hasSchedule = recurringSchedules.some(
+          (schedule) => schedule.account === acc,
+        );
+        const hasAccountLink = Object.entries(accountSettings).some(
+          ([name, setting]) =>
+            name !== acc &&
+            (setting?.primaryAccount === acc ||
+              (setting?.sharedLimitAccounts || []).includes(acc)),
+        );
+        if (hasRecordHistory || hasSchedule || hasAccountLink) {
           showToast(t("toastAccountInUse"));
           return;
         }
@@ -11637,6 +11687,13 @@
           return `${compact.slice(0, 4)}-${compact.slice(4, 6)}-${compact.slice(6, 8)}`;
         if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
         return raw.replace(/\//g, "-");
+      }
+
+      function isValidProjectDate(value) {
+        if (!value) return true;
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+        const parsed = parseLocalDate(value);
+        return !Number.isNaN(parsed.getTime()) && formatLocalDate(parsed) === value;
       }
 
       function projectMonthRange(monthValue) {
@@ -12104,12 +12161,16 @@
         const currency = currencySymbolFromCode(
           prompt(t("promptProjectCurrency"), "JPY"),
         );
-        const start = normalizeProjectDate(
-          prompt(t("promptProjectStart"), "") || "",
-        );
-        const end = normalizeProjectDate(
-          prompt(t("promptProjectEnd"), "") || "",
-        );
+        const start = normalizeProjectDate(prompt(t("promptProjectStart"), "") || "");
+        const end = normalizeProjectDate(prompt(t("promptProjectEnd"), "") || "");
+        if (!isValidProjectDate(start) || !isValidProjectDate(end)) {
+          showToast("日期格式錯誤，請使用 YYYY-MM-DD");
+          return;
+        }
+        if (start && end && end < start) {
+          showToast("專案結束日期不可早於開始日期");
+          return;
+        }
         const recurring = confirm(t("promptProjectRecurring"));
         budgetProjects.push({
           id: `project-${Date.now()}`,
@@ -12154,12 +12215,16 @@
         const currency = currencySymbolFromCode(
           prompt(t("promptEditProjectCurrency"), currentCode),
         );
-        const start = normalizeProjectDate(
-          prompt(t("promptEditProjectStart"), project.start || "") || "",
-        );
-        const end = normalizeProjectDate(
-          prompt(t("promptEditProjectEnd"), project.end || "") || "",
-        );
+        const start = normalizeProjectDate(prompt(t("promptEditProjectStart"), project.start || "") || "");
+        const end = normalizeProjectDate(prompt(t("promptEditProjectEnd"), project.end || "") || "");
+        if (!isValidProjectDate(start) || !isValidProjectDate(end)) {
+          showToast("日期格式錯誤，請使用 YYYY-MM-DD");
+          return;
+        }
+        if (start && end && end < start) {
+          showToast("專案結束日期不可早於開始日期");
+          return;
+        }
         const recurring = confirm(t("promptProjectRecurring"));
         const oldName = project.name;
         project.name = name.trim();
@@ -12209,6 +12274,9 @@
             item.projectName = "";
           }
         });
+        recurringSchedules.forEach((schedule) => {
+          if (schedule.projectId === projectId) schedule.projectId = "";
+        });
         budgetProjects = budgetProjects.filter((item) => item.id !== projectId);
         const selectedProjectInput = document.getElementById("selected-project-id");
         if (selectedProjectInput?.value === projectId) selectedProjectInput.value = "";
@@ -12217,13 +12285,19 @@
           "myBudgetProjects",
           JSON.stringify(budgetProjects),
         );
+        persistRecurringSchedules();
         renderBudgetProjectsDashboard();
         renderProjectOverviewPage();
         renderBudgetProjectSettings();
         renderProjectButtons();
         renderProjectSummary();
-        renderDailyLedger();
-        renderMonthReport();
+        renderDailyRecords();
+        if (
+          !document
+            .getElementById("monthly-report-modal")
+            ?.classList.contains("hidden")
+        )
+          renderMonthlyReport();
         updateBalances();
         showToast(t("toastProjectDeleted"));
       }
@@ -13448,21 +13522,54 @@
         closeIconPicker();
         closeIconSourceModal();
       }
-      function triggerMainCategoryUpload() {
+      function applyCustomCategoryEmoji() {
+        const input = document.getElementById("custom-category-emoji");
+        const emoji = (input?.value || "").trim();
+        if (!emoji || emoji.length > 16) {
+          showToast("請輸入一個 Emoji 圖示");
+          input?.focus();
+          return;
+        }
+        customMainDraft.icon = emoji;
+        updateCustomMainPreview();
         closeIconSourceModal();
-        document.activeElement?.blur?.();
+        if (input) input.value = "";
+      }
+      function triggerMainCategoryUpload() {
         document.getElementById("custom-main-cat-upload").click();
       }
       async function handleMainCategoryImageUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
-        customMainDraft.icon = await new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onload = (e) => resolve(e.target.result);
-          reader.readAsDataURL(file);
-        });
-        updateCustomMainPreview();
-        event.target.value = "";
+        try {
+          if (!/^image\/(png|jpeg|webp|gif)$/i.test(file.type || ""))
+            throw new Error("unsupported image");
+          if (file.size > 8_000_000) throw new Error("image too large");
+          let imageData = await new Promise((resolve, reject) => {
+                  const reader = new FileReader();
+                  reader.onload = () => resolve(reader.result);
+                  reader.onerror = () => reject(new Error("read failed"));
+                  reader.readAsDataURL(file);
+                });
+          if (StorageCore.utf8Bytes(imageData) > 650_000)
+            imageData = await compressRecordPhoto(file);
+          if (!UISecurity.isSafeDataImage(imageData))
+            throw new Error("unsafe image");
+          customMainDraft.icon = imageData;
+          updateCustomMainPreview();
+          closeIconSourceModal();
+          showToast("類別圖片已套用");
+        } catch (error) {
+          showToast(
+            error?.message === "image too large"
+              ? "圖片請勿超過 8 MB"
+              : error?.message === "storage quota risk"
+                ? t("storageFull")
+              : "無法讀取圖片，請使用 PNG、JPG、WebP 或 GIF",
+          );
+        } finally {
+          event.target.value = "";
+        }
       }
       function editCustomCategory(mode, oldName) {
         const currentType = document.getElementById("selected-type").value;
@@ -13667,6 +13774,7 @@
       window.closeIconPicker = closeIconPicker;
       window.setIconPickerTab = setIconPickerTab;
       window.chooseCategoryIcon = chooseCategoryIcon;
+      window.applyCustomCategoryEmoji = applyCustomCategoryEmoji;
       window.triggerMainCategoryUpload = triggerMainCategoryUpload;
       window.handleMainCategoryImageUpload = handleMainCategoryImageUpload;
       window.showMainCategoryGrid = showMainCategoryGrid;
@@ -13915,6 +14023,14 @@
             showToast(t("monthlyNoData"));
             return;
           }
+          if (
+            original.creditPayment &&
+            (baseRecord.type !== "轉帳" ||
+              baseRecord.toAccount !== original.cardAccount)
+          ) {
+            showToast("信用卡還款必須保留為轉帳並轉入原信用卡");
+            return;
+          }
           if (installmentEnabled) {
             const installmentId =
               original.installmentId || `installment-${Date.now()}`;
@@ -13936,13 +14052,22 @@
               baseDate,
             );
           } else {
+            let nextPendingBillAppliedAmount =
+              original.pendingBillAppliedAmount;
             if (original.creditPayment && original.cardAccount) {
               const paymentSetting = ensureAccountSetting(original.cardAccount);
+              const restoredPending =
+                (Number(paymentSetting.pendingBillAmount) || 0) +
+                (Number(
+                  original.pendingBillAppliedAmount ?? original.price,
+                ) || 0);
+              nextPendingBillAppliedAmount = Math.min(
+                restoredPending,
+                Number(baseRecord.price) || 0,
+              );
               paymentSetting.pendingBillAmount = Math.max(
                 0,
-                (Number(paymentSetting.pendingBillAmount) || 0) +
-                  (Number(original.price) || 0) -
-                  (Number(baseRecord.price) || 0),
+                restoredPending - nextPendingBillAppliedAmount,
               );
               paymentSetting.primaryAccount = baseRecord.account;
               persistAccountSettings();
@@ -13954,6 +14079,7 @@
               installmentId: undefined,
               installmentIndex: undefined,
               installmentCount: undefined,
+              pendingBillAppliedAmount: nextPendingBillAppliedAmount,
             };
           }
           data.sort((a, b) => new Date(b.date) - new Date(a.date));
