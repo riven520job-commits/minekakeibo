@@ -1412,6 +1412,26 @@
         font-size: 0.72rem;
         font-weight: 800;
       }
+      .monthly-calendar-day-markers {
+        position: absolute;
+        top: 10px;
+        right: 7px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .monthly-calendar-day-marker {
+        width: 8px;
+        height: 8px;
+        border-radius: 9999px;
+        box-shadow: 0 0 0 2px var(--panel);
+      }
+      .monthly-calendar-day-marker.is-expense {
+        background: #d84f5d;
+      }
+      .monthly-calendar-day-marker.is-income {
+        background: #2f9b61;
+      }
       .monthly-calendar-day-summary {
         display: grid;
         gap: 5px;
@@ -5978,6 +5998,8 @@
           monthlyCalendarMore: (count) => `另有 ${count} 筆`,
           monthlyCalendarExpenseShort: "支",
           monthlyCalendarIncomeShort: "收",
+          monthlyCalendarHasExpense: "有支出",
+          monthlyCalendarHasIncome: "有收入",
           monthlyCalendarScheduleShort: (count) => `${count} 筆待扣`,
           monthlyCalendarScheduledTotal: "預定扣款",
           monthlyCalendarScheduledCount: "預定筆數",
@@ -6424,6 +6446,8 @@
           monthlyCalendarMore: (count) => `ほか ${count} 件`,
           monthlyCalendarExpenseShort: "支",
           monthlyCalendarIncomeShort: "収",
+          monthlyCalendarHasExpense: "支出あり",
+          monthlyCalendarHasIncome: "収入あり",
           monthlyCalendarScheduleShort: (count) => `予定 ${count}件`,
           monthlyCalendarScheduledTotal: "引落予定",
           monthlyCalendarScheduledCount: "予定件数",
@@ -8152,6 +8176,10 @@
       function monthlyCalendarDaySummary(summary) {
         if (!summary) return "";
         return `
+          <span class="monthly-calendar-day-markers" aria-hidden="true">
+            ${summary.expense ? '<i class="monthly-calendar-day-marker is-expense"></i>' : ""}
+            ${summary.income ? '<i class="monthly-calendar-day-marker is-income"></i>' : ""}
+          </span>
           <span class="monthly-calendar-day-summary">
             ${
               summary.expense
@@ -8311,6 +8339,7 @@
                 const pendingScheduleCount = dayOccurrences.filter(
                   (occurrence) => occurrence.status !== "paid",
                 ).length;
+                const activityLabel = `${daySummary?.expense ? ` · ${t("monthlyCalendarHasExpense")}` : ""}${daySummary?.income ? ` · ${t("monthlyCalendarHasIncome")}` : ""}`;
                 const classes = [
                   "monthly-calendar-day",
                   cell.inMonth ? "" : "is-outside",
@@ -8328,7 +8357,7 @@
                     onclick="setMonthlyCalendarDate('${cell.date}')"
                     ${cell.inMonth ? "" : "disabled"}
                     aria-pressed="${cell.date === selectedMonthlyCalendarDate && cell.inMonth}"
-                    aria-label="${escapeHTML(cell.date)}${dayRecordCount ? ` · ${dayRecordCount} ${t("monthlyCalendarCount")}` : ""}${pendingScheduleCount ? ` · ${t("monthlyCalendarScheduleShort", pendingScheduleCount)}` : ""}"
+                    aria-label="${escapeHTML(cell.date)}${activityLabel}${dayRecordCount ? ` · ${dayRecordCount} ${t("monthlyCalendarCount")}` : ""}${pendingScheduleCount ? ` · ${t("monthlyCalendarScheduleShort", pendingScheduleCount)}` : ""}"
                   >
                     <span class="monthly-calendar-day-number">${cell.day}</span>
                     ${monthlyCalendarDaySummary(daySummary)}

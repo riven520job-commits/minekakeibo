@@ -154,7 +154,11 @@ test("mobile monthly calendar stacks and preserves daily amounts", () => {
     html.match(/function monthlyCalendarDaySummary\(summary\) \{[\s\S]*?\n      \}/)?.[0] || "";
   assert.match(daySummary, /aria-hidden="true">−</);
   assert.match(daySummary, /aria-hidden="true">＋</);
+  assert.match(daySummary, /monthly-calendar-day-marker is-expense/);
+  assert.match(daySummary, /monthly-calendar-day-marker is-income/);
   assert.doesNotMatch(daySummary, /monthly-calendar-schedule-count/);
+  assert.match(html, /monthlyCalendarHasExpense/);
+  assert.match(html, /monthlyCalendarHasIncome/);
 });
 
 test("ergonomic UI keeps labels, touch targets, danger cues, and desktop columns", () => {
